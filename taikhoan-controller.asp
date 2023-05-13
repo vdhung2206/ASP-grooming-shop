@@ -6,19 +6,31 @@
     'status code 4: tai khoan khong ton tai
     'status code 5: tai khoan dang bi khoa
     loai = request.Form("loai")
-
+    dim page 
+    Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
+    limit = 10
+    
     if(loai = "phantrangtaikhoan") then
-        Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
-        limit = 10
-        dim page 
         page = request.form("page")
         set danhsachtaikhoan = tk.phanTrangTaiKhoan(offset,limit,page)
+    end if
+
+    if(loai = "phantrangtaikhoanquanly") then
+        Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
+        page = request.form("page")
+        set danhsachtaikhoan = tk.phanTrangTaiKhoanQuanLy(offset,limit,page)
     end if
 
     if(loai = "unban") then
         set tk = new TaiKhoan
         set tentk= Request.Form("tk")
         tk.moKhoaTaiKhoan(tentk)       
+    end if
+
+    if(loai = "ban") then
+        set tk = new TaiKhoan
+        set tentk= Request.Form("tk")
+        tk.khoaTaiKhoan(tentk)       
     end if
 
     If (loai = "admindangnhap") Then

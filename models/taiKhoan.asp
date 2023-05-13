@@ -122,7 +122,8 @@ connDB.ConnectionString = strConnection
     end function
 
     public function phanTrangTaiKhoan(offset, limit, page)
-        totalRows = 11
+        set classtk = new TaiKhoan
+        totalRows = classtk.count("0")
         if (trim(page) = "") or (isnull(page) or Clng(page)<=0) then
             page = 1
         end if
@@ -199,7 +200,8 @@ connDB.ConnectionString = strConnection
     end function
 
     public function phanTrangTaiKhoanQuanLy(offset, limit, page)
-        totalRows = 11
+        set classtk = new TaiKhoan
+        totalRows = classtk.count("1")
         if (trim(page) = "") or (isnull(page) or Clng(page)<=0) then
             page = 1
         end if
@@ -227,7 +229,7 @@ connDB.ConnectionString = strConnection
         cmdPrep.ActiveConnection = connDB
         cmdPrep.CommandType = 1
         cmdPrep.Prepared = True
-        cmdPrep.CommandText = "SELECT * FROM TaiKhoan where LoaiTK='0' ORDER BY TK OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+        cmdPrep.CommandText = "SELECT * FROM TaiKhoan where LoaiTK='1' ORDER BY TK OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
         cmdPrep.parameters.Append cmdPrep.createParameter("offset",3,1, ,offset)
         cmdPrep.parameters.Append cmdPrep.createParameter("limit",3,1, , limit)
         Set rs = cmdPrep.execute
@@ -245,9 +247,6 @@ connDB.ConnectionString = strConnection
             response.write("<td>")
             response.write(rs.Fields("DiaChi"))
             response.write("<td>")
-            response.write(rs.Fields("TichDiem"))
-            response.write("</td>")
-            response.write("<td>")
             if(rs.Fields("TinhTrang")="True") then
               response.write("Hoạt Động")
             else 
@@ -256,7 +255,10 @@ connDB.ConnectionString = strConnection
             response.write("</td>")
             response.write("<td>")
               if(rs.Fields("TinhTrang")="False") then
-                response.write "<a data-bs-toggle=modal data-bs-target=#confirm-unban class=""btn btn-success unban"" onclick="""&"getData('" & rs.Fields("TK") &"','unban')"& """>Mở Khóa</a>"
+                response.write "<a data-bs-toggle=modal data-bs-target=#confirmbanunban class=""btn btn-success"" onclick="""&"getData('" & rs.Fields("TK") &"','unban'); setConfirmBox('" & rs.Fields("TK") &"','unban')"& """>Mở Khóa</a>"
+              end if
+              if(rs.Fields("TinhTrang")="True") then
+                response.write "<a data-bs-toggle=modal data-bs-target=#confirmbanunban class=""btn btn-danger"" onclick="""&"getData('" & rs.Fields("TK") &"','ban'); setConfirmBox('" & rs.Fields("TK") &"','ban')"& """>Khóa</a>"
               end if
             response.write("<a style = ""margin-left:3px""href =""#""class =""btn btn-info"">Chi Tiết</a>")
             response.write("</td>")
@@ -272,18 +274,21 @@ connDB.ConnectionString = strConnection
         response.write("</td>")
         response.write("</tr>")
         conndb.Close()
-        set phanTrangTaiKhoan = danhsachtaikhoan
+        set phanTrangTaiKhoanQuanLy = danhsachtaikhoan
     end function
 
-    public function count()
-      Dim connDB
+    public function count(key)
+        Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection
         strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
         connDB.ConnectionString = strConnection
         connDB.Open()
-
-        Set rs = connDB.execute("select count(*) as c from TaiKhoan where LoaiTK = '0'")
+        if(key = 0 ) then
+          Set rs = connDB.execute("select count(*) as c from TaiKhoan where LoaiTK = '0'")
+        else
+          Set rs = connDB.execute("select count(*) as c from TaiKhoan where LoaiTK = '1'")
+        end if
         count = rs.Fields("c")
         connDB.Close()
     end function
@@ -308,6 +313,32 @@ connDB.ConnectionString = strConnection
         conndb.Close()
         If Err.Number = 0 Then
           Session("Success") = "Mở khóa tài khoản thành công"
+        Else
+          Session("Error") = Err.Description
+        End If
+        end if
+    end sub
+
+    public sub khoaTaiKhoan(tentk)
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+        if (isnull(tentk) OR trim(tentk)="") then
+          Response.End
+        else
+        Set cmdPrep = Server.CreateObject("ADODB.Command")
+        cmdPrep.ActiveConnection = connDB
+        cmdPrep.CommandType = 1
+        cmdPrep.Prepared = True
+        cmdPrep.CommandText = "Update TaiKhoan set TinhTrang = 0 where TK=?"
+        cmdPrep.Parameters(0)=tentk
+        cmdPrep.execute
+        conndb.Close()
+        If Err.Number = 0 Then
+          Session("Success") = "Khóa tài khoản thành công"
         Else
           Session("Error") = Err.Description
         End If

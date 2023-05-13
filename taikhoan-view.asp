@@ -70,6 +70,6 @@
             </div>
             
         </div>
-        <!--#include file="./share/footer.html"-->
+        <!--#include file="./share/taikhoanviewfooter.html"-->
     </body>
 </html>

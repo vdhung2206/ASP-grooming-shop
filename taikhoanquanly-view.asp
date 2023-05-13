@@ -28,7 +28,6 @@
                             <th scope="col">Tên người dùng</th>
                             <th scope="col">Số điện thoại</th>
                             <th scope="col">Địa chỉ</th>
-                            <th scope="col">Tích Điểm</th>
                             <th scope="col">Tình trạng</th>
                             <th scope="col">Thao Tác</th>
                         </tr>
@@ -44,24 +43,23 @@
             </ul>
             </nav>
 
-            <div class="modal" tabindex="-1" id="confirm-unban">                
+            <div class="modal" tabindex="-1" id="confirmbanunban">                
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Xác nhận mở khóa tài khoản</h5>
+                            <h5 class="modal-title"></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <p>Xác nhận mở khóa tài khoản này?</p>
+                            <p></p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <form>
-                                <input id="tkmuonunban" type="hidden" value="">
+                                <input id="tkmuonunbanhoacunban" type="hidden" value="">
                                 <input id="type" type="hidden" value="">
 
-                                <button id="confirm" type="button" data-bs-dismiss="modal" class="btn btn-success">
-                                    Đồng ý
+                                <button id="confirm" type="button" data-bs-dismiss="modal" class="btn">
                                 </button>
                             </form>
                         </div>
@@ -70,6 +68,6 @@
             </div>
             
         </div>
-        <!--#include file="./share/footer.html"-->
+        <!--#include file="./share/taikhoanquanlyviewfooter.html"-->
     </body>
 </html>
