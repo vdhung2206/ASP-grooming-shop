@@ -1,0 +1,109 @@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" 
+integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" 
+crossorigin="anonymous">
+</script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+
+</script>
+<script>
+
+function getData(data,type){
+  $("#tkmuonunban").val(data);
+  $("#type").val(type);
+}
+$("#confirm").click(function(){
+  var tk = $("#tkmuonunban").val();
+  var type = $("#type").val();
+  $.post("taikhoan-controller.asp",{tk:tk,loai:type,function(){
+  }}).done(function(){
+    loadData($("#currentPage").html());
+    $("#msg").addClass("alert alert-success");
+    $("#msg").html("Mở khóa tài khoản thành công");
+    $(".alert").fadeTo(500, 1).slideDown(500, function(){
+    });
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+    });
+}, 2000);
+  })
+})
+
+$(document).ready(function(){
+  loadData(1);
+});
+function loadThanhPhanTrang(){
+    var currentPage = $("#currentPage").html()
+    var totalPages = $("#totalPages").html()
+    var truoc = "<li class=\"page-item\"" + "><a  class =\"page-link\" onclick=\"myFunction1("+(currentPage-1)+")\" style=\"cursor:pointer";
+    if(currentPage<=1){
+      truoc += " ;pointer-cursor: none"
+    }
+    truoc += "\">" +"Trước</a></li>"
+    var str="";
+    str+=truoc;
+    if(totalPages<=10){
+      for(let i=1; i<=totalPages; i++){
+        str += "<li class=\"page-item"
+        if(i == currentPage){
+          str += " active"
+        }
+        str+="\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+i+")\""
+        str+=">"+i+"</a></li>"
+      }
+    }
+    if(totalPages>10){
+      str+= "<li class=\"page-item";
+      if(1 == currentPage){
+        str += " active"
+      }
+      str += "\"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(1)\">"+1+"</a></li>"
+      if(currentPage > 3){
+        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+      }
+      if(currentPage >2){
+        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+(parseInt(currentPage)-1)+")\">"+(parseInt(currentPage)-1)+"</a></li>"
+      }
+      if(currentPage != 1){
+        str += "<li class=\"page-item active\"><a class=\"page-link\">" + currentPage+"</a></li>"
+      }
+      if(currentPage < (totalPages-1)){
+        str += "<li class=\"page-item\"><a class=\"page-link\"style=\"cursor:pointer\" onclick=\"myFunction1("+(parseInt(currentPage)+1)+")\">"+(parseInt(currentPage)+1)+"</a></li>"
+      }
+      if(currentPage < (totalPages-2)){
+        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+      }
+      if((totalPages > 1) && (parseInt(currentPage) < parseInt(totalPages))){
+        str +="<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+totalPages+")\">"+totalPages+"</a></li>"
+      }
+    }
+    
+    var sau = "<li class=\"page-item\"" + "><a  class =\"page-link\" onclick=\"myFunction1("+(parseInt(currentPage)+1)+")\" style=\"cursor:pointer";
+    if(currentPage>=totalPages-1){
+      sau += " ;pointer-cursor: none"
+    }
+    sau += "\">" +"Sau</a></li>"
+    str+=sau;
+    $("#thanhphantrang").html(str);
+  }
+function loadData(page){
+    $.ajax({
+      method : "post",
+      url: "taikhoan-controller.asp",
+      data:{
+        page : page,
+        loai: "phantrangtaikhoan"
+      }
+      ,
+      success: function(data){
+        console.log("ok")
+        $("#result").html(data);
+        loadThanhPhanTrang()
+      }
+    });
+  }
+function myFunction1(page){
+    loadData(page);
+  }
+</script>
+
