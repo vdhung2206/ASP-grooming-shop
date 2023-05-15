@@ -119,12 +119,9 @@ connDB.ConnectionString = strConnection
       end if
     end function
 
-    public function phanTrangTaiKhoan(offset, limit, page)
+    public function phanTrangTaiKhoan(limit, page, taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
         set classtk = new TaiKhoan
-        totalRows = classtk.count("0")
-        if (trim(page) = "") or (isnull(page) or Clng(page)<=0) then
-            page = 1
-        end if
+        totalRows = classtk.count(taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
         pages = Ceil(totalRows/limit)
         if (Clng(pages) < Clng(page)) then
             page = pages
@@ -133,7 +130,27 @@ connDB.ConnectionString = strConnection
         if(offset < 0) then 
             offset =0
         end if
-
+        Dim sql
+        sql = "select * from TaiKhoan where LoaiTK='0'"
+        if(taikhoansearch <> "") then
+          sql = sql + " and TK like '%" & taikhoansearch & "%'"
+        end if
+        if (tennguoidung <>"") then
+          sql = sql + " and Ten like '%" & tennguoidung & "%'"
+        end if
+        if (diachi <>"") then
+          sql = sql + " and DiaChi like '%" & diachi & "%'"
+        end if
+        if (sodienthoai <>"") then
+          sql = sql + " and SDT like '%" & sodienthoai & "%'"
+        end if
+        if (tichdiem <>"") then
+          sql = sql + " and TichDiem > " & tichdiem & ""
+        end if
+        if (trangthai <>"") then
+          sql = sql + " and TinhTrang = " & trangthai & ""
+        end if
+        sql = sql + " order by Tk offset " & offset &" rows fetch next " & limit &" rows only"
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection
@@ -148,9 +165,7 @@ connDB.ConnectionString = strConnection
         cmdPrep.ActiveConnection = connDB
         cmdPrep.CommandType = 1
         cmdPrep.Prepared = True
-        cmdPrep.CommandText = "SELECT * FROM TaiKhoan where LoaiTK='0' ORDER BY TK OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
-        cmdPrep.parameters.Append cmdPrep.createParameter("offset",3,1, ,offset)
-        cmdPrep.parameters.Append cmdPrep.createParameter("limit",3,1, , limit)
+        cmdPrep.CommandText = sql
         Set rs = cmdPrep.execute
         Do While Not rs.EOF
             seq = seq+1
@@ -199,12 +214,9 @@ connDB.ConnectionString = strConnection
         set phanTrangTaiKhoan = danhsachtaikhoan
     end function
 
-    public function phanTrangTaiKhoanQuanLy(offset, limit, page)
+    public function phanTrangTaiKhoanQuanLy(offset, limit,  page)
         set classtk = new TaiKhoan
         totalRows = classtk.count("1")
-        if (trim(page) = "") or (isnull(page) or Clng(page)<=0) then
-            page = 1
-        end if
         pages = Ceil(totalRows/limit)
         if (Clng(pages) < Clng(page)) then
             page = pages
@@ -229,7 +241,7 @@ connDB.ConnectionString = strConnection
         cmdPrep.ActiveConnection = connDB
         cmdPrep.CommandType = 1
         cmdPrep.Prepared = True
-        cmdPrep.CommandText = "SELECT * FROM TaiKhoan where LoaiTK='1' ORDER BY TK OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+        cmdPrep.CommandText = sql'"SELECT * FROM TaiKhoan where LoaiTK='1' ORDER BY TK OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
         cmdPrep.parameters.Append cmdPrep.createParameter("offset",3,1, ,offset)
         cmdPrep.parameters.Append cmdPrep.createParameter("limit",3,1, , limit)
         Set rs = cmdPrep.execute
@@ -277,20 +289,36 @@ connDB.ConnectionString = strConnection
         set phanTrangTaiKhoanQuanLy = danhsachtaikhoan
     end function
 
-    public function count(key)
-        Dim connDB
-        set connDB = Server.CreateObject("ADODB.Connection")
-        Dim strConnection
-        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
-        connDB.ConnectionString = strConnection
-        connDB.Open()
-        if(key = 0 ) then
-          Set rs = connDB.execute("select count(*) as c from TaiKhoan where LoaiTK = '0'")
-        else
-          Set rs = connDB.execute("select count(*) as c from TaiKhoan where LoaiTK = '1'")
-        end if
-        count = rs.Fields("c")
-        connDB.Close()
+    public function count(taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
+      Dim sql
+      sql ="select count(*) as c from TaiKhoan where LoaiTK='0'"
+      if(taikhoansearch <> "") then
+        sql = sql + " and TK like '%" & taikhoansearch & "%'"
+      end if
+      if (tennguoidung <>"") then
+        sql = sql + " and Ten like '%" & tennguoidung & "%'"
+      end if
+      if (diachi <>"") then
+        sql = sql + " and DiaChi like '%" & diachi & "%'"
+      end if
+      if (sodienthoai <>"") then
+        sql = sql + " and SDT like '%" & sodienthoai & "%'"
+      end if
+      if (tichdiem <>"") then
+        sql = sql + " and TichDiem > " & tichdiem & ""
+      end if
+      if (trangthai <>"") then
+        sql = sql + " and TinhTrang = " & trangthai & ""
+      end if
+      Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+      Set rs = connDB.execute(sql)
+      count = rs.Fields("c")
+      connDB.Close()
     end function
     
     public sub moKhoaTaiKhoan(tentk)
@@ -441,4 +469,5 @@ connDB.ConnectionString = strConnection
       connDB.Close()
     end function
   End Class
+  set tk = new TaiKhoan
 %>

@@ -15,14 +15,13 @@
     if(loai = "phantrangtaikhoan") then
         set tk = new TaiKhoan
         page = request.form("page")
-        searchinput = request.form("searchinput")
-        loaitimkiem = request.form("loaitimkiem")
+        taikhoansearch = request.form("taikhoan")
+        tennguoidung = request.form("tennguoidung")
+        diachi = request.form("diachi")
+        sodienthoai = request.form("sodienthoai")
         tichdiem = request.form("tichdiem")
         trangthai = request.form("trangthai")
-        if(searchinput ="" and loaitimkiem ="" and tichdiem ="" and trangthai ="") then
-            set danhsachtaikhoan = tk.phanTrangTaiKhoan(offset,limit,page)
-        else
-        end if
+        set danhsachtaikhoan = tk.phanTrangTaiKhoan(limit,page,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
         Response.Write("{")
         Response.Write("""status code"": ""6"",")
         Response.Write("""message"": """",")
@@ -63,7 +62,7 @@
         next
         Response.Write("]")
         Response.Write(",""totalPages"":")
-        Response.Write(tk.Ceil(tk.count(0)/limit))
+        Response.Write(tk.Ceil(tk.count(taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)/limit))
         Response.Write("")
         Response.Write("}")
         Response.Write("}")
@@ -88,7 +87,7 @@
         tk.khoaTaiKhoan(tentk)       
     end if
 
-    If (loai = "admindangnhap") Then
+    If (loai="admindangnhap") Then
     Set classtk = New TaiKhoan
     dim tk
     tk = Request.Form("tk")

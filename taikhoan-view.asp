@@ -14,13 +14,35 @@
         <div class="me-auto p-2 bd-highlight"><h2>Danh sách tài khoản khách hàng</h2></div>
         <form id ="formtimkiem" class="form-inline">
             <div  class="form-group mx-sm-3 mb-2 row" >
-                <div class="col-lg-3" style="padding-left: 0" >
-                    <input type="text" class="form-control " id="searchinput" placeholder="">
+
+                <div  class="form-group row mt-3" style="padding-left: 0; margin-left:0">
+                    <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
+                        <label for="inputtennguoidung" class="form-label">Tên người dùng: </label>
+                    </div>
+                    <div class="col-lg-3" >
+                        <input type="text" class="form-control" id="inputtennguoidung">
+                    </div>
+                    <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
+                        <label for="inputsodienthoai" class="form-label">Số điện thoại: </label>
+                    </div>
+                    <div class="col-lg-3" >
+                        <input type="text" class="form-control" id="inputsodienthoai">
+                    </div>
                 </div>
-                <div class="col-lg-2">
-                    <select class="form-select" id ="formselect">
-                        <option value="">Chọn loại tìm kiếm</option>
-                    </select>
+
+                <div  class="form-group row mt-3" style="padding-left: 0; margin-left:0">
+                    <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
+                        <label for="inputtaikhoan" class="form-label">Tài khoản: </label>
+                    </div>
+                    <div class="col-lg-3" >
+                        <input type="text" class="form-control" id="inputtaikhoan">
+                    </div>
+                    <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
+                        <label for="inputdiachi" class="form-label">Địa chỉ: </label>
+                    </div>
+                    <div class="col-lg-3" >
+                        <input type="text" class="form-control" id="inputdiachi">
+                    </div>
                 </div>
                 <div  class="form-group row mt-3" style="padding-left: 0; margin-left:0">
                     <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
@@ -30,15 +52,21 @@
                     <div class="col-lg-3" >
                         <input type="range" class="form-range" id="customRange1">
                     </div>
+                    <div class="col-lg-3" >
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Lọc theo tích điểm
+                        </label>    
+                    </div>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" value="khoa" id="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" value="0" id="flexRadioDefault1">
                     <label class="form-check-label" for="flexRadioDefault1">
                         Khóa
                     </label>
                 </div>
                     <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" value ="hoatdong" id="flexRadioDefault2" checked>
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" value ="1" id="flexRadioDefault2" checked>
                     <label class="form-check-label" for="flexRadioDefault2">
                         Hoạt động
                     </label>

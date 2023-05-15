@@ -13,12 +13,28 @@
     var val = $(this).val();
     $("#tichdiem").html(val)
   })
-
+  $("#flexCheckDefault").change(function () {
+    if ($('#flexCheckDefault').is(':checked')) {
+      $("#customRange1").prop('disabled', false)
+      var val = $("#customRange1").val();
+      $("#tichdiem").html(val)
+    } else {
+      $("#customRange1").prop('disabled', true)
+      $("#tichdiem").html("")
+    }
+  })
   $("#formtimkiem").submit(function (e) {
     e.preventDefault()
-    var searchinput = $("#searchinput").val()
-    var loaitimkiem = $("#formselect").val()
-    var tichdiem = $("#customRange1").val()
+    var taikhoan = $("#inputtaikhoan").val()
+    var tennguoidung = $("#inputtennguoidung").val()
+    var diachi = $("#inputdiachi").val()
+    var sodienthoai = $("#inputsodienthoai").val()
+    if ($('#flexCheckDefault').is(':checked')) {
+      var tichdiem = $("#customRange1").val()
+    }
+    else {
+      var tichdiem = ""
+    }
     var trangthai = document.getElementsByName('flexRadioDefault');
     var selectedValue
     for (var i = 0, length = trangthai.length; i < length; i++) {
@@ -27,20 +43,27 @@
         break;
       }
     }
+    console.log(taikhoan);
+    console.log(tennguoidung);
+    console.log(diachi);
+    console.log(sodienthoai);
+    console.log(selectedValue);
+    console.log(tichdiem)
     $.ajax({
       method: "post",
       url: "taikhoan-controller.asp",
       data: {
-        searchinput: searchinput,
-        loaitimkiem: loaitimkiem,
-        tichdiem : tichdiem,
-        trangthai: selectedValue
+        loai: "phantrangtaikhoan",
+        taikhoan: taikhoan,
+        tennguoidung: tennguoidung,
+        diachi: diachi,
+        sodienthoai: sodienthoai,
+        trangthai: selectedValue,
+        tichdiem: tichdiem
       },
-      success: function(response){
-        loadData(1);
+      success: function (response) {
         const obj = JSON.parse(response);
-        var danhsachtaikhoan = obj.data.danhsachtaikhoan
-        loadThanhPhanTrang(obj.data.totalPages,currentPage)
+        loadSearchData(obj,1);
       }
     })
   })
@@ -69,8 +92,8 @@
   })
 
   $(document).ready(function () {
-    var val = $("#customRange1").val();
-    $("#tichdiem").html(val)
+    $("#customRange1").prop('disabled', true)
+    $("#tichdiem").html("")
     loadData(1);
     for (let i = 0; i < taikhoanfields.length; i++) {
       if (i > 3) {
@@ -94,8 +117,8 @@
       for (let i = 1; i <= totalPages; i++) {
         str += "<li class=\"page-item"
         if (i == currentPage) {
-        str += " active"
-      }
+          str += " active"
+        }
         str += "\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(" + i + ")\""
         str += ">" + i + "</a></li>"
       }
@@ -135,6 +158,45 @@
     if (currentPage >= totalPages) {
       $("#sau").addClass(" disabled")
     }
+  }
+
+  function loadSearchData(obj,page) {
+    var danhsachtaikhoan = obj.data.danhsachtaikhoan
+    var str = ""
+    danhsachtaikhoan.forEach(taikhoan => {
+      str += "<tr>";
+      str += "<td>";
+      str += taikhoan.taikhoan;
+      str += "</td>";
+      str += "<td>";
+      str += taikhoan.ten;
+      str += "</td>";
+      str += "<td>";
+      str += taikhoan.sdt;
+      str += "</td>";
+      str += "<td>";
+      str += taikhoan.diachi;
+      str += "<td>";
+      str += taikhoan.tichdiem;
+      str += "</td>";
+      str += "<td>";
+      if (taikhoan.tinhtrang == "True")
+        str += "Hoạt Động";
+      else
+        str += "Khóa";
+      str += "</td>";
+      str += "<td>";
+      if (taikhoan.tinhtrang == "False") {
+        str += '<a data-bs-toggle="modal" data-bs-target="#confirm-unban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\')">Mở Khóa</a>';
+      }
+      str += "<a style ='margin-left:3px' href ='#'class ='btn btn-info'>Chi Tiết</a>";
+      str += "</td>";
+      str += "</tr>";
+    }
+    );
+    $("#result").html(str);
+    loadThanhPhanTrang(obj.data.totalPages, page)
+    currentPage = page
   }
   function loadData(page) {
     $.ajax({
@@ -188,8 +250,5 @@
   }
   function myFunction1(page) {
     loadData(page);
-  }
-  function increasePage() {
-
   }
 </script>
