@@ -1,0 +1,1 @@
+const taikhoanfields = ["Tài Khoản","Tên người dùng","Số điện thoại", "Địa chỉ", "Tích điểm", "Tình trạng"]

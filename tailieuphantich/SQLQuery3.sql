@@ -7,6 +7,7 @@ LoaiTK tinyint,--2:admin, 1:quan ly, 0:thanh vien
 TinhTrang bit,--1:enable, 0:disable
 TichDiem int,
 )
+alter table TaiKhoan add UID int identity(1,1) 
 go
 alter trigger tg_TaiKhoan_CheckMK on TaiKhoan for insert
 as

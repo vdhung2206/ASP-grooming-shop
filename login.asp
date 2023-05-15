@@ -1,3 +1,11 @@
+<%
+    dim t 
+    set t= request.form("loai")
+    if(t = "dangxuat") then
+        Session.Contents.RemoveAll()
+    end if
+    if(session("uid")="") then
+%>
 <!-- #include file="./share/connect.asp" -->
 <!DOCTYPE html>
 <html lang="en">
@@ -35,3 +43,8 @@
         </div>
     </body>
 </html>
+<%
+    else
+        response.redirect("index.asp")
+    end if
+%>

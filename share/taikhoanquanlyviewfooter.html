@@ -29,14 +29,13 @@ function setConfirmBox(data,type){
         $("#confirm").addClass(" btn-success")
     }
 }
-$("#confirm").click(function(){
+$("#confirm").click(function(){  
   var tk = $("#tkmuonunbanhoacunban").val();
   var type = $("#type").val();
   $.post("taikhoan-controller.asp",{tk:tk,loai:type,function(){
   }}).done(function(){
     loadData($("#currentPage").html());
     if(type == "unban"){
-        console.log("true")
         $("#msg").html("Mở khóa tài khoản thành công");
         $("#msg").addClass("alert alert-success");
     }

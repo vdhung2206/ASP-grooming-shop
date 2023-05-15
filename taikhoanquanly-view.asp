@@ -1,4 +1,6 @@
-
+<%
+    if(session("uid")<>"") then
+%>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -7,8 +9,7 @@
         <title>CRUD Example</title>
     </head>
     <body>
-        <!-- #include file="./share/header.asp" -->
-
+        <!-- #include file="./share/header.html" -->
         <div class="container">
             <div class="d-flex bd-highlight mb-3">
                 <div class="me-auto p-2 bd-highlight"><h2>Danh sách tài khoản quản lý</h2></div>
@@ -71,3 +72,8 @@
         <!--#include file="./share/taikhoanquanlyviewfooter.html"-->
     </body>
 </html>
+<%
+    else
+        response.redirect("login.asp")
+    end if
+%>

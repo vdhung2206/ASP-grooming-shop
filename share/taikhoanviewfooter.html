@@ -1,109 +1,195 @@
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" 
-integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" 
-crossorigin="anonymous">
-</script> 
+<script src="share.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous">
+  </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
 
 </script>
 <script>
+  var currentPage = 1
 
-function getData(data,type){
-  $("#tkmuonunban").val(data);
-  $("#type").val(type);
-}
-$("#confirm").click(function(){
-  var tk = $("#tkmuonunban").val();
-  var type = $("#type").val();
-  $.post("taikhoan-controller.asp",{tk:tk,loai:type,function(){
-  }}).done(function(){
-    loadData($("#currentPage").html());
-    $("#msg").addClass("alert alert-success");
-    $("#msg").html("Mở khóa tài khoản thành công");
-    $(".alert").fadeTo(500, 1).slideDown(500, function(){
-    });
-    window.setTimeout(function() {
-    $(".alert").fadeTo(500, 0).slideUp(500, function(){
-    });
-}, 2000);
+  $("#customRange1").mousemove(function () {
+    var val = $(this).val();
+    $("#tichdiem").html(val)
   })
-})
 
-$(document).ready(function(){
-  loadData(1);
-});
-function loadThanhPhanTrang(){
-    var currentPage = $("#currentPage").html()
-    var totalPages = $("#totalPages").html()
-    var truoc = "<li class=\"page-item\"" + "><a  class =\"page-link\" onclick=\"myFunction1("+(currentPage-1)+")\" style=\"cursor:pointer";
-    if(currentPage<=1){
-      truoc += " ;pointer-cursor: none"
-    }
-    truoc += "\">" +"Trước</a></li>"
-    var str="";
-    str+=truoc;
-    if(totalPages<=10){
-      for(let i=1; i<=totalPages; i++){
-        str += "<li class=\"page-item"
-        if(i == currentPage){
-          str += " active"
-        }
-        str+="\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+i+")\""
-        str+=">"+i+"</a></li>"
+  $("#formtimkiem").submit(function (e) {
+    e.preventDefault()
+    var searchinput = $("#searchinput").val()
+    var loaitimkiem = $("#formselect").val()
+    var tichdiem = $("#customRange1").val()
+    var trangthai = document.getElementsByName('flexRadioDefault');
+    var selectedValue
+    for (var i = 0, length = trangthai.length; i < length; i++) {
+      if (trangthai[i].checked) {
+        selectedValue = trangthai[i].value;
+        break;
       }
     }
-    if(totalPages>10){
-      str+= "<li class=\"page-item";
-      if(1 == currentPage){
+    $.ajax({
+      method: "post",
+      url: "taikhoan-controller.asp",
+      data: {
+        searchinput: searchinput,
+        loaitimkiem: loaitimkiem,
+        tichdiem : tichdiem,
+        trangthai: selectedValue
+      },
+      success: function(response){
+        loadData(1);
+        const obj = JSON.parse(response);
+        var danhsachtaikhoan = obj.data.danhsachtaikhoan
+        loadThanhPhanTrang(obj.data.totalPages,currentPage)
+      }
+    })
+  })
+  function getData(data, type) {
+    console.log("asdsa")
+    $("#tkmuonunban").val(data);
+    $("#type").val(type);
+  }
+  $("#confirm").click(function () {
+    var tk = $("#tkmuonunban").val();
+    var type = $("#type").val();
+    $.post("taikhoan-controller.asp", {
+      tk: tk, loai: type, function() {
+      }
+    }).done(function () {
+      loadData(currentPage);
+      $("#msg").addClass("alert alert-success");
+      $("#msg").html("Mở khóa tài khoản thành công");
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    })
+  })
+
+  $(document).ready(function () {
+    var val = $("#customRange1").val();
+    $("#tichdiem").html(val)
+    loadData(1);
+    for (let i = 0; i < taikhoanfields.length; i++) {
+      if (i > 3) {
+        continue;
+      }
+      $("#formselect").append("<Option value=" + i + ">" + taikhoanfields[i] + "</option>")
+    }
+  });
+  function loadThanhPhanTrang(totalPages, currentPage) {
+    if (currentPage < 1) {
+      currentPage = 1;
+    }
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+    var truoc = "<li class=\"page-item\"" + "><a id=\"truoc\" class =\"page-link\" onclick=\"myFunction1(" + (currentPage - 1) + ")\" style=\"cursor:pointer";
+    truoc += "\">" + "Trước</a></li>"
+    var str = "";
+    str += truoc;
+    if (totalPages <= 10) {
+      for (let i = 1; i <= totalPages; i++) {
+        str += "<li class=\"page-item"
+        if (i == currentPage) {
         str += " active"
       }
-      str += "\"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(1)\">"+1+"</a></li>"
-      if(currentPage > 3){
-        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
-      }
-      if(currentPage >2){
-        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+(parseInt(currentPage)-1)+")\">"+(parseInt(currentPage)-1)+"</a></li>"
-      }
-      if(currentPage != 1){
-        str += "<li class=\"page-item active\"><a class=\"page-link\">" + currentPage+"</a></li>"
-      }
-      if(currentPage < (totalPages-1)){
-        str += "<li class=\"page-item\"><a class=\"page-link\"style=\"cursor:pointer\" onclick=\"myFunction1("+(parseInt(currentPage)+1)+")\">"+(parseInt(currentPage)+1)+"</a></li>"
-      }
-      if(currentPage < (totalPages-2)){
-        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
-      }
-      if((totalPages > 1) && (parseInt(currentPage) < parseInt(totalPages))){
-        str +="<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+totalPages+")\">"+totalPages+"</a></li>"
+        str += "\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(" + i + ")\""
+        str += ">" + i + "</a></li>"
       }
     }
-    
-    var sau = "<li class=\"page-item\"" + "><a  class =\"page-link\" onclick=\"myFunction1("+(parseInt(currentPage)+1)+")\" style=\"cursor:pointer";
-    if(currentPage>=totalPages-1){
-      sau += " ;pointer-cursor: none"
+    if (totalPages > 10) {
+      str += "<li class=\"page-item";
+      if (1 == currentPage) {
+        str += " active"
+      }
+      str += "\"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(1)\">" + 1 + "</a></li>"
+      if (currentPage > 3) {
+        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+      }
+      if (currentPage > 2) {
+        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(" + (parseInt(currentPage) - 1) + ")\">" + (parseInt(currentPage) - 1) + "</a></li>"
+      }
+      if (currentPage != 1) {
+        str += "<li class=\"page-item active\"><a class=\"page-link\">" + currentPage + "</a></li>"
+      }
+      if (currentPage < (totalPages - 1)) {
+        str += "<li class=\"page-item\"><a class=\"page-link\"style=\"cursor:pointer\" onclick=\"myFunction1(" + (parseInt(currentPage) + 1) + ")\">" + (parseInt(currentPage) + 1) + "</a></li>"
+      }
+      if (currentPage < (totalPages - 2)) {
+        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+      }
+      if ((totalPages > 1) && (parseInt(currentPage) < parseInt(totalPages))) {
+        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(" + totalPages + ")\">" + totalPages + "</a></li>"
+      }
     }
-    sau += "\">" +"Sau</a></li>"
-    str+=sau;
+    var sau = "<li class=\"page-item\"" + "><a id=\"sau\" class =\"page-link\" onclick=\"myFunction1(" + (parseInt(currentPage) + 1) + ")\" style=\"cursor:pointer";
+    sau += "\">" + "Sau</a></li>"
+    str += sau;
     $("#thanhphantrang").html(str);
+    if (currentPage <= 1) {
+      $("#truoc").addClass(" disabled")
+    }
+    if (currentPage >= totalPages) {
+      $("#sau").addClass(" disabled")
+    }
   }
-function loadData(page){
+  function loadData(page) {
     $.ajax({
-      method : "post",
+      method: "post",
       url: "taikhoan-controller.asp",
-      data:{
-        page : page,
+      data: {
+        page: page,
         loai: "phantrangtaikhoan"
       }
       ,
-      success: function(data){
-        console.log("ok")
-        $("#result").html(data);
-        loadThanhPhanTrang()
+      success: function (response) {
+        const obj = JSON.parse(response);
+        var danhsachtaikhoan = obj.data.danhsachtaikhoan
+        var str = ""
+        danhsachtaikhoan.forEach(taikhoan => {
+          str += "<tr>";
+          str += "<td>";
+          str += taikhoan.taikhoan;
+          str += "</td>";
+          str += "<td>";
+          str += taikhoan.ten;
+          str += "</td>";
+          str += "<td>";
+          str += taikhoan.sdt;
+          str += "</td>";
+          str += "<td>";
+          str += taikhoan.diachi;
+          str += "<td>";
+          str += taikhoan.tichdiem;
+          str += "</td>";
+          str += "<td>";
+          if (taikhoan.tinhtrang == "True")
+            str += "Hoạt Động";
+          else
+            str += "Khóa";
+          str += "</td>";
+          str += "<td>";
+          if (taikhoan.tinhtrang == "False") {
+            str += '<a data-bs-toggle="modal" data-bs-target="#confirm-unban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\')">Mở Khóa</a>';
+          }
+          str += "<a style ='margin-left:3px' href ='#'class ='btn btn-info'>Chi Tiết</a>";
+          str += "</td>";
+          str += "</tr>";
+        }
+        );
+        $("#result").html(str);
+        loadThanhPhanTrang(obj.data.totalPages, page)
+        currentPage = page
       }
     });
   }
-function myFunction1(page){
+  function myFunction1(page) {
     loadData(page);
   }
-</script>
+  function increasePage() {
 
+  }
+</script>

@@ -34,8 +34,13 @@ $(document).ready(function () {
                     loai: "admindangnhap",
                 },
                 success:function(response){
-                    console.log(response)
                     const obj  = JSON.parse(response);
+                        if(obj.data.checkLogin){
+                        const now = new Date();
+                        const expires = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toUTCString();
+                        document.cookie = "tk="+tk+"; mk="+mk+";expires=" + expires + "; path=/";
+                        window.location.href="index.asp"
+                    }
                     $("#loginmsg").addClass("alert alert-danger mt-2");
                     $("#loginmsg").html(obj.message);
                     $(".alert").fadeTo(500, 1).slideDown(500, function () {
@@ -45,9 +50,6 @@ $(document).ready(function () {
                     $(".alert").fadeTo(500, 0).slideUp(500, function () {
                     });
                     }, 2000);
-                    if(obj.data.checkLogin){
-                        window.location.href= "index.asp"
-                    }
                 }
             })
         }

@@ -1,3 +1,4 @@
+
 <!--#include file="./models/taiKhoan.asp" -->
 <%  
     'status code 1: dang nhap thanh cong
@@ -5,17 +6,71 @@
     'status code 3: sai loai tai khoan
     'status code 4: tai khoan khong ton tai
     'status code 5: tai khoan dang bi khoa
+    'status code 6: lay danh sach tai khoan phan trang
     loai = request.Form("loai")
     dim page 
     Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
     limit = 10
     
     if(loai = "phantrangtaikhoan") then
+        set tk = new TaiKhoan
         page = request.form("page")
-        set danhsachtaikhoan = tk.phanTrangTaiKhoan(offset,limit,page)
+        searchinput = request.form("searchinput")
+        loaitimkiem = request.form("loaitimkiem")
+        tichdiem = request.form("tichdiem")
+        trangthai = request.form("trangthai")
+        if(searchinput ="" and loaitimkiem ="" and tichdiem ="" and trangthai ="") then
+            set danhsachtaikhoan = tk.phanTrangTaiKhoan(offset,limit,page)
+        else
+        end if
+        Response.Write("{")
+        Response.Write("""status code"": ""6"",")
+        Response.Write("""message"": """",")
+        Response.Write("""data"":{ ""danhsachtaikhoan"": [")
+        dim count 
+        count = 0
+        for each z in danhsachtaikhoan
+            count = count + 1
+            Response.Write("{")
+            Response.Write("")
+            response.write("""taikhoan"": """)
+            response.write(danhsachtaikhoan(z).Tk)
+            response.write(""",")
+            response.write("""ten"": """)
+            response.write(danhsachtaikhoan(z).Ten)
+            response.write("""")
+            response.write(",")
+            response.write("""sdt"": """)
+            response.write(danhsachtaikhoan(z).Sdt)
+            response.write("""")
+            response.write(",")
+            response.write("""tinhtrang"": """)
+            response.write(danhsachtaikhoan(z).Tinhtrang)
+            response.write("""")
+            response.write(",")
+            response.write("""tichdiem"": """)
+            response.write(danhsachtaikhoan(z).Tichdiem)
+            response.write("""")
+            response.write(",")
+            response.write("""diachi"": """)
+            response.write(danhsachtaikhoan(z).Diachi)
+            response.write("""")
+            Response.Write("}")
+            if(count < danhsachtaikhoan.count) then
+                response.write(",")
+            end if
+
+        next
+        Response.Write("]")
+        Response.Write(",""totalPages"":")
+        Response.Write(tk.Ceil(tk.count(0)/limit))
+        Response.Write("")
+        Response.Write("}")
+        Response.Write("}")
     end if
 
     if(loai = "phantrangtaikhoanquanly") then
+        set tk = new TaiKhoan
         Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
         page = request.form("page")
         set danhsachtaikhoan = tk.phanTrangTaiKhoanQuanLy(offset,limit,page)
@@ -44,8 +99,9 @@
         If (classtk.getLoaiTK(tk) <> "0") Then
             If(classtk.getTinhTrang(tk) = True) Then
                 If(classtk.checkMK(tk,mk)) Then
+                    Session("uid") = classtk.getUID(tk)
                     Response.Write("""status code"": ""1"",")
-                    Response.Write("""message"": ""Đăng nhập thành công!"",")
+                    Response.Write("""message"": """",")
                     Response.Write("""data"":{ ""checkLogin"": true}")
                 Else
                     Response.Write("""status code"": ""2"",")

@@ -15,7 +15,6 @@ connDB.ConnectionString = strConnection
     Private p_loaitk
     Private p_tinhtrang
     Private p_tichdiem
-
     ' getter and setter
     Public Property Get Tk()
       Tk = p_tk
@@ -105,11 +104,10 @@ connDB.ConnectionString = strConnection
         connDB.Close()
         set getList = danhsachtaikhoan
     end function
-
     public function Ceil(Number)
       Ceil = Int(Number)
       if Ceil<>Number Then
-        Ceil = Ceil + 1
+      Ceil = Ceil + 1
       end if
     end function
 
@@ -130,7 +128,6 @@ connDB.ConnectionString = strConnection
         pages = Ceil(totalRows/limit)
         if (Clng(pages) < Clng(page)) then
             page = pages
-
         end if
         offset = (Clng(page) * Clng(limit)) - Clng(limit)
         if(offset < 0) then 
@@ -156,45 +153,48 @@ connDB.ConnectionString = strConnection
         cmdPrep.parameters.Append cmdPrep.createParameter("limit",3,1, , limit)
         Set rs = cmdPrep.execute
         Do While Not rs.EOF
-            response.write("<tr>")
-            response.write("<td>")
-            response.write(rs.Fields("TK"))
-            response.write("</td>")
-            response.write("<td>")
-            response.write(rs.Fields("Ten"))
-            response.write("</td>")
-            response.write("<td>")
-            response.write(rs.Fields("Sdt"))
-            response.write("</td>")
-            response.write("<td>")
-            response.write(rs.Fields("DiaChi"))
-            response.write("<td>")
-            response.write(rs.Fields("TichDiem"))
-            response.write("</td>")
-            response.write("<td>")
-            if(rs.Fields("TinhTrang")="True") then
-              response.write("Hoạt Động")
-            else 
-              response.write("Khóa")
-            end if       
-            response.write("</td>")
-            response.write("<td>")
-              if(rs.Fields("TinhTrang")="False") then
-                response.write "<a data-bs-toggle=modal data-bs-target=#confirm-unban class=""btn btn-success unban"" onclick="""&"getData('" & rs.Fields("TK") &"','unban')"& """>Mở Khóa</a>"
-              end if
-            response.write("<a style = ""margin-left:3px""href =""#""class =""btn btn-info"">Chi Tiết</a>")
-            response.write("</td>")
-            response.write("</tr>")
+            seq = seq+1
+            set myTK = New TaiKhoan
+            myTK.Tk = rs.Fields("TK")
+            myTK.Mk = rs.Fields("MK")
+            myTK.Ten = rs.Fields("Ten")
+            myTK.Sdt = rs.Fields("SDT")
+            myTK.Loaitk = rs.Fields("LoaiTK")
+            myTK.Tinhtrang = rs.Fields("TinhTrang")
+            myTK.Tichdiem= rs.Fields("TichDiem")
+            myTK.Diachi = rs.Fields("DiaChi")
+            danhsachtaikhoan.add seq, myTK
+            'response.write("<tr>")
+            'response.write("<td>")
+            'response.write(rs.Fields("TK"))
+            'response.write("</td>")
+            'response.write("<td>")
+            'response.write(rs.Fields("Ten"))
+            'response.write("</td>")
+            'response.write("<td>")
+            'response.write(rs.Fields("Sdt"))
+            'response.write("</td>")
+            'response.write("<td>")
+            'response.write(rs.Fields("DiaChi"))
+            'response.write("<td>")
+            'response.write(rs.Fields("TichDiem"))
+            'response.write("</td>")
+            'response.write("<td>")
+            'if(rs.Fields("TinhTrang")="True") then
+              'response.write("Hoạt Động")
+            'else 
+              'response.write("Khóa")
+            'end if       
+            'response.write("</td>")
+            'response.write("<td>")
+              'if(rs.Fields("TinhTrang")="False") then
+                'response.write "<a data-bs-toggle=modal data-bs-target=#confirm-unban class=""btn btn-success unban"" onclick="""&"getData('" & rs.Fields("TK") &"','unban')"& """>Mở Khóa</a>"
+              'end if
+            'response.write("<a style = ""margin-left:3px""href =""#""class =""btn btn-info"">Chi Tiết</a>")
+            'response.write("</td>")
+            'response.write("</tr>")
             rs.MoveNext
         Loop 
-        response.write("<tr>")
-        response.write("<td style=""display:none"" id=""currentPage"">")
-        response.write(page)
-        response.write("</td>")
-        response.write("<td style=""display:none"" id=""totalPages"">")
-        response.write(pages)
-        response.write("</td>")
-        response.write("</tr>")
         conndb.Close()
         set phanTrangTaiKhoan = danhsachtaikhoan
     end function
@@ -387,6 +387,7 @@ connDB.ConnectionString = strConnection
       else
         checkMK = False
       end if
+      connDB.Close()
     end function
 
     function getLoaiTK(tk)
@@ -422,6 +423,22 @@ connDB.ConnectionString = strConnection
       getTinhTrang = result("TinhTrang")
       connDB.Close()
     end function
+
+    function getUID(tk)
+      Dim sql
+      sql = "select UID from TaiKhoan where TK=?"
+      Dim cmdPrep
+      set cmdPrep = Server.CreateObject("ADODB.Command")
+      connDB.Open()
+      cmdPrep.ActiveConnection = connDB
+      cmdPrep.CommandType=1
+      cmdPrep.Prepared=true
+      cmdPrep.CommandText = sql
+      cmdPrep.Parameters(0)=tk
+      Dim result
+      set result = cmdPrep.execute()
+      getUID = result("UID")
+      connDB.Close()
+    end function
   End Class
-  set tk = new TaiKhoan
 %>
