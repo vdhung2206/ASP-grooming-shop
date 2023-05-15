@@ -4,15 +4,22 @@
   </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
-
 </script>
 <script>
   var currentPage = 1
-
+  var obj
+  var taikhoan = ""
+  var  tennguoidung =""
+  var  diachi = ""
+  var  sodienthoai = ""
+  var  tichdiem = ""
+  var  trangthai = ""
+  var selectedValue =""
   $("#customRange1").mousemove(function () {
     var val = $(this).val();
     $("#tichdiem").html(val)
   })
+
   $("#flexCheckDefault").change(function () {
     if ($('#flexCheckDefault').is(':checked')) {
       $("#customRange1").prop('disabled', false)
@@ -25,53 +32,90 @@
   })
   $("#formtimkiem").submit(function (e) {
     e.preventDefault()
-    var taikhoan = $("#inputtaikhoan").val()
-    var tennguoidung = $("#inputtennguoidung").val()
-    var diachi = $("#inputdiachi").val()
-    var sodienthoai = $("#inputsodienthoai").val()
+    taikhoan = $("#inputtaikhoan").val()
+    tennguoidung = $("#inputtennguoidung").val()
+    diachi = $("#inputdiachi").val()
+    sodienthoai = $("#inputsodienthoai").val()
     if ($('#flexCheckDefault').is(':checked')) {
-      var tichdiem = $("#customRange1").val()
+      tichdiem = $("#customRange1").val()
     }
     else {
-      var tichdiem = ""
+      tichdiem = ""
     }
-    var trangthai = document.getElementsByName('flexRadioDefault');
-    var selectedValue
+    trangthai = document.getElementsByName('checkbox1');
+    selectedValue =""
     for (var i = 0, length = trangthai.length; i < length; i++) {
       if (trangthai[i].checked) {
         selectedValue = trangthai[i].value;
         break;
       }
     }
-    console.log(taikhoan);
-    console.log(tennguoidung);
-    console.log(diachi);
-    console.log(sodienthoai);
-    console.log(selectedValue);
-    console.log(tichdiem)
-    $.ajax({
-      method: "post",
-      url: "taikhoan-controller.asp",
-      data: {
-        loai: "phantrangtaikhoan",
-        taikhoan: taikhoan,
-        tennguoidung: tennguoidung,
-        diachi: diachi,
-        sodienthoai: sodienthoai,
-        trangthai: selectedValue,
-        tichdiem: tichdiem
-      },
-      success: function (response) {
-        const obj = JSON.parse(response);
-        loadSearchData(obj,1);
-      }
-    })
+    loadData(1)
+    // var taikhoan = $("#inputtaikhoan").val()
+    // var tennguoidung = $("#inputtennguoidung").val()
+    // var diachi = $("#inputdiachi").val()
+    // var sodienthoai = $("#inputsodienthoai").val()
+    // if ($('#flexCheckDefault').is(':checked')) {
+    //   var tichdiem = $("#customRange1").val()
+    // }
+    // else {
+    //   var tichdiem = ""
+    // }
+    // var trangthai = document.getElementsByName('flexRadioDefault');
+    // var selectedValue
+    // for (var i = 0, length = trangthai.length; i < length; i++) {
+    //   if (trangthai[i].checked) {
+    //     selectedValue = trangthai[i].value;
+    //     break;
+    //   }
+    // }
+    // $.ajax({
+    //   method: "post",
+    //   url: "taikhoan-controller.asp",
+    //   data: {
+    //     loai: "phantrangtaikhoan",
+    //     taikhoan: taikhoan,
+    //     tennguoidung: tennguoidung,
+    //     diachi: diachi,
+    //     sodienthoai: sodienthoai,
+    //     trangthai: selectedValue,
+    //     tichdiem: tichdiem
+    //   },
+    //   success: function (response) {
+    //     obj = JSON.parse(response);
+    //     loadData(1, obj);
+    //   }
+    // })
   })
+
+
   function getData(data, type) {
-    console.log("asdsa")
     $("#tkmuonunban").val(data);
     $("#type").val(type);
   }
+
+  // Lấy ra tất cả các ô checkbox có cùng tên là "checkbox1"
+  const checkboxes = document.getElementsByName('checkbox1');
+
+  // Thêm sự kiện "click" cho mỗi ô checkbox
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('click', (event) => {
+      // Nếu ô checkbox đang được chọn
+      if (checkbox.checked) {
+        // Vô hiệu hóa tất cả các ô checkbox khác
+        checkboxes.forEach((otherCheckbox) => {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.disabled = true;
+          }
+        });
+      } else {
+        // Kích hoạt lại tất cả các ô checkbox
+        checkboxes.forEach((otherCheckbox) => {
+          otherCheckbox.disabled = false;
+        });
+      }
+    });
+  });
   $("#confirm").click(function () {
     var tk = $("#tkmuonunban").val();
     var type = $("#type").val();
@@ -95,13 +139,9 @@
     $("#customRange1").prop('disabled', true)
     $("#tichdiem").html("")
     loadData(1);
-    for (let i = 0; i < taikhoanfields.length; i++) {
-      if (i > 3) {
-        continue;
-      }
-      $("#formselect").append("<Option value=" + i + ">" + taikhoanfields[i] + "</option>")
-    }
   });
+
+
   function loadThanhPhanTrang(totalPages, currentPage) {
     if (currentPage < 1) {
       currentPage = 1;
@@ -160,51 +200,59 @@
     }
   }
 
-  function loadSearchData(obj,page) {
-    var danhsachtaikhoan = obj.data.danhsachtaikhoan
-    var str = ""
-    danhsachtaikhoan.forEach(taikhoan => {
-      str += "<tr>";
-      str += "<td>";
-      str += taikhoan.taikhoan;
-      str += "</td>";
-      str += "<td>";
-      str += taikhoan.ten;
-      str += "</td>";
-      str += "<td>";
-      str += taikhoan.sdt;
-      str += "</td>";
-      str += "<td>";
-      str += taikhoan.diachi;
-      str += "<td>";
-      str += taikhoan.tichdiem;
-      str += "</td>";
-      str += "<td>";
-      if (taikhoan.tinhtrang == "True")
-        str += "Hoạt Động";
-      else
-        str += "Khóa";
-      str += "</td>";
-      str += "<td>";
-      if (taikhoan.tinhtrang == "False") {
-        str += '<a data-bs-toggle="modal" data-bs-target="#confirm-unban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\')">Mở Khóa</a>';
-      }
-      str += "<a style ='margin-left:3px' href ='#'class ='btn btn-info'>Chi Tiết</a>";
-      str += "</td>";
-      str += "</tr>";
-    }
-    );
-    $("#result").html(str);
-    loadThanhPhanTrang(obj.data.totalPages, page)
-    currentPage = page
-  }
-  function loadData(page) {
+  // function loadSearchData(obj,page) {
+  //   var danhsachtaikhoan = obj.data.danhsachtaikhoan
+  //   var str = ""
+  //   danhsachtaikhoan.forEach(taikhoan => {
+  //     str += "<tr>";
+  //     str += "<td>";
+  //     str += taikhoan.taikhoan;
+  //     str += "</td>";
+  //     str += "<td>";
+  //     str += taikhoan.ten;
+  //     str += "</td>";
+  //     str += "<td>";
+  //     str += taikhoan.sdt;
+  //     str += "</td>";
+  //     str += "<td>";
+  //     str += taikhoan.diachi;
+  //     str += "<td>";
+  //     str += taikhoan.tichdiem;
+  //     str += "</td>";
+  //     str += "<td>";
+  //     if (taikhoan.tinhtrang == "True")
+  //       str += "Hoạt Động";
+  //     else
+  //       str += "Khóa";
+  //     str += "</td>";
+  //     str += "<td>";
+  //     if (taikhoan.tinhtrang == "False") {
+  //       str += '<a data-bs-toggle="modal" data-bs-target="#confirm-unban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\')">Mở Khóa</a>';
+  //     }
+  //     str += "<a style ='margin-left:3px' href ='#'class ='btn btn-info'>Chi Tiết</a>";
+  //     str += "</td>";
+  //     str += "</tr>";
+  //   }
+  //   );
+  //   $("#result").html(str);
+  //   loadThanhPhanTrang(obj.data.totalPages, page)
+  //   currentPage = page
+  // }
+
+  function loadData(page, obj) {
+    
     $.ajax({
       method: "post",
       url: "taikhoan-controller.asp",
       data: {
         page: page,
-        loai: "phantrangtaikhoan"
+        loai: "phantrangtaikhoan",
+        taikhoan: taikhoan,
+        tennguoidung: tennguoidung,
+        diachi: diachi,
+        sodienthoai: sodienthoai,
+        trangthai: selectedValue,
+        tichdiem: tichdiem
       }
       ,
       success: function (response) {
@@ -247,6 +295,7 @@
         currentPage = page
       }
     });
+
   }
   function myFunction1(page) {
     loadData(page);

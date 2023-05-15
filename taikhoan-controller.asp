@@ -10,7 +10,7 @@
     loai = request.Form("loai")
     dim page 
     Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
-    limit = 10
+    limit = 1
     
     if(loai = "phantrangtaikhoan") then
         set tk = new TaiKhoan

@@ -60,14 +60,14 @@
                     </div>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" value="0" id="flexRadioDefault1">
-                    <label class="form-check-label" for="flexRadioDefault1">
+                    <input class="form-check-input" type="checkbox" name="checkbox1" value="0" id="cb1">
+                    <label class="form-check-label" for="cb1">
                         Khóa
                     </label>
                 </div>
                     <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" value ="1" id="flexRadioDefault2" checked>
-                    <label class="form-check-label" for="flexRadioDefault2">
+                    <input class="form-check-input" type="checkbox" name="checkbox1" value ="1" id="cb2">
+                    <label class="form-check-label" for="cb2">
                         Hoạt động
                     </label>
                 </div>
