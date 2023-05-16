@@ -10,9 +10,9 @@
     loai = request.Form("loai")
     dim page 
     Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
-    limit = 1
+    limit = 10
     
-    if(loai = "phantrangtaikhoan") then
+    if(true) then
         set tk = new TaiKhoan
         page = request.form("page")
         taikhoansearch = request.form("taikhoan")
@@ -21,7 +21,10 @@
         sodienthoai = request.form("sodienthoai")
         tichdiem = request.form("tichdiem")
         trangthai = request.form("trangthai")
-        set danhsachtaikhoan = tk.phanTrangTaiKhoan(limit,page,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
+        sapxepten = request.form("sapxepten")
+        sapxeptichdiem = request.form("sapxeptichdiem")
+        sapxepdiachi = request.form("sapxepdiachi")
+        set danhsachtaikhoan = tk.phanTrangTaiKhoan(limit,page,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai,sapxepten,sapxepdiachi,sapxeptichdiem)
         Response.Write("{")
         Response.Write("""status code"": ""6"",")
         Response.Write("""message"": """",")

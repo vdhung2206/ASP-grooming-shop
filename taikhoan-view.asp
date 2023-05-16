@@ -71,8 +71,31 @@
                         Hoạt động
                     </label>
                 </div>
-                <div class="col-lg-4 "style="padding-left: 0; margin-left:0">
-                    <button type="submit" class="btn btn-primary mb-2">Tìm kiếm</button>
+                <div  class="form-group row mt-3" style="padding-left: 0; margin-left:0">
+                    <div class="col-lg-2 "style="padding-left: 0; margin-left:0">
+                        <button type="submit" class="btn btn-primary mb-2">Tìm kiếm</button>
+                    </div>
+                    <div class="col-lg-3 "style="padding-left: 0; margin-left:0">
+                         <select id="sapxepten" class="form-select">
+                            <option value="">Sắp xếp theo tên người dùng</option>
+                            <option value="0">Tên người dùng ascending</option>
+                            <option value="1">Tên người dùng descending</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 "style="padding-left: 0; margin-left:0">
+                         <select id="sapxeptichdiem" class="form-select">
+                            <option value="">Sắp xếp theo tích điểm tích điểm</option>
+                            <option value="0">Tích điểm tăng dần</option>
+                            <option value="1">Tích điểm giảm dần</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 "style="padding-left: 0; margin-left:0">
+                         <select id="sapxepdiachi" class="form-select">
+                            <option value="">Sắp xếp theo địa chỉ</option>
+                            <option value="0">Địa chỉ ascending</option>
+                            <option value="1">Địa chỉ descending</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </form>

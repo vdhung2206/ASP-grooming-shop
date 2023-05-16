@@ -119,7 +119,7 @@ connDB.ConnectionString = strConnection
       end if
     end function
 
-    public function phanTrangTaiKhoan(limit, page, taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
+    public function phanTrangTaiKhoan(limit, page, taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai,sapxepten,sapxepdiachi,sapxeptichdiem)
         set classtk = new TaiKhoan
         totalRows = classtk.count(taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
         pages = Ceil(totalRows/limit)
@@ -150,7 +150,32 @@ connDB.ConnectionString = strConnection
         if (trangthai <>"") then
           sql = sql + " and TinhTrang = " & trangthai & ""
         end if
-        sql = sql + " order by Tk offset " & offset &" rows fetch next " & limit &" rows only"
+        sql = sql + "order by"
+        if (sapxeptichdiem ="0") then
+          sql = sql + " TichDiem,"
+        end if
+        if (sapxeptichdiem ="1") then
+          sql = sql + " TichDiem desc,"
+        end if
+        if(sapxepten ="" and sapxepdiachi ="" and sapxeptichdiem ="") then
+          sql = sql + " TK,"
+        end if
+        if (sapxepten ="0") then
+          sql = sql + " Ten,"
+        end if
+        if (sapxepten ="1") then
+          sql = sql + " Ten desc,"
+        end if
+        if (sapxepdiachi ="0") then
+          sql = sql + " DiaChi,"
+        end if
+        if (sapxepdiachi ="1") then
+          sql = sql + " DiaChi desc,"
+        end if
+        If Len(sql) > 0 Then
+          sql = Left(sql, Len(sql) - 1)
+        End If
+        sql = sql + " offset " & offset &" rows fetch next " & limit &" rows only"
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection

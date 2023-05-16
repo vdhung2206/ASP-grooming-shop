@@ -9,12 +9,15 @@
   var currentPage = 1
   var obj
   var taikhoan = ""
-  var  tennguoidung =""
-  var  diachi = ""
-  var  sodienthoai = ""
-  var  tichdiem = ""
-  var  trangthai = ""
+  var tennguoidung =""
+  var diachi = ""
+  var sodienthoai = ""
+  var tichdiem = ""
+  var trangthai = ""
   var selectedValue =""
+  var sapxepten = ""
+  var sapxeptichdiem = ""
+  var sapxepdiachi = ""
   $("#customRange1").mousemove(function () {
     var val = $(this).val();
     $("#tichdiem").html(val)
@@ -42,6 +45,9 @@
     else {
       tichdiem = ""
     }
+    sapxepten = $("#sapxepten").find(":selected").val()
+    sapxeptichdiem = $("#sapxeptichdiem").find(":selected").val()
+    sapxepdiachi = $("#sapxepdiachi").find(":selected").val()
     trangthai = document.getElementsByName('checkbox1');
     selectedValue =""
     for (var i = 0, length = trangthai.length; i < length; i++) {
@@ -252,7 +258,10 @@
         diachi: diachi,
         sodienthoai: sodienthoai,
         trangthai: selectedValue,
-        tichdiem: tichdiem
+        tichdiem: tichdiem,
+        sapxepten: sapxepten,
+        sapxeptichdiem: sapxeptichdiem,
+        sapxepdiachi: sapxepdiachi,
       }
       ,
       success: function (response) {
