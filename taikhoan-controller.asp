@@ -14,6 +14,7 @@
     
     if(loai = "phantrangtaikhoan") then
         set tk = new TaiKhoan
+        loaitk = request.form("loaitk")
         page = request.form("page")
         taikhoansearch = request.form("taikhoan")
         tennguoidung = request.form("tennguoidung")
@@ -24,7 +25,7 @@
         sapxepten = request.form("sapxepten")
         sapxeptichdiem = request.form("sapxeptichdiem")
         sapxepdiachi = request.form("sapxepdiachi")
-        set danhsachtaikhoan = tk.phanTrangTaiKhoan(limit,page,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai,sapxepten,sapxepdiachi,sapxeptichdiem)
+        set danhsachtaikhoan = tk.phanTrangTaiKhoan(loaitk,limit,page,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai,sapxepten,sapxepdiachi,sapxeptichdiem)
         Response.Write("{")
         Response.Write("""status code"": ""6"",")
         Response.Write("""message"": """",")

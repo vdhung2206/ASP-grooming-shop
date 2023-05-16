@@ -1,132 +1,243 @@
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" 
-integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" 
-crossorigin="anonymous">
-</script> 
+<script src="share.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous">
+  </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
-
 </script>
 <script>
+  var currentPage = 1
+  var obj
+  var taikhoan = ""
+  var tennguoidung = ""
+  var diachi = ""
+  var sodienthoai = ""
+  var selectedValue = ""
 
-function getData(data,type){
-  $("#tkmuonunbanhoacunban").val(data);
-  $("#type").val(type);
-}
+  $("#customRange1").mousemove(function () {
+    var val = $(this).val();
+    $("#tichdiem").html(val)
+  })
 
-function setConfirmBox(data,type){
-    if(type =="ban"){
-        $("#confirm").removeClass(" btn-success")
-        $(".modal-header").html("Xác nhận khóa tài khoản")
-        $(".modal-body").html("Xác nhận khóa tài khoản "+ data +"?");
-        $("#confirm").html("Đồng ý");
-        $("#confirm").addClass(" btn-danger")
+  $("#flexCheckDefault").change(function () {
+    if ($('#flexCheckDefault').is(':checked')) {
+      $("#customRange1").prop('disabled', false)
+      var val = $("#customRange1").val();
+      $("#tichdiem").html(val)
+    } else {
+      $("#customRange1").prop('disabled', true)
+      $("#tichdiem").html("")
     }
-    else{
-        $("#confirm").removeClass(" btn-danger")
-        $(".modal-header").html("Xác nhận mở khóa tài khoản")
-        $(".modal-body").html("Xác nhận mở khóa tài khoản "+ data +"?");
-        $("#confirm").html("Đồng ý");
-        $("#confirm").addClass(" btn-success")
+  })
+  $("#formtimkiem").submit(function (e) {
+    e.preventDefault()
+    taikhoan = $("#inputtaikhoan").val()
+    tennguoidung = $("#inputtennguoidung").val()
+    diachi = $("#inputdiachi").val()
+    sodienthoai = $("#inputsodienthoai").val()
+    trangthai = document.getElementsByName('checkbox1');
+    selectedValue = ""
+    for (var i = 0, length = trangthai.length; i < length; i++) {
+      if (trangthai[i].checked) {
+        selectedValue = trangthai[i].value;
+        break;
+      }
     }
-}
-$("#confirm").click(function(){  
-  var tk = $("#tkmuonunbanhoacunban").val();
-  var type = $("#type").val();
-  $.post("taikhoan-controller.asp",{tk:tk,loai:type,function(){
-  }}).done(function(){
-    loadData($("#currentPage").html());
-    if(type == "unban"){
+    loadData(1)
+  })
+
+
+  function getData(data, type) {
+    $("#tkmuonunbanhoacunban").val(data);
+    $("#type").val(type);
+  }
+
+  // Lấy ra tất cả các ô checkbox có cùng tên là "checkbox1"
+  const checkboxes = document.getElementsByName('checkbox1');
+
+  // Thêm sự kiện "click" cho mỗi ô checkbox
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('click', (event) => {
+      // Nếu ô checkbox đang được chọn
+      if (checkbox.checked) {
+        // Vô hiệu hóa tất cả các ô checkbox khác
+        checkboxes.forEach((otherCheckbox) => {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.disabled = true;
+          }
+        });
+      } else {
+        // Kích hoạt lại tất cả các ô checkbox
+        checkboxes.forEach((otherCheckbox) => {
+          otherCheckbox.disabled = false;
+        });
+      }
+    });
+  });
+  $("#confirm").click(function () {
+    var tk = $("#tkmuonunbanhoacunban").val();
+    var type = $("#type").val();
+    $.post("taikhoan-controller.asp", {
+      tk: tk, loai: type, function() {
+      }
+    }).done(function () {
+      loadData($("#currentPage").html());
+      if (type == "unban") {
         $("#msg").html("Mở khóa tài khoản thành công");
         $("#msg").addClass("alert alert-success");
-    }
-    else{
+      }
+      else {
         $("#msg").html("Khóa tài khoản thành công");
         $("#msg").addClass("alert alert-success");
-    }
-    $(".alert").fadeTo(500, 1).slideDown(500, function(){
-    });
-    window.setTimeout(function() {
-    $(".alert").fadeTo(500, 0).slideUp(500, function(){
-    });
-}, 2000);
+      }
+        $(".alert").fadeTo(500, 1).slideDown(500, function () {
+        });
+        window.setTimeout(function () {
+          $(".alert").fadeTo(500, 0).slideUp(500, function () {
+          });
+        }, 2000);
+      })
   })
-})
 
-$(document).ready(function(){
-  loadData(1);
-});
-function loadThanhPhanTrang(){
-    var currentPage = $("#currentPage").html()
-    var totalPages = $("#totalPages").html()
-    var truoc = "<li class=\"page-item\"" + "><a  class =\"page-link\" onclick=\"myFunction1("+(currentPage-1)+")\" style=\"cursor:pointer";
-    if(currentPage<=1){
-      truoc += " ;pointer-cursor: none"
+  $(document).ready(function () {
+    $("#customRange1").prop('disabled', true)
+    $("#tichdiem").html("")
+    loadData(1);
+  });
+
+
+  function loadThanhPhanTrang(totalPages, currentPage) {
+    if (currentPage < 1) {
+      currentPage = 1;
     }
-    truoc += "\">" +"Trước</a></li>"
-    var str="";
-    str+=truoc;
-    if(totalPages<=10){
-      for(let i=1; i<=totalPages; i++){
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+    var truoc = "<li class=\"page-item\"" + "><a id=\"truoc\" class =\"page-link\" onclick=\"myFunction1(" + (currentPage - 1) + ")\" style=\"cursor:pointer";
+    truoc += "\">" + "Trước</a></li>"
+    var str = "";
+    str += truoc;
+    if (totalPages <= 10) {
+      for (let i = 1; i <= totalPages; i++) {
         str += "<li class=\"page-item"
-        if(i == currentPage){
+        if (i == currentPage) {
           str += " active"
         }
-        str+="\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+i+")\""
-        str+=">"+i+"</a></li>"
+        str += "\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(" + i + ")\""
+        str += ">" + i + "</a></li>"
       }
     }
-    if(totalPages>10){
-      str+= "<li class=\"page-item";
-      if(1 == currentPage){
+    if (totalPages > 10) {
+      str += "<li class=\"page-item";
+      if (1 == currentPage) {
         str += " active"
       }
-      str += "\"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(1)\">"+1+"</a></li>"
-      if(currentPage > 3){
+      str += "\"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(1)\">" + 1 + "</a></li>"
+      if (currentPage > 3) {
         str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
       }
-      if(currentPage >2){
-        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+(parseInt(currentPage)-1)+")\">"+(parseInt(currentPage)-1)+"</a></li>"
+      if (currentPage > 2) {
+        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(" + (parseInt(currentPage) - 1) + ")\">" + (parseInt(currentPage) - 1) + "</a></li>"
       }
-      if(currentPage != 1){
-        str += "<li class=\"page-item active\"><a class=\"page-link\">" + currentPage+"</a></li>"
+      if (currentPage != 1) {
+        str += "<li class=\"page-item active\"><a class=\"page-link\">" + currentPage + "</a></li>"
       }
-      if(currentPage < (totalPages-1)){
-        str += "<li class=\"page-item\"><a class=\"page-link\"style=\"cursor:pointer\" onclick=\"myFunction1("+(parseInt(currentPage)+1)+")\">"+(parseInt(currentPage)+1)+"</a></li>"
+      if (currentPage < (totalPages - 1)) {
+        str += "<li class=\"page-item\"><a class=\"page-link\"style=\"cursor:pointer\" onclick=\"myFunction1(" + (parseInt(currentPage) + 1) + ")\">" + (parseInt(currentPage) + 1) + "</a></li>"
       }
-      if(currentPage < (totalPages-2)){
+      if (currentPage < (totalPages - 2)) {
         str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
       }
-      if((totalPages > 1) && (parseInt(currentPage) < parseInt(totalPages))){
-        str +="<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1("+totalPages+")\">"+totalPages+"</a></li>"
+      if ((totalPages > 1) && (parseInt(currentPage) < parseInt(totalPages))) {
+        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"myFunction1(" + totalPages + ")\">" + totalPages + "</a></li>"
       }
     }
-    
-    var sau = "<li class=\"page-item\"" + "><a  class =\"page-link\" onclick=\"myFunction1("+(parseInt(currentPage)+1)+")\" style=\"cursor:pointer";
-    if(currentPage>=totalPages-1){
-      sau += " ;pointer-cursor: none"
-    }
-    sau += "\">" +"Sau</a></li>"
-    str+=sau;
+    var sau = "<li class=\"page-item\"" + "><a id=\"sau\" class =\"page-link\" onclick=\"myFunction1(" + (parseInt(currentPage) + 1) + ")\" style=\"cursor:pointer";
+    sau += "\">" + "Sau</a></li>"
+    str += sau;
     $("#thanhphantrang").html(str);
+    if (currentPage <= 1) {
+      $("#truoc").addClass(" disabled")
+    }
+    if (currentPage >= totalPages) {
+      $("#sau").addClass(" disabled")
+    }
   }
-function loadData(page){
+
+  function setConfirmBox(data, type) {
+    if (type == "ban") {
+      $("#confirm").removeClass(" btn-success")
+      $(".modal-header").html("Xác nhận khóa tài khoản")
+      $(".modal-body").html("Xác nhận khóa tài khoản " + data + "?");
+      $("#confirm").html("Đồng ý");
+      $("#confirm").addClass(" btn-danger")
+    }
+    else {
+      $("#confirm").removeClass(" btn-danger")
+      $(".modal-header").html("Xác nhận mở khóa tài khoản")
+      $(".modal-body").html("Xác nhận mở khóa tài khoản " + data + "?");
+      $("#confirm").html("Đồng ý");
+      $("#confirm").addClass(" btn-success")
+    }
+  }
+
+  function loadData(page, obj) {
     $.ajax({
-      method : "post",
+      method: "post",
       url: "taikhoan-controller.asp",
-      data:{
-        page : page,
-        loai: "phantrangtaikhoanquanly"
+      data: {
+        loaitk: "1",
+        page: page,
+        loai: "phantrangtaikhoan",
+        taikhoan: taikhoan,
+        tennguoidung: tennguoidung,
+        diachi: diachi,
+        sodienthoai: sodienthoai,
+        trangthai: selectedValue,
       }
       ,
-      success: function(data){
-        console.log("ok")
-        $("#result").html(data);
-        loadThanhPhanTrang()
+      success: function (response) {
+        const obj = JSON.parse(response);
+        var danhsachtaikhoan = obj.data.danhsachtaikhoan
+        var str = ""
+        danhsachtaikhoan.forEach(taikhoan => {
+          str += "<tr>";
+          str += "<td>";
+          str += taikhoan.taikhoan;
+          str += "</td>";
+          str += "<td>";
+          str += taikhoan.ten;
+          str += "</td>";
+          str += "<td>";
+          str += taikhoan.sdt;
+          str += "</td>";
+          str += "<td>";
+          str += taikhoan.diachi;
+          str += "<td>";
+          if (taikhoan.tinhtrang == "True")
+            str += "Hoạt Động";
+          else
+            str += "Khóa";
+          str += "</td>";
+          str += "<td>";
+          if (taikhoan.tinhtrang == "False") {
+            str += '<a data-bs-toggle="modal" data-bs-target="#confirmbanunban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\'); setConfirmBox(\''+taikhoan.taikhoan+'\',\'unban\')'+'">Mở Khóa</a>';
+          }
+          if (taikhoan.tinhtrang == "True") {
+            str += '<a data-bs-toggle="modal" data-bs-target="#confirmbanunban" class="btn btn-danger ban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'ban\'); setConfirmBox(\''+taikhoan.taikhoan+'\',\'ban\')'+'">Khóa</a>';
+          }
+          str += "</td>";
+          str += "</tr>";
+        }
+        );
+        $("#result").html(str);
+        loadThanhPhanTrang(obj.data.totalPages, page)
+        currentPage = page
       }
     });
+
   }
-function myFunction1(page){
+  function myFunction1(page) {
     loadData(page);
   }
 </script>
-
