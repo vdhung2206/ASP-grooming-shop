@@ -12,7 +12,7 @@
     Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
     limit = 10
     
-    if(true) then
+    if(loai = "phantrangtaikhoan") then
         set tk = new TaiKhoan
         page = request.form("page")
         taikhoansearch = request.form("taikhoan")
