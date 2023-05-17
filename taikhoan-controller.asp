@@ -7,24 +7,24 @@
     'status code 4: tai khoan khong ton tai
     'status code 5: tai khoan dang bi khoa
     'status code 6: lay danh sach tai khoan phan trang
-    loai = request.Form("loai")
+    loai = request.querystring("loai")
     dim page 
     Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
     limit = 10
     
     if(loai = "phantrangtaikhoan") then
         set tk = new TaiKhoan
-        loaitk = request.form("loaitk")
-        page = request.form("page")
-        taikhoansearch = request.form("taikhoan")
-        tennguoidung = request.form("tennguoidung")
-        diachi = request.form("diachi")
-        sodienthoai = request.form("sodienthoai")
-        tichdiem = request.form("tichdiem")
-        trangthai = request.form("trangthai")
-        sapxepten = request.form("sapxepten")
-        sapxeptichdiem = request.form("sapxeptichdiem")
-        sapxepdiachi = request.form("sapxepdiachi")
+        loaitk = request.querystring("loaitk")
+        page = request.querystring("page")
+        taikhoansearch = request.querystring("taikhoan")
+        tennguoidung = request.querystring("tennguoidung")
+        diachi = request.querystring("diachi")
+        sodienthoai = request.querystring("sodienthoai")
+        tichdiem = request.querystring("tichdiem")
+        trangthai = request.querystring("trangthai")
+        sapxepten = request.querystring("sapxepten")
+        sapxeptichdiem = request.querystring("sapxeptichdiem")
+        sapxepdiachi = request.querystring("sapxepdiachi")
         set danhsachtaikhoan = tk.phanTrangTaiKhoan(loaitk,limit,page,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai,sapxepten,sapxepdiachi,sapxeptichdiem)
         Response.Write("{")
         Response.Write("""status code"": ""6"",")
@@ -66,7 +66,7 @@
         next
         Response.Write("]")
         Response.Write(",""totalPages"":")
-        Response.Write(tk.Ceil(tk.count(taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)/limit))
+        Response.Write(tk.Ceil(tk.count(loaitk,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)/limit))
         Response.Write("")
         Response.Write("}")
         Response.Write("}")
@@ -75,33 +75,34 @@
     if(loai = "phantrangtaikhoanquanly") then
         set tk = new TaiKhoan
         Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
-        page = request.form("page")
+        page = request.querystring("page")
         set danhsachtaikhoan = tk.phanTrangTaiKhoanQuanLy(offset,limit,page)
     end if
 
     if(loai = "unban") then
         set tk = new TaiKhoan
-        set tentk= Request.Form("tk")
+        set tentk= Request.querystring("tk")
         tk.moKhoaTaiKhoan(tentk)       
     end if
 
     if(loai = "ban") then
         set tk = new TaiKhoan
-        set tentk= Request.Form("tk")
+        set tentk= Request.querystring("tk")
         tk.khoaTaiKhoan(tentk)       
     end if
 
     If (loai="admindangnhap") Then
     Set classtk = New TaiKhoan
     dim tk
-    tk = Request.Form("tk")
+    tk = Request.querystring("tk")
     dim mk
-    mk = Request.Form("mk")
+    mk = Request.querystring("mk")
     Response.Write("{")
     If (classtk.checkTonTai(tk)) Then
         If (classtk.getLoaiTK(tk) <> "0") Then
             If(classtk.getTinhTrang(tk) = True) Then
                 If(classtk.checkMK(tk,mk)) Then
+                    session("loaitk") = classtk.getLoaiTK(tk)
                     Session("uid") = classtk.getUID(tk)
                     Response.Write("""status code"": ""1"",")
                     Response.Write("""message"": """",")

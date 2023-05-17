@@ -14,21 +14,7 @@
   var sodienthoai = ""
   var selectedValue = ""
 
-  $("#customRange1").mousemove(function () {
-    var val = $(this).val();
-    $("#tichdiem").html(val)
-  })
 
-  $("#flexCheckDefault").change(function () {
-    if ($('#flexCheckDefault').is(':checked')) {
-      $("#customRange1").prop('disabled', false)
-      var val = $("#customRange1").val();
-      $("#tichdiem").html(val)
-    } else {
-      $("#customRange1").prop('disabled', true)
-      $("#tichdiem").html("")
-    }
-  })
   $("#formtimkiem").submit(function (e) {
     e.preventDefault()
     taikhoan = $("#inputtaikhoan").val()
@@ -44,6 +30,8 @@
       }
     }
     loadData(1)
+    var newUrl = "taikhoanquanly-view.asp?page=" + currentPage +"&taikhoan="+taikhoan+"&tennguoidung="+tennguoidung+"&diachi="+diachi+"&trangthai="+selectedValue
+    history.pushState(null, null, newUrl);
   })
 
 
@@ -77,11 +65,11 @@
   $("#confirm").click(function () {
     var tk = $("#tkmuonunbanhoacunban").val();
     var type = $("#type").val();
-    $.post("taikhoan-controller.asp", {
+    $.get("taikhoan-controller.asp", {
       tk: tk, loai: type, function() {
       }
     }).done(function () {
-      loadData($("#currentPage").html());
+      loadData(currentPage)
       if (type == "unban") {
         $("#msg").html("Mở khóa tài khoản thành công");
         $("#msg").addClass("alert alert-success");
@@ -100,9 +88,38 @@
   })
 
   $(document).ready(function () {
-    $("#customRange1").prop('disabled', true)
-    $("#tichdiem").html("")
-    loadData(1);
+    var queryString = window.location.search;
+
+    // Tạo đối tượng URLSearchParams từ query string
+    var searchParams = new URLSearchParams(queryString);
+
+    // Lấy giá trị của tham số có tên là 'paramName'
+    currentPage = searchParams.get('page');
+    if (currentPage == null || currentPage == undefined) {
+      currentPage = "1";
+    }
+    taikhoan = searchParams.get('taikhoan');
+    tennguoidung = searchParams.get('tennguoidung');
+    diachi = searchParams.get('diachi');
+    sodienthoai = searchParams.get('sodienthoai');
+    selectedValue = searchParams.get('trangthai');
+
+    if(taikhoan == null){
+      taikhoan = ""
+    }
+    if(tennguoidung == null){
+      tennguoidung = ""
+    }
+    if(diachi == null){
+       diachi= ""
+    }
+    if(sodienthoai == null){
+       sodienthoai= ""
+    }
+    if(selectedValue == null){
+       selectedValue= ""
+    }
+    loadData(currentPage);
   });
 
 
@@ -182,8 +199,11 @@
   }
 
   function loadData(page, obj) {
+    currentPage = page
+    var newUrl = "taikhoanquanly-view.asp?page=" + currentPage +"&taikhoan="+taikhoan+"&tennguoidung="+tennguoidung+"&diachi="+diachi+"&trangthai=" + selectedValue
+    history.pushState(null, null, newUrl);
     $.ajax({
-      method: "post",
+      method: "get",
       url: "taikhoan-controller.asp",
       data: {
         loaitk: "1",

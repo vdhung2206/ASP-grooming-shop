@@ -7,14 +7,13 @@
 </script>
 <script>
   var currentPage = 1
-  var obj
   var taikhoan = ""
-  var tennguoidung =""
+  var tennguoidung = ""
   var diachi = ""
   var sodienthoai = ""
   var tichdiem = ""
   var trangthai = ""
-  var selectedValue =""
+  var selectedValue = ""
   var sapxepten = ""
   var sapxeptichdiem = ""
   var sapxepdiachi = ""
@@ -49,49 +48,15 @@
     sapxeptichdiem = $("#sapxeptichdiem").find(":selected").val()
     sapxepdiachi = $("#sapxepdiachi").find(":selected").val()
     trangthai = document.getElementsByName('checkbox1');
-    selectedValue =""
     for (var i = 0, length = trangthai.length; i < length; i++) {
       if (trangthai[i].checked) {
         selectedValue = trangthai[i].value;
         break;
       }
+      var newUrl = "taikhoan-view.asp?page=" + currentPage +"&taikhoan="+taikhoan+"&tennguoidung="+tennguoidung+"&diachi="+diachi+"&tichdiem="+tichdiem+"&sapxepten="+sapxepten+"&sapxeptichdiem="+sapxeptichdiem+"&sapxepdiachi="+sapxepdiachi
+        history.pushState(null, null, newUrl);
     }
     loadData(1)
-    // var taikhoan = $("#inputtaikhoan").val()
-    // var tennguoidung = $("#inputtennguoidung").val()
-    // var diachi = $("#inputdiachi").val()
-    // var sodienthoai = $("#inputsodienthoai").val()
-    // if ($('#flexCheckDefault').is(':checked')) {
-    //   var tichdiem = $("#customRange1").val()
-    // }
-    // else {
-    //   var tichdiem = ""
-    // }
-    // var trangthai = document.getElementsByName('flexRadioDefault');
-    // var selectedValue
-    // for (var i = 0, length = trangthai.length; i < length; i++) {
-    //   if (trangthai[i].checked) {
-    //     selectedValue = trangthai[i].value;
-    //     break;
-    //   }
-    // }
-    // $.ajax({
-    //   method: "post",
-    //   url: "taikhoan-controller.asp",
-    //   data: {
-    //     loai: "phantrangtaikhoan",
-    //     taikhoan: taikhoan,
-    //     tennguoidung: tennguoidung,
-    //     diachi: diachi,
-    //     sodienthoai: sodienthoai,
-    //     trangthai: selectedValue,
-    //     tichdiem: tichdiem
-    //   },
-    //   success: function (response) {
-    //     obj = JSON.parse(response);
-    //     loadData(1, obj);
-    //   }
-    // })
   })
 
 
@@ -125,7 +90,7 @@
   $("#confirm").click(function () {
     var tk = $("#tkmuonunban").val();
     var type = $("#type").val();
-    $.post("taikhoan-controller.asp", {
+    $.get("taikhoan-controller.asp", {
       tk: tk, loai: type, function() {
       }
     }).done(function () {
@@ -142,9 +107,55 @@
   })
 
   $(document).ready(function () {
+    var queryString = window.location.search;
+
+    // Tạo đối tượng URLSearchParams từ query string
+    var searchParams = new URLSearchParams(queryString);
+
+    // Lấy giá trị của tham số có tên là 'paramName'
+    currentPage = searchParams.get('page');
+    if (currentPage == null) {
+      currentPage = "1";
+    }
+    taikhoan = searchParams.get('taikhoan');
+    if(taikhoan == null){
+      taikhoan = ""
+    }
+    tennguoidung = searchParams.get('tennguoidung');
+    if(tennguoidung == null){
+      tennguoidung = ""
+    }
+    diachi = searchParams.get('diachi');
+    if(diachi == null){
+       diachi= ""
+    }
+    sodienthoai = searchParams.get('sodienthoai');
+    if(sodienthoai == null){
+       sodienthoai= ""
+    }
+    tichdiem = searchParams.get('tichdiem');
+    if(tichdiem == null){
+       tichdiem= ""
+    }
+    selectedValue = searchParams.get('trangthai');
+    if(selectedValue == null){
+       selectedValue= ""
+    }
+    sapxepten = searchParams.get('sapxepten');
+    if(sapxepten == null){
+       sapxepten= ""
+    }
+    sapxeptichdiem = searchParams.get('sapxeptichdiem');
+    if(sapxeptichdiem == null){
+       sapxeptichdiem= ""
+    }
+    sapxepdiachi = searchParams.get('sapxepdiachi');
+    if(sapxepdiachi == null){
+       sapxepdiachi= ""
+    }
     $("#customRange1").prop('disabled', true)
     $("#tichdiem").html("")
-    loadData(1);
+    loadData(currentPage);
   });
 
 
@@ -206,49 +217,12 @@
     }
   }
 
-  // function loadSearchData(obj,page) {
-  //   var danhsachtaikhoan = obj.data.danhsachtaikhoan
-  //   var str = ""
-  //   danhsachtaikhoan.forEach(taikhoan => {
-  //     str += "<tr>";
-  //     str += "<td>";
-  //     str += taikhoan.taikhoan;
-  //     str += "</td>";
-  //     str += "<td>";
-  //     str += taikhoan.ten;
-  //     str += "</td>";
-  //     str += "<td>";
-  //     str += taikhoan.sdt;
-  //     str += "</td>";
-  //     str += "<td>";
-  //     str += taikhoan.diachi;
-  //     str += "<td>";
-  //     str += taikhoan.tichdiem;
-  //     str += "</td>";
-  //     str += "<td>";
-  //     if (taikhoan.tinhtrang == "True")
-  //       str += "Hoạt Động";
-  //     else
-  //       str += "Khóa";
-  //     str += "</td>";
-  //     str += "<td>";
-  //     if (taikhoan.tinhtrang == "False") {
-  //       str += '<a data-bs-toggle="modal" data-bs-target="#confirm-unban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\')">Mở Khóa</a>';
-  //     }
-  //     str += "<a style ='margin-left:3px' href ='#'class ='btn btn-info'>Chi Tiết</a>";
-  //     str += "</td>";
-  //     str += "</tr>";
-  //   }
-  //   );
-  //   $("#result").html(str);
-  //   loadThanhPhanTrang(obj.data.totalPages, page)
-  //   currentPage = page
-  // }
-
-  function loadData(page, obj) {
-    
+  function loadData(page) {
+    currentPage = page
+    var newUrl = "taikhoan-view.asp?page=" + currentPage +"&taikhoan="+taikhoan+"&tennguoidung="+tennguoidung+"&diachi="+diachi+"&tichdiem="+tichdiem+"&sapxepten="+sapxepten+"&sapxeptichdiem="+sapxeptichdiem+"&sapxepdiachi="+sapxepdiachi
+    history.pushState(null, null, newUrl);
     $.ajax({
-      method: "post",
+      method: "get",
       url: "taikhoan-controller.asp",
       data: {
         loaitk: "0",
@@ -301,7 +275,6 @@
         );
         $("#result").html(str);
         loadThanhPhanTrang(obj.data.totalPages, page)
-        currentPage = page
       }
     });
 

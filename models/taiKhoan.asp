@@ -121,7 +121,7 @@ connDB.ConnectionString = strConnection
 
     public function phanTrangTaiKhoan(loaitk,limit, page, taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai,sapxepten,sapxepdiachi,sapxeptichdiem)
         set classtk = new TaiKhoan
-        totalRows = classtk.count(taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
+        totalRows = classtk.count(loaitk,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
         pages = Ceil(totalRows/limit)
         if (Clng(pages) < Clng(page)) then
             page = pages
@@ -154,7 +154,7 @@ connDB.ConnectionString = strConnection
         if (trangthai <>"") then
           sql = sql + " and TinhTrang = " & trangthai & ""
         end if
-        sql = sql + "order by"
+        sql = sql + "order by "
         if (sapxeptichdiem ="0") then
           sql = sql + " TichDiem,"
         end if
@@ -208,44 +208,21 @@ connDB.ConnectionString = strConnection
             myTK.Tichdiem= rs.Fields("TichDiem")
             myTK.Diachi = rs.Fields("DiaChi")
             danhsachtaikhoan.add seq, myTK
-            'response.write("<tr>")
-            'response.write("<td>")
-            'response.write(rs.Fields("TK"))
-            'response.write("</td>")
-            'response.write("<td>")
-            'response.write(rs.Fields("Ten"))
-            'response.write("</td>")
-            'response.write("<td>")
-            'response.write(rs.Fields("Sdt"))
-            'response.write("</td>")
-            'response.write("<td>")
-            'response.write(rs.Fields("DiaChi"))
-            'response.write("<td>")
-            'response.write(rs.Fields("TichDiem"))
-            'response.write("</td>")
-            'response.write("<td>")
-            'if(rs.Fields("TinhTrang")="True") then
-              'response.write("Hoạt Động")
-            'else 
-              'response.write("Khóa")
-            'end if       
-            'response.write("</td>")
-            'response.write("<td>")
-              'if(rs.Fields("TinhTrang")="False") then
-                'response.write "<a data-bs-toggle=modal data-bs-target=#confirm-unban class=""btn btn-success unban"" onclick="""&"getData('" & rs.Fields("TK") &"','unban')"& """>Mở Khóa</a>"
-              'end if
-            'response.write("<a style = ""margin-left:3px""href =""#""class =""btn btn-info"">Chi Tiết</a>")
-            'response.write("</td>")
-            'response.write("</tr>")
             rs.MoveNext
         Loop 
         conndb.Close()
         set phanTrangTaiKhoan = danhsachtaikhoan
     end function
 
-    public function count(taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
+    public function count(loaitk,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)
       Dim sql
-      sql ="select count(*) as c from TaiKhoan where LoaiTK='0'"
+      sql ="select count(*) as c from TaiKhoan where"
+      if(loaitk = "0") then
+        sql = sql +" LoaiTK='0'"
+      end if
+      if(loaitk = "1") then
+        sql = sql +" LoaiTK='1'"
+      end if
       if(taikhoansearch <> "") then
         sql = sql + " and TK like '%" & taikhoansearch & "%'"
       end if

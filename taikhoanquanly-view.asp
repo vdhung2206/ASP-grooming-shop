@@ -1,5 +1,6 @@
+
 <%
-    if(session("uid")<>"") then
+    if(session("uid")<>"" and session("loaitk")=2) then
 %>
 <html lang="en">
     <head>
@@ -11,7 +12,12 @@
     <body>
         <!-- #include file="./share/header.html" -->
         <div class="container">
-        <div class="me-auto p-2 bd-highlight"><h2>Danh sách tài khoản quản lý</h2></div>
+        <div class="d-flex bd-highlight mb-3">
+            <div class="me-auto p-2 bd-highlight"><h2>Danh sách tài khoản quản lý</h2></div>
+            <div class="p-2 bd-highlight">
+                <a href="taikhoanquanly-them.asp" class="btn btn-primary">Tạo mới</a>
+            </div>
+        </div>
         <form id ="formtimkiem" class="form-inline">
             <div  class="form-group mx-sm-3 mb-2 row" >
 
@@ -69,7 +75,6 @@
                 <table id="mytable"class="table table-dark">
                     <thead>
                         <tr>
-                            
                             <th scope="col">Tài khoản</th>
                             <th scope="col">Tên người dùng</th>
                             <th scope="col">Số điện thoại</th>

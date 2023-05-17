@@ -26,7 +26,7 @@ $(document).ready(function () {
         }
         else{
             $.ajax({
-                method: "post",
+                method: "get",
                 url: "taikhoan-controller.asp",
                 data:{
                     tk: tk,
