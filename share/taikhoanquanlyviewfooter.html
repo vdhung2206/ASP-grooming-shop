@@ -30,7 +30,7 @@
       }
     }
     loadData(1)
-    var newUrl = "taikhoanquanly-view.asp?page=" + currentPage +"&taikhoan="+taikhoan+"&tennguoidung="+tennguoidung+"&diachi="+diachi+"&trangthai="+selectedValue
+    var newUrl = "taikhoanquanly-view.asp?page=" + currentPage + "&taikhoan=" + taikhoan + "&tennguoidung=" + tennguoidung + "&diachi=" + diachi + "&trangthai=" + selectedValue
     history.pushState(null, null, newUrl);
   })
 
@@ -78,16 +78,27 @@
         $("#msg").html("Khóa tài khoản thành công");
         $("#msg").addClass("alert alert-success");
       }
-        $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
         });
-        window.setTimeout(function () {
-          $(".alert").fadeTo(500, 0).slideUp(500, function () {
-          });
-        }, 2000);
-      })
+      }, 2000);
+    })
   })
 
   $(document).ready(function () {
+    if (sessionStorage.getItem("createMSG") != null && sessionStorage.getItem("createMSG") != "") {
+      $("#msg").html(sessionStorage.getItem("createMSG"));
+      $("#msg").addClass("alert alert-success");
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+      sessionStorage.removeItem("createMSG");
+    }
     var queryString = window.location.search;
 
     // Tạo đối tượng URLSearchParams từ query string
@@ -104,20 +115,20 @@
     sodienthoai = searchParams.get('sodienthoai');
     selectedValue = searchParams.get('trangthai');
 
-    if(taikhoan == null){
+    if (taikhoan == null) {
       taikhoan = ""
     }
-    if(tennguoidung == null){
+    if (tennguoidung == null) {
       tennguoidung = ""
     }
-    if(diachi == null){
-       diachi= ""
+    if (diachi == null) {
+      diachi = ""
     }
-    if(sodienthoai == null){
-       sodienthoai= ""
+    if (sodienthoai == null) {
+      sodienthoai = ""
     }
-    if(selectedValue == null){
-       selectedValue= ""
+    if (selectedValue == null) {
+      selectedValue = ""
     }
     loadData(currentPage);
   });
@@ -200,7 +211,7 @@
 
   function loadData(page, obj) {
     currentPage = page
-    var newUrl = "taikhoanquanly-view.asp?page=" + currentPage +"&taikhoan="+taikhoan+"&tennguoidung="+tennguoidung+"&diachi="+diachi+"&trangthai=" + selectedValue
+    var newUrl = "taikhoanquanly-view.asp?page=" + currentPage + "&taikhoan=" + taikhoan + "&tennguoidung=" + tennguoidung + "&diachi=" + diachi + "&trangthai=" + selectedValue
     history.pushState(null, null, newUrl);
     $.ajax({
       method: "get",
@@ -241,10 +252,10 @@
           str += "</td>";
           str += "<td>";
           if (taikhoan.tinhtrang == "False") {
-            str += '<a data-bs-toggle="modal" data-bs-target="#confirmbanunban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\'); setConfirmBox(\''+taikhoan.taikhoan+'\',\'unban\')'+'">Mở Khóa</a>';
+            str += '<a data-bs-toggle="modal" data-bs-target="#confirmbanunban" class="btn btn-success unban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'unban\'); setConfirmBox(\'' + taikhoan.taikhoan + '\',\'unban\')' + '">Mở Khóa</a>';
           }
           if (taikhoan.tinhtrang == "True") {
-            str += '<a data-bs-toggle="modal" data-bs-target="#confirmbanunban" class="btn btn-danger ban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'ban\'); setConfirmBox(\''+taikhoan.taikhoan+'\',\'ban\')'+'">Khóa</a>';
+            str += '<a data-bs-toggle="modal" data-bs-target="#confirmbanunban" class="btn btn-danger ban" onclick="getData(\'' + taikhoan.taikhoan + '\', \'ban\'); setConfirmBox(\'' + taikhoan.taikhoan + '\',\'ban\')' + '">Khóa</a>';
           }
           str += "</td>";
           str += "</tr>";

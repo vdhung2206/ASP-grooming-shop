@@ -389,6 +389,55 @@ connDB.ConnectionString = strConnection
       getUID = result("UID")
       connDB.Close()
     end function
+
+    function kiemTraDinhDangTK(tk) 
+      If Len(tk) >= 6 And Len(tk) <= 25 And InStr(tk, " ") = 0 Then
+        kiemTraDinhDangTK = true
+      Else
+        kiemTraDinhDangTK = false
+      End If
+    end function
+
+    function kiemTraDinhDangMK(mk)
+    Dim regex
+    Set regex = New RegExp
+    regex.Pattern = "\d" ' Biểu thức chính quy kiểm tra có ít nhất một số trong chuỗi
+    If (Len(mk) >= 6 And regex.Test(mk)) Then
+      kiemTraDinhDangMK = true
+    Else
+      kiemTraDinhDangMK = false
+    End If
+    end function
+
+    function kiemTraDinhDangSDT(sdt)
+      Dim regex
+      Set regex = New RegExp
+      regex.Pattern = "^0\d{9}$" ' Biểu thức chính quy kiểm tra có ít nhất một số trong chuỗi
+      If (Len(sdt) >= 6 And regex.Test(sdt)) Then
+        kiemTraDinhDangSDT = true
+      Else
+        kiemTraDinhDangSDT = false
+      End If
+    end function
+
+    function taoTaiKhoanQuanLy(tk, mk ,sdt, ten, diachi)
+      Dim sql
+      sql = "insert into TaiKhoan values (?,?,?,?,'1','1',null,?)"
+      Dim cmdPrep
+      set cmdPrep = Server.CreateObject("ADODB.Command")
+      connDB.Open()
+      cmdPrep.ActiveConnection = connDB
+      cmdPrep.CommandType=1
+      cmdPrep.Prepared=true
+      cmdPrep.CommandText = sql
+      cmdPrep.Parameters(0)=tk
+      cmdPrep.Parameters(1)=mk
+      cmdPrep.Parameters(2)=sdt
+      cmdPrep.Parameters(3)=ten
+      cmdPrep.Parameters(4)=diachi
+      cmdPrep.execute()
+      connDB.Close()
+    end function
   End Class
   set tk = new TaiKhoan
 %>

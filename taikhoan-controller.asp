@@ -7,7 +7,17 @@
     'status code 4: tai khoan khong ton tai
     'status code 5: tai khoan dang bi khoa
     'status code 6: lay danh sach tai khoan phan trang
+    'status code 7: tai khoan khong dung dinh dang (tao moi tai khoan quan ly)
+    'status code 8: mat khau khong dung dinh dang (tao moi tai khoan quan ly)
+    'status code 9: so dien thoai khong dung dinh dang (tao moi tai khoan quan ly)
+    'status code 10: tai khoan da ton tai (tao moi tai khoan quan ly)
+    'status code 11 : tao tai khoan thanh cong (tao moi tai khoan quan ly)
+
+
     loai = request.querystring("loai")
+    if(loai = "") then
+        loai = request.form("loai")
+    end if
     dim page 
     Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
     limit = 10
@@ -130,4 +140,47 @@
     Response.Write("}")
     End If
 
+    if(loai ="taotaikhoanquanly") then
+        Set classtk = New TaiKhoan
+        dim tkqldangky
+        tkqldangky = Request.form("tkqldangky")
+        dim mkqldangky
+        mkqldangky = Request.form("mkqldangky")
+        dim tenqldangky
+        tenqldangky = Request.form("tenqldangky")
+        dim sdtqldangky
+        sdtqldangky = Request.form("sdtqldangky")
+        dim diachiqldangky
+        diachiqldangky = Request.form("diachiqldangky")
+        Response.Write("{")
+        If not (classtk.checkTonTai(tkqldangky)) then 
+            If (classtk.kiemTraDinhDangTK(tkqldangky)) Then
+                If (classtk.kiemTraDinhDangMK(mkqldangky)) Then
+                    If(classtk.kiemTraDinhDangSDT(sdtqldangky)) Then
+                        call classtk.taoTaiKhoanQuanLy(tkqldangky, mkqldangky, sdtqldangky, tenqldangky, diachiqldangky)
+                        Response.Write("""status code"": ""11"",")
+                        Response.Write("""message"": ""Tạo tài khoản thành công!"",")
+                        Response.Write("""data"":{ ""checkCreate"": true}")
+                    Else
+                        Response.Write("""status code"": ""9"",")
+                        Response.Write("""message"": ""Số điện thoại không đúng định dạng!"",")
+                        Response.Write("""data"":{ ""checkCreate"": false}")
+                    End if
+                Else
+                    Response.Write("""status code"": ""8"",")
+                    Response.Write("""message"": ""Mật khẩu sai định dạng!"",")
+                    Response.Write("""data"":{ ""checkCreate"": false}")
+                End If
+            Else
+                Response.Write("""status code"": ""7"",")
+                Response.Write("""message"": ""Tài khoản không đúng định dạng!"",")
+                Response.Write("""data"":{ ""checkCreate"": false}")
+            End If
+        Else
+            Response.Write("""status code"": ""10"",")
+            Response.Write("""message"": ""Tài khoản đã tồn tại!"",")
+            Response.Write("""data"":{ ""checkCreate"": false}")
+        end if
+        Response.Write("}")
+    end if
 %>  
