@@ -1,0 +1,272 @@
+<script>
+  var currentPage = "1"
+  var tensp
+  var madm
+  var loaisp
+  var hangsp
+  var slton1
+  var slton2
+  var selectedValue
+  var sapxeptonkho
+  var sltonmin
+  var sltonmax
+  $("#formtimkiem").submit(function (e) {
+    e.preventDefault()
+    tensp = $("#tensp").val();
+    console.log(tensp)
+    madm = $("#danhmucsp option:selected").val();
+    loaisp = $("#loaisp option:selected").val();
+    hangsp = $("#hangsp").val();
+    if ($('#flexCheckDefault').is(':checked')) {
+      slton1 = $("#customRange1").val()
+      slton2 = $("#customRange2").val()
+    }
+    else{
+      slton1="";
+      slton2="";
+    }
+    sapxeptonkho = $("#sapxeptonkho").find(":selected").val()
+    selectedValue
+    tinhtrang = document.getElementsByName('checkbox1');
+    for (var i = 0, length = tinhtrang.length; i < length; i++) {
+      if (tinhtrang[i].checked) {
+        selectedValue = tinhtrang[i].value;
+        break;
+      }
+    }
+    loadData(1)
+  })
+
+  $("#customRange1").mousemove(function () {
+    var val1 = $("#customRange1").val();
+    $("#tonkhotren").html(val1)
+  })
+  $("#customRange2").mousemove(function () {
+    var val1 = $("#customRange2").val();
+    $("#tonkhoduoi").html(val1)
+  })
+  $("#flexCheckDefault").change(function () {
+    if ($('#flexCheckDefault').is(':checked')) {
+      $(".form-range").prop('disabled', false)
+      var val = $("#customRange1").val();
+      $("#tonkhotren").html(val)
+      val = $("#customRange2").val();
+      $("#tonkhoduoi").html(val)
+    } else {
+      $(".form-range").prop('disabled', true)
+      $("#tonkhotren").html("")
+      $("#tonkhoduoi").html("")
+    }
+  })
+  $(document).ready(function () {
+    $(".form-range").prop('disabled', true)
+    $("#tonkhotren").html("")
+    $("#tonkhoduoi").html("")
+    $.ajax({
+      method: "get",
+      url: "controllers/danhmuc-controller.asp",
+      data: {
+        loai: "getListDanhMuc",
+      },
+      success: function (response) {
+        const obj = JSON.parse(response);
+        var str = "<option value=\"\">Không</Option>"
+        obj.data.listdanhmuc.forEach(element => {
+          str += "<option value=\"" + element.madm + "\">" + element.tendm;
+          str += "</option>";
+        });
+        $("#danhmucsp").html(str)
+        $("#loaisp").html("<option value=\"\">Không</Option>")
+      }
+    })
+    loadData(1);
+  })
+
+  $("#danhmucsp").change(function () {
+    madm = $(this).val()
+    if (madm != "") {
+      $.ajax({
+        method: "get",
+        url: "controllers/danhmuc-controller.asp",
+        data: {
+          madm: madm,
+          loai: "getList",
+        },
+        success: function (response) {
+          const obj = JSON.parse(response);
+          var str = "<option value=\"\">Không</Option>"
+          if (madm != "") {
+            obj.data.listloaisp.forEach(element => {
+              str += "<option value=\"" + element.maloaisp + "\">";
+              str += element.tenloaisp
+              str += "</option>";
+            })
+          }
+          else {
+            var str = "<option value=\"\">Không</Option>"
+          }
+          $("#loaisp").html(str)
+        }
+      })
+    }
+    else {
+      $("#loaisp").html("<option value=\"\">Không</Option>")
+    }
+  })
+  function loadData(page) {
+    currentPage = page
+    //var newUrl = "sanpham-view.asp?page=" + currentPage +"&sanpham="+sanpham+"&tennguoidung="+tennguoidung+"&diachi="+diachi+"&tichdiem="+tichdiem+"&sapxepten="+sapxepten+"&sapxeptichdiem="+sapxeptichdiem+"&sapxepdiachi="+sapxepdiachi
+    //history.pushState(null, null, newUrl);
+    $.ajax({
+      method: "get",
+      url: "controllers/sanpham-controller.asp",
+      data: {
+        page: page,
+        loai: "phantrangsanpham",
+        tensp: tensp,
+        madm: madm,
+        loaisp: loaisp,
+        hangsp: hangsp,
+        slton1: slton1,
+        slton2: slton2,
+        tinhtrang: selectedValue,
+        sapxeptonkho: sapxeptonkho
+      }
+      ,
+      success: function (response) {
+        const obj = JSON.parse(response);
+        var mid = Math.round((obj.data.mintonkho + obj.data.maxtonkho) / 2)
+        $("#customRange1").prop("min", obj.data.mintonkhoall-1)
+        $("#customRange2").prop("max", obj.data.maxtonkhoall+1)
+        $("#customRange1").prop("max", mid)
+        $("#customRange2").prop("min", mid)
+        var danhsachsanpham = obj.data.danhsachsanpham
+        var str = ""
+        danhsachsanpham.forEach(sanpham => {
+          str += "<tr>";
+          str += "<td width = 10%>";
+          str += "<img width=80% src=" + sanpham.hinhanh + ">"
+          str += "</td>";
+          str += "<td>";
+          str += sanpham.tensp;
+          str += "</td>";
+          str += "<td>";
+          str += sanpham.danhmuc;
+          str += "</td>";
+          str += "<td>";
+          str += sanpham.loaisp;
+          str += "</td>";
+          str += "<td>";
+          str += sanpham.hang;
+          str += "<td>";
+          str += sanpham.sltonkho;
+          str += "</td>";
+          str += "<td>";
+          str += sanpham.giagocsp;
+          str += "</td>";
+          str += "<td>";
+          str += sanpham.giamgiasp;
+          str += "</td>";
+          str += "<td>";
+          str += sanpham.giasp;
+          str += "</td>";
+          str += "<td>";
+          if (sanpham.trangthai == "True")
+            str += "Đang bán";
+          else
+            str += "Ngừng bán";
+          str += "</td>";
+          str += "<td>";
+          str += "<form action=\"chitietsanpham-view.asp\">"
+          str += "<input type=\"hidden\" value=\"" + sanpham.masp +"\">"
+          str += "<input type=\"hidden\" value=\"" + sanpham.chitietsp +"\">"
+          str += '<button type="submit" class="btn btn-success")">Chi tiết</button>';
+          str += "</form>";
+          str += "</td>";
+          str += "</tr>";
+        }
+        );
+        $("#result").html(str);
+        loadThanhPhanTrang(obj.data.totalPages, page)
+      }
+    });
+  }
+  function loadThanhPhanTrang(totalPages, currentPage) {
+    if (currentPage < 1) {
+      currentPage = 1;
+    }
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+    var truoc = "<li class=\"page-item\"" + "><a id=\"truoc\" class =\"page-link\" onclick=\"loadData(" + (currentPage - 1) + ")\" style=\"cursor:pointer";
+    truoc += "\">" + "Trước</a></li>"
+    var str = "";
+    str += truoc;
+    if (totalPages <= 10) {
+      for (let i = 1; i <= totalPages; i++) {
+        str += "<li class=\"page-item"
+        if (i == currentPage) {
+          str += " active"
+        }
+        str += "\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(" + i + ")\""
+        str += ">" + i + "</a></li>"
+      }
+    }
+    if (totalPages > 10) {
+      str += "<li class=\"page-item";
+      if (1 == currentPage) {
+        str += " active"
+      }
+      str += "\"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(1)\">" + 1 + "</a></li>"
+      if (currentPage > 3) {
+        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+      }
+      if (currentPage > 2) {
+        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(" + (parseInt(currentPage) - 1) + ")\">" + (parseInt(currentPage) - 1) + "</a></li>"
+      }
+      if (currentPage != 1) {
+        str += "<li class=\"page-item active\"><a class=\"page-link\">" + currentPage + "</a></li>"
+      }
+      if (currentPage < (totalPages - 1)) {
+        str += "<li class=\"page-item\"><a class=\"page-link\"style=\"cursor:pointer\" onclick=\"loadData(" + (parseInt(currentPage) + 1) + ")\">" + (parseInt(currentPage) + 1) + "</a></li>"
+      }
+      if (currentPage < (totalPages - 2)) {
+        str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+      }
+      if ((totalPages > 1) && (parseInt(currentPage) < parseInt(totalPages))) {
+        str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(" + totalPages + ")\">" + totalPages + "</a></li>"
+      }
+    }
+    var sau = "<li class=\"page-item\"" + "><a id=\"sau\" class =\"page-link\" onclick=\"loadData(" + (parseInt(currentPage) + 1) + ")\" style=\"cursor:pointer";
+    sau += "\">" + "Sau</a></li>"
+    str += sau;
+    $("#thanhphantrang").html(str);
+    if (currentPage <= 1) {
+      $("#truoc").addClass(" disabled")
+    }
+    if (currentPage >= totalPages) {
+      $("#sau").addClass(" disabled")
+    }
+  }
+  const checkboxes = document.getElementsByName('checkbox1');
+
+  // Thêm sự kiện "click" cho mỗi ô checkbox
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('click', (event) => {
+      // Nếu ô checkbox đang được chọn
+      if (checkbox.checked) {
+        // Vô hiệu hóa tất cả các ô checkbox khác
+        checkboxes.forEach((otherCheckbox) => {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.disabled = true;
+          }
+        });
+      } else {
+        // Kích hoạt lại tất cả các ô checkbox
+        checkboxes.forEach((otherCheckbox) => {
+          otherCheckbox.disabled = false;
+        });
+      }
+    });
+  });
+</script>

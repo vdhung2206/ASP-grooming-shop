@@ -440,4 +440,5 @@ connDB.ConnectionString = strConnection
     end function
   End Class
   set tk = new TaiKhoan
+  call tk.phanTrangTaiKhoan("0",10,1,"","","","","","","","","")
 %>

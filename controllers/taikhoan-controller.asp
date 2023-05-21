@@ -1,12 +1,12 @@
 
-<!--#include file="./models/taiKhoan.asp" -->
+<!--#include file="../models/taiKhoan.asp" -->
 <%  
     'status code 1: dang nhap thanh cong
     'status code 2: sai mat khau
     'status code 3: sai loai tai khoan
     'status code 4: tai khoan khong ton tai
     'status code 5: tai khoan dang bi khoa
-    'status code 6: lay danh sach tai khoan phan trang
+    'status code 6: lay danh sach tai khoan phan trang thanh cong
     'status code 7: tai khoan khong dung dinh dang (tao moi tai khoan quan ly)
     'status code 8: mat khau khong dung dinh dang (tao moi tai khoan quan ly)
     'status code 9: so dien thoai khong dung dinh dang (tao moi tai khoan quan ly)

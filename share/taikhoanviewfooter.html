@@ -90,7 +90,7 @@
   $("#confirm").click(function () {
     var tk = $("#tkmuonunban").val();
     var type = $("#type").val();
-    $.get("taikhoan-controller.asp", {
+    $.get("controllers/taikhoan-controller.asp", {
       tk: tk, loai: type, function() {
       }
     }).done(function () {
@@ -223,7 +223,7 @@
     history.pushState(null, null, newUrl);
     $.ajax({
       method: "get",
-      url: "taikhoan-controller.asp",
+      url: "controllers/taikhoan-controller.asp",
       data: {
         loaitk: "0",
         page: page,
@@ -277,7 +277,6 @@
         loadThanhPhanTrang(obj.data.totalPages, page)
       }
     });
-
   }
   function myFunction1(page) {
     loadData(page);

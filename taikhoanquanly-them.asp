@@ -51,7 +51,7 @@
                 <input type="text" class="form-control" id="diachiql-dangky" name="diachiql-dangky">
             </div>
             <div class="row px-2 mt-4">
-                <button type="submit" class="btn btn-primary">Đăng ký</button>
+                <button type="submit" class="btn btn-primary">Tạo mới</button>
             </div>
         </form>
     </div>
@@ -77,7 +77,7 @@
                             if (sdtcheck.test(sdtqldangky)) {
                                 $.ajax({
                                     method: "post",
-                                    url: "taikhoan-controller.asp",
+                                    url: "controllers/taikhoan-controller.asp",
                                     data: {
                                         loai: "taotaikhoanquanly",
                                         tkqldangky: tkqldangky,
