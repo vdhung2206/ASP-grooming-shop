@@ -130,31 +130,6 @@
                 <li class="page-item"><a class ="page-link" style="pointer-events: none" href ="taikhoan-view.asp?page=0">Trước</a></li>
             </ul>
             </nav>
-
-            <div class="modal" tabindex="-1" id="confirm-unban">                
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Xác nhận mở khóa tài khoản</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Xác nhận mở khóa tài khoản này?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <form>
-                                <input id="tkmuonunban" type="hidden" value="">
-                                <input id="type" type="hidden" value="">
-
-                                <button id="confirm" type="button" data-bs-dismiss="modal" class="btn btn-success">
-                                    Đồng ý
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <!--#include file="./share/sanphamviewfooter.html"-->
     </body>

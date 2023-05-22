@@ -22,6 +22,24 @@ Class LoaiSanPham
         p_tenloaisp = value
     End Property
 
+    public function checkTonTai(maloaisp)
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+        dim sql
+        sql = "select count(*) as c from LoaiSP where MaLoaiSP = " + maloaisp
+        Set rs = connDB.execute(sql)
+        if(rs.Fields("c")>0) then
+            checkTonTai = true
+        else
+            checkTonTai = false
+        end if
+        connDB.Close()
+    end function
+
     public function getTenLoaiSP(maloaisp)
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
@@ -122,6 +140,25 @@ Class DanhMucSanPham
         end if
         connDB.Close()
     end function
+
+    public function checkTonTai(madm)
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+        dim sql
+        sql = "select count(*) as c from DanhMucSP where MaDM = " + madm
+        Set rs = connDB.execute(sql)
+        if(rs.Fields("c")>0) then
+            checkTonTai = true
+        else
+            checkTonTai = false
+        end if
+        connDB.Close()
+    end function
+
     public function getListDanhMuc() 
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")

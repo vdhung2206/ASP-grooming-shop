@@ -24,22 +24,108 @@
     sapxepgia = request.querystring("sapxepgia")
     sapxeptonkho = request.querystring("sapxeptonkho")
     if(loai="themsanpham") then
+        ' set dmsp = new DanhMucSanPham
+        ' set lsp = new LoaiSanPham
         Dim uploader   
         Set uploader=new AspUploader 
         Dim mvcfile						
         Set mvcfile=uploader.GetUploadedFile(Request.Form("myuploader"))
         dim hinhanh
         hinhanh= "image/" + mvcfile.FileName
-        Response.Write(hinhanh)
         tenspthem = request.form("tenspthem")
         maloaispthem = request.form("maloaispthem")
         hangspthem = request.form("hangspthem")
         sltonkhothem = request.form("sltonkhothem")
         giagocspthem = request.form("giagocspthem")
         chitietspthem = request.form("chitietspthem")
+        ' if(tenspthem<>"") then
+        '     if(loaisp.checkTonTai(maloaispthem)) then
+        '         if(hangspthem <>"") then
+        '             if(sltonkhothem > 0) then
+        '                 if(giagocsp >0) then
+                            set sp = new SanPham
+                            call sp.themSanPham(tenspthem, maloaispthem, hangspthem, sltonkhothem, giagocspthem, hinhanh, chitietspthem)
+        '                     response.redirect(sanpham-view.asp)
+        '                 else
+        '                     Response.Write("""status code"": ""103"",")
+        '                     Response.Write("""message"": ""Giá sản phẩm phải sản phẩm phải lớn hơn 0!"",")
+        '                     Response.Write("""data"":{ ""themSanPham"": false}")
+        '             else
+        '                 Response.Write("""status code"": ""104"",")
+        '                 Response.Write("""message"": ""Số lượng sản phẩm phải lớn hơn 0!"",")
+        '                 Response.Write("""data"":{ ""themSanPham"": false}")
+        '         else
+        '             Response.Write("""status code"": ""103"",")
+        '             Response.Write("""message"": ""Hãng sản phẩm không được trống!"",")
+        '             Response.Write("""data"":{ ""themSanPham"": false}")
+        '     else
+        '         Response.Write("""status code"": ""102"",")
+        '         Response.Write("""message"": ""Loại sản phẩm không tồn tại!"",")
+        '         Response.Write("""data"":{ ""themSanPham"": false}")
+        ' else
+        '     Response.Write("""status code"": ""101"",")
+        '     Response.Write("""message"": ""Tên sản phẩm không được trống!"",")
+        '     Response.Write("""data"":{ ""themSanPham"": false}")
+        ' end if
+    end if
+    if(loai="laythongtinsanpham") then
+        masp = request.queryString("masp")
         set sp = new SanPham
-        call sp.themSanPham(tenspthem, maloaispthem, hangspthem, sltonkhothem, giagocspthem, hinhanh, chitietspthem)
-        response.redirect(sanpham-view.asp)
+        dim spx
+        set spx= sp.layThongTinSanPham(masp)
+        Response.Write("{")
+        Response.Write("""status code"": ""201"",")
+        Response.Write("""message"": """",")
+        Response.Write("""data"":")
+            Response.Write("{")
+            Response.Write("")
+            response.write("""hinhanh"": """)
+            response.write(spx.HinhAnh)
+            response.write(""",")
+            Response.Write("")
+            response.write("""masp"": """)
+            response.write(spx.MaSP)
+            response.write(""",")
+            response.write("""tensp"": """)
+            response.write(spx.TenSP)
+            response.write(""",")
+            response.write("""danhmuc"": """)
+            response.write(spx.DanhMuc)
+            response.write("""")
+            response.write(",")
+            response.write("""loaisp"": """)
+            response.write(spx.LoaiSP)
+            response.write("""")
+            response.write(",")
+            response.write("""hang"": """)
+            response.write(spx.HangSP)
+            response.write("""")
+            response.write(",")
+            response.write("""sltonkho"": """)
+            response.write(spx.SLTonKho)
+            response.write("""")
+            response.write(",")
+            response.write("""giagocsp"": """)
+            response.write(spx.GiaGocSP)
+            response.write("""")
+            response.write(",")
+            response.write("""giamgiasp"": """)
+            response.write(spx.GiamGiaSP)
+            response.write("""")
+            response.write(",")
+            response.write("""giasp"": """)
+            response.write(spx.giasp)
+            response.write("""")
+            response.write(",")
+            response.write("""chitietsp"": """)
+            response.write(spx.ChiTiet)
+            response.write("""")
+            response.write(",")
+            response.write("""trangthai"": """)
+            response.write(spx.TrangThai)
+            response.write("""")
+            Response.Write("}")
+        Response.Write("}")
     end if
     if(loai="phantrangsanpham") then
         set sp = new SanPham

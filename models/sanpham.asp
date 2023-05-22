@@ -107,7 +107,6 @@ Class SanPham
     End Property
 
     public function layThongTinSanPham(masp)
-      sql = "select * from SanPham where MaSP = " + masp
       Dim connDB
       set connDB = Server.CreateObject("ADODB.Connection")
       Dim strConnection
@@ -115,34 +114,27 @@ Class SanPham
       connDB.ConnectionString = strConnection
       connDB.Open()
       dim sql
-      sql = "select TenDM from DanhMucSP where MaDM = " + madm
+      sql = "select * from view1_SanPham where MaSP = " + masp
       Set rs = connDB.execute(sql)
-      Set cmdPrep = Server.CreateObject("ADODB.Command")
-      cmdPrep.ActiveConnection = connDB
-      cmdPrep.CommandType = 1
-      cmdPrep.Prepared = True
-      cmdPrep.CommandText = sql
-      Set rs = cmdPrep.execute
-      Do While Not rs.EOF
-          seq = seq+1
-          set mySP = New SanPham
-          mySP.MaSP = rs.Fields("MaSP")
-          mySP.TenSP = rs.Fields("TenSP")
-          mySP.LoaiSP = rs.Fields("TenLoaiSP")
-          mySP.DanhMuc = rs.Fields("TenDM")
-          mySP.HangSP = rs.Fields("HangSP")
-          mySP.SLTonKho = rs.Fields("SLTonKho")
-          mySP.GiaGocSP = rs.Fields("GiaGocSP")
-          mySP.GiamGiaSP= rs.Fields("GiamGiaSP")
-          mySP.GiaSP = rs.Fields("GiaSP")
-          mySP.HinhAnh = rs.Fields("HinhAnh")
-          mySP.ChiTiet = rs.Fields("ChiTiet")
-          mySP.TrangThai = rs.Fields("TrangThai")
-          danhsachsanpham.add seq, mySP
-          rs.MoveNext
-      Loop 
+      if Not rs.EOF then
+        set mySP = New SanPham
+        mySP.MaSP = rs.Fields("MaSP")
+        mySP.TenSP = rs.Fields("TenSP")
+        mySP.LoaiSP = rs.Fields("MaLoaiSP")
+        mySP.DanhMuc = rs.Fields("MaDM")
+        mySP.HangSP = rs.Fields("HangSP")
+        mySP.SLTonKho = rs.Fields("SLTonKho")
+        mySP.GiaGocSP = rs.Fields("GiaGocSP")
+        mySP.GiamGiaSP= rs.Fields("GiamGiaSP")
+        mySP.GiaSP = rs.Fields("GiaSP")
+        mySP.HinhAnh = rs.Fields("HinhAnh")
+        mySP.ChiTiet = rs.Fields("ChiTiet")
+        mySP.TrangThai = rs.Fields("TrangThai")
+        set layThongTinSanPham = mySP
+      else
+        layThongTinSanPham = "nothing"
+      end if
       conndb.Close()
-      set phantrangsanpham = danhsachsanpham
     end function
     public function phanTrangSanPham(limit, page, tenspsearch,danhmucsearch,loaispsearch,hangspsearch,sltonkhosearch1,sltonkhosearch2,giasp1search,giasp2search,trangthaisearch,sapxepphobien, sapxepgia,sapxeptonkho)
         set classSP = new SanPham
@@ -164,7 +156,7 @@ Class SanPham
           sql = sql + " and MaDM like '%" & danhmucsearch & "%'"
         end if
         if (loaispsearch <>"") then
-          sql = sql + " and LoaiSP like '%" & loaispsearch & "%'"
+          sql = sql + " and MaLoaiSP like '%" & loaispsearch & "%'"
         end if
         if (hangspsearch <>"") then
           sql = sql + " and HangSP like '%" & hangspsearch & "%'"
@@ -280,7 +272,7 @@ End Function
         sql = sql + " and MaDM like '%" & danhmuc & "%'"
       end if
       if (loaisp <>"") then
-        sql = sql + " and LoaiSP like '%" & loaisp & "%'"
+        sql = sql + " and MaLoaiSP like '%" & loaisp & "%'"
       end if
       if (hangsp <>"") then
         sql = sql + " and HangSP like '%" & hangsp & "%'"
@@ -322,7 +314,7 @@ End Function
         sql = sql + " and MaDM like '%" & danhmuc & "%'"
       end if
       if (loaisp <>"") then
-        sql = sql + " and LoaiSP like '%" & loaisp & "%'"
+        sql = sql + " and MaLoaiSP like '%" & loaisp & "%'"
       end if
       if (hangsp <>"") then
         sql = sql + " and HangSP like '%" & hangsp & "%'"
@@ -371,7 +363,7 @@ End Function
         sql = sql + " and MaDM like '%" & danhmuc & "%'"
       end if
       if (loaisp <>"") then
-        sql = sql + " and LoaiSP like '%" & loaisp & "%'"
+        sql = sql + " and MaLoaiSP like '%" & loaisp & "%'"
       end if
       if (hangsp <>"") then
         sql = sql + " and HangSP like '%" & hangsp & "%'"
@@ -399,4 +391,5 @@ End Function
       connDB.Close()
     end function
 End Class
+  set sp = new SanPham
 %>

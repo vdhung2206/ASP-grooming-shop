@@ -116,3 +116,4 @@ select MaDM, TenDM from DanhMucSP
 select count (TenLoaiSP) as c from DanhMucSP join LoaiSP on DanhMucSP.MaDM = LoaiSP.MaDM and DanhMucSP.MaDM =1
 
 select min (SLTonKho) from SanPham where MaSP !=''
+select count(*) as c from LoaiSP where MaLoaiSP ='35'
