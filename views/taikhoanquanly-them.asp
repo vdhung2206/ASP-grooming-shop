@@ -77,7 +77,7 @@
                             if (sdtcheck.test(sdtqldangky)) {
                                 $.ajax({
                                     method: "post",
-                                    url: "controllers/taikhoan-controller.asp",
+                                    url: "../controllers/taikhoan-controller.asp",
                                     data: {
                                         loai: "taotaikhoanquanly",
                                         tkqldangky: tkqldangky,

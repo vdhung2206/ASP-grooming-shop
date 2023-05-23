@@ -6,7 +6,7 @@
     end if
     if(session("uid")="") then
 %>
-<!-- #include file="./share/connect.asp" -->
+<!-- #include file="../share/connect.asp" -->
 <!DOCTYPE html>
 <html lang="en">
 <head>

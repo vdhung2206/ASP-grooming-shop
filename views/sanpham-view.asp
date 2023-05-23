@@ -6,7 +6,7 @@
         <title>Danh sách sản phẩm</title>
     </head>
     <body>
-        <!-- #include file="./share/header.html" -->
+        <!-- #include file="../share/header.html" -->
         <div class="container">
         <div  class="d-flex bd-highlight mb-3" style="padding-left: 0; margin-left:0">
             <div class="me-auto p-2 bd-highlight">
@@ -131,6 +131,6 @@
             </ul>
             </nav>
         </div>
-        <!--#include file="./share/sanphamviewfooter.html"-->
+        <!--#include file="../share/sanphamviewfooter.html"-->
     </body>
 </html>

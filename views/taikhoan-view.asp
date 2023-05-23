@@ -9,7 +9,7 @@
         <title>Tài khoản khách hàng</title>
     </head>
     <body>
-        <!-- #include file="./share/header.html" -->
+        <!-- #include file="../share/header.html" -->
         <div class="container">
         <div class="me-auto p-2 bd-highlight"><h2>Danh sách tài khoản khách hàng</h2></div>
         <form id ="formtimkiem" class="form-inline">
@@ -149,7 +149,7 @@
             </div>
             
         </div>
-        <!--#include file="./share/taikhoanviewfooter.html"-->
+        <!--#include file="../share/taikhoanviewfooter.html"-->
     </body>
 </html>
 <%

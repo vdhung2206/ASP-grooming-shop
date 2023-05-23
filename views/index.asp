@@ -11,7 +11,7 @@
     <title>Document</title>
 </head>
 <body>
-    <!-- #include file="./share/header.html" -->
+    <!-- #include file="../share/header.html" -->
 </body>
 </html>
 <%

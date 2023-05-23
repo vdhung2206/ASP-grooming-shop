@@ -10,7 +10,7 @@
         <title>Tài khoản quản lý</title>
     </head>
     <body>
-        <!-- #include file="./share/header.html" -->
+        <!-- #include file="../share/header.html" -->
         <div class="container">
         <div class="d-flex bd-highlight mb-3">
             <div class="me-auto p-2 bd-highlight"><h2>Danh sách tài khoản quản lý</h2></div>
@@ -119,7 +119,7 @@
             </div>
             
         </div>
-        <!--#include file="./share/taikhoanquanlyviewfooter.html"-->
+        <!--#include file="../share/taikhoanquanlyviewfooter.html"-->
     </body>
 </html>
 <%

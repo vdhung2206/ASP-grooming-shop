@@ -59,12 +59,23 @@
     }
   })
   $(document).ready(function () {
+    if (sessionStorage.getItem("suaspMSG") != null && sessionStorage.getItem("suaspMSG") != "") {
+      $("#msg").html(sessionStorage.getItem("suaspMSG"));
+      $("#msg").addClass("alert alert-success");
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+      sessionStorage.removeItem("suaspMSG");
+    }
     $(".form-range").prop('disabled', true)
     $("#tonkhotren").html("")
     $("#tonkhoduoi").html("")
     $.ajax({
       method: "get",
-      url: "controllers/danhmuc-controller.asp",
+      url: "../controllers/danhmuc-controller.asp",
       data: {
         loai: "getListDanhMuc",
       },
@@ -87,7 +98,7 @@
     if (madm != "") {
       $.ajax({
         method: "get",
-        url: "controllers/danhmuc-controller.asp",
+        url: "../controllers/danhmuc-controller.asp",
         data: {
           madm: madm,
           loai: "getList",
@@ -119,7 +130,7 @@
     //history.pushState(null, null, newUrl);
     $.ajax({
       method: "get",
-      url: "controllers/sanpham-controller.asp",
+      url: "../controllers/sanpham-controller.asp",
       data: {
         page: page,
         loai: "phantrangsanpham",

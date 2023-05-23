@@ -1,0 +1,86 @@
+<html lang="en">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <title>Tài khoản khách hàng</title>
+</head>
+
+<body>
+    <!-- #include file="../share/header.html" -->
+    <div class="container">
+        <div class="me-auto p-2 bd-highlight">
+            <h2>Danh sách các chương trình giảm giá </h2>
+        </div>
+        <div class="table-responsive">
+            <table id="mytable" class="table table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">Mã giảm giá</th>
+                        <th scope="col">Tên chương trình</th>
+                        <th scope="col">Điều kiện áp dụng</th>
+                        <th scope="col">Bắt đầu</th>
+                        <th scope="col">Kết thúc</th>
+                        <th scope="col">Phần trăm</th>
+                        <th scope="col">Số tiền</th>
+                        <th scope="col">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody id="result">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            loadData();
+        });
+        function loadData() {
+            $.ajax({
+                method: "get",
+                url: "../controllers/giamgia-controller.asp",
+                data: {
+                    loai: "laydanhsachgiamgia",
+                }
+                ,
+                success: function (response) {
+                    const obj = JSON.parse(response);
+                    var danhsachgiamgia = obj.data.danhsachgiamgia
+                    var str = ""
+                    danhsachgiamgia.forEach(giamgia => {
+                        str += "<tr>";
+                        str += "<td>";
+                        str += giamgia.magg;
+                        str += "</td>";
+                        str += "<td>";
+                        str += giamgia.tengg;
+                        str += "</td>";
+                        str += "<td>";
+                        str += giamgia.dkkhachhang;
+                        str += "</td>";
+                        str += "<td>";
+                        str += giamgia.batdau;
+                        str += "<td>";
+                        str += giamgia.ketthuc;
+                        str += "</td>";
+                        str += "<td>";
+                        str += giamgia.phantramgg;
+                        str += "</td>";
+                        str += "<td>";
+                        str += giamgia.sotiengg;
+                        str += "</td>";
+                        str += "<td>";
+                        str += "</tr>";
+                    }
+                    );
+                    $("#result").html(str);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

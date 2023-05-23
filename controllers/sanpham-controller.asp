@@ -24,49 +24,130 @@
     sapxepgia = request.querystring("sapxepgia")
     sapxeptonkho = request.querystring("sapxeptonkho")
     if(loai="themsanpham") then
-        ' set dmsp = new DanhMucSanPham
-        ' set lsp = new LoaiSanPham
+        set sp = new SanPham
         Dim uploader   
         Set uploader=new AspUploader 
         Dim mvcfile						
         Set mvcfile=uploader.GetUploadedFile(Request.Form("myuploader"))
         dim hinhanh
-        hinhanh= "image/" + mvcfile.FileName
+        hinhanh= "../image/" + mvcfile.FileName
         tenspthem = request.form("tenspthem")
         maloaispthem = request.form("maloaispthem")
         hangspthem = request.form("hangspthem")
         sltonkhothem = request.form("sltonkhothem")
         giagocspthem = request.form("giagocspthem")
         chitietspthem = request.form("chitietspthem")
-        ' if(tenspthem<>"") then
-        '     if(loaisp.checkTonTai(maloaispthem)) then
-        '         if(hangspthem <>"") then
-        '             if(sltonkhothem > 0) then
-        '                 if(giagocsp >0) then
+        if(tenspthem<>"") then
+            if(sp.checkTonTaiMaLoaiSP(maloaispthem)) then
+                if(hangspthem <>"") then
+                    if(sltonkhothem > 0 and IsNumeric(sltonkhothem)) then
+                        if(giagocspthem >0 and IsNumeric(giagocspthem)) then
                             set sp = new SanPham
                             call sp.themSanPham(tenspthem, maloaispthem, hangspthem, sltonkhothem, giagocspthem, hinhanh, chitietspthem)
-        '                     response.redirect(sanpham-view.asp)
-        '                 else
-        '                     Response.Write("""status code"": ""103"",")
-        '                     Response.Write("""message"": ""Giá sản phẩm phải sản phẩm phải lớn hơn 0!"",")
-        '                     Response.Write("""data"":{ ""themSanPham"": false}")
-        '             else
-        '                 Response.Write("""status code"": ""104"",")
-        '                 Response.Write("""message"": ""Số lượng sản phẩm phải lớn hơn 0!"",")
-        '                 Response.Write("""data"":{ ""themSanPham"": false}")
-        '         else
-        '             Response.Write("""status code"": ""103"",")
-        '             Response.Write("""message"": ""Hãng sản phẩm không được trống!"",")
-        '             Response.Write("""data"":{ ""themSanPham"": false}")
-        '     else
-        '         Response.Write("""status code"": ""102"",")
-        '         Response.Write("""message"": ""Loại sản phẩm không tồn tại!"",")
-        '         Response.Write("""data"":{ ""themSanPham"": false}")
-        ' else
-        '     Response.Write("""status code"": ""101"",")
-        '     Response.Write("""message"": ""Tên sản phẩm không được trống!"",")
-        '     Response.Write("""data"":{ ""themSanPham"": false}")
-        ' end if
+                            response.redirect("/views/sanpham-view.asp")
+                        else
+                            Response.Write("""status code"": ""103"",")
+                            Response.Write("""message"": ""Giá sản phẩm phải sản phẩm phải lớn hơn 0 và phải là số!"",")
+                            Response.Write("""data"":{ ""themSanPham"": false}")
+                            response.redirect("themsanpham-view.asp")
+                            session("errmsgthem") ="Giá sản phẩm phải sản phẩm phải lớn hơn 0 và phải là số!" 
+                        end if
+                    else
+                        Response.Write("""status code"": ""104"",")
+                        Response.Write("""message"": ""Số lượng sản phẩm phải lớn hơn 0!"",")
+                        Response.Write("""data"":{ ""themSanPham"": false}")
+                        response.redirect("themsanpham-view.asp")
+                        session("errmsgthem") ="Số lượng sản phẩm phải lớn hơn 0 và là số!" 
+                    end if
+                else
+                    Response.Write("""status code"": ""103"",")
+                    Response.Write("""message"": ""Hãng sản phẩm không được trống!"",")
+                    Response.Write("""data"":{ ""themSanPham"": false}")
+                    response.redirect("themsanpham-view.asp")
+                    session("errmsgthem") ="Hãng sản phẩm không được trống!" 
+                end if
+            else
+                Response.Write("""status code"": ""102"",")
+                Response.Write("""message"": ""Loại sản phẩm không tồn tại!"",")
+                Response.Write("""data"":{ ""themSanPham"": false}")
+                response.redirect("themsanpham-view.asp")
+                session("errmsgthem") ="Loại sản phẩm không tồn tại!" 
+            end if   
+        else
+            Response.Write("""status code"": ""101"",")
+            Response.Write("""message"": ""Tên sản phẩm không được trống!"",")
+            Response.Write("""data"":{ ""themSanPham"": false}")
+            response.redirect("themsanpham-view.asp")
+            session("errmsgthem") ="Tên sản phẩm không được trống!" 
+        end if
+    end if
+
+    if(loai="chinhsuathongtinsanpham") then
+        set sp = new SanPham
+        maspsua = request.form("masp")
+        tenspsua = request.form("tensp")
+        danhmucspsua = request.form("tensp")
+        loaispsua = request.form("loaisp")
+        hangspsua = request.form("hangsp")
+        sltonkhospsua = request.form("sltonkhosp")
+        giagocspsua = request.form("giagocsp")
+        giagiamspsua = request.form("giagiamsp")
+        trangthaispsua = request.form("trangthai")
+        chitietspsua = request.form("chitietsp")
+        Response.Write("{")
+        if(tenspsua<>"") then
+            if(sp.checkTonTaiMaLoaiSP(loaispsua)) then
+                if(hangspsua <>"") then
+                    if(sltonkhospsua > 0 and IsNumeric(sltonkhospsua)) then
+                        if(giagocspsua >0 and IsNumeric(giagocspsua)) then
+                            if(giagiamspsua >=0 and IsNumeric(giagiamspsua)) then
+                                set sp = new SanPham
+                                call sp.suaThongTin(maspsua, tenspsua, loaispsua, hangspsua, sltonkhospsua, giagocspsua, giagiamspsua, trangthaispsua, chitietspsua)     
+                                Response.Write("""status code"": ""103"",")
+                                Response.Write("""message"": ""Thành công!"",")
+                                Response.Write("""data"":{ ""suaSanPham"": true}")                   
+                            else
+                                Response.Write("""status code"": ""103"",")
+                                Response.Write("""message"": ""Giảm giá sản phẩm lớn hơn 0 và phải là số!"",")
+                                Response.Write("""data"":{ ""suaSanPham"": false}") 
+                                session("errmsgsua") ="Giá sản phẩm phải sản phẩm phải lớn hơn 0 và phải là số!" 
+                            end if
+                        else
+                            Response.Write("""status code"": ""103"",")
+                            Response.Write("""message"": ""Giá sản phẩm phải sản phẩm phải lớn hơn 0 và phải là số!"",")
+                            Response.Write("""data"":{ ""suaSanPham"": false}")
+                            session("errmsgsua") ="Giá sản phẩm phải sản phẩm phải lớn hơn 0 và phải là số!" 
+                        end if
+                    else
+                        Response.Write("""status code"": ""104"",")
+                        Response.Write("""message"": ""Số lượng sản phẩm phải lớn hơn 0!"",")
+                        Response.Write("""data"":{ ""suaSanPham"": false}")
+                        session("errmsgsua") ="Số lượng sản phẩm phải lớn hơn 0 và là số!" 
+                    end if
+                else
+                    Response.Write("""status code"": ""103"",")
+                    Response.Write("""message"": ""Hãng sản phẩm không được trống!"",")
+                    Response.Write("""data"":{ ""suaSanPham"": false}")
+                    session("errmsgsua") ="Hãng sản phẩm không được trống!" 
+                end if
+            else
+                Response.Write("""status code"": ""102"",")
+                Response.Write("""message"": ""Loại sản phẩm không tồn tại!"",")
+                Response.Write("""data"":{ ""suaSanPham"": false}")
+                session("errmsgsua") ="Loại sản phẩm không tồn tại!" 
+            end if   
+        else
+            Response.Write("""status code"": ""101"",")
+            Response.Write("""message"": ""Tên sản phẩm không được trống!"",")
+            Response.Write("""data"":{ ""suaSanPham"": false}")
+            session("errmsgsua") ="Tên sản phẩm không được trống!" 
+        end if
+        Response.Write("}")
+        ' Response.Write("{")
+        ' Response.Write("""status code"": ""201"",")
+        ' Response.Write("""message"": """",")
+        ' Response.Write("""data"":" + """"+tenspsua+"""")
+        ' Response.Write("}")
     end if
     if(loai="laythongtinsanpham") then
         masp = request.queryString("masp")

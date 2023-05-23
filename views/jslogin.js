@@ -29,7 +29,7 @@ $(document).ready(function () {
             else{
                 $.ajax({
                     method: "get",
-                    url: "controllers/taikhoan-controller.asp",
+                    url: "../controllers/taikhoan-controller.asp",
                     data:{
                         tk: tk,
                         mk: mk,

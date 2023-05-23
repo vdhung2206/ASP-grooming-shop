@@ -65,7 +65,7 @@
   $("#confirm").click(function () {
     var tk = $("#tkmuonunbanhoacunban").val();
     var type = $("#type").val();
-    $.get("controllers/taikhoan-controller.asp", {
+    $.get("../controllers/taikhoan-controller.asp", {
       tk: tk, loai: type, function() {
       }
     }).done(function () {
@@ -215,7 +215,7 @@
     history.pushState(null, null, newUrl);
     $.ajax({
       method: "get",
-      url: "controllers/taikhoan-controller.asp",
+      url: "../controllers/taikhoan-controller.asp",
       data: {
         loaitk: "1",
         page: page,

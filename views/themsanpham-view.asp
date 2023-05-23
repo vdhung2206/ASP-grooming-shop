@@ -1,6 +1,6 @@
 <% @ Language="VBScript" %>
   <!--Step 1: Register Uploader to your page -->
-  <!-- #include file="aspuploader/include_aspuploader.asp" -->
+  <!-- #include file="../aspuploader/include_aspuploader.asp" -->
   <!DOCTYPE html>
   <html lang="en">
 
@@ -16,9 +16,9 @@
 
   <body>
 
-    <!-- #include file="./share/header.html" -->
+    <!-- #include file="../share/header.html" -->
     <div class="container col-6">
-      <form id="form-them-sp" action="controllers/sanpham-controller.asp" method="post">
+      <form id="form-them-sp" action="../controllers/sanpham-controller.asp" method="post">
         <div class="form-group">
           <input type="hidden" name="loai" value="themsanpham">
         </div>
@@ -61,7 +61,7 @@
         Set uploader=new AspUploader   
         'Step 3: Set a unique name to Uploader
         uploader.Name="myuploader"
-        uploader.SaveDirectory="image"  
+        uploader.SaveDirectory="../image"  
         uploader.AllowedFileExtensions="*.jpg,*.png,*.gif"  
         'Step 4: Render Uploader
         uploader.Render()
@@ -89,6 +89,23 @@
     }
     else {
       $("#danhmucsp").focus();
+    }
+  });
+  $("#gia-goc").focusout(function () {
+    if ($(this).val() == "") {
+      $(this).focus();
+      addAlertDanger("Giá sản phẩm không được để trống!");
+    }
+    else if ($(this).val() < 0) {
+      $(this).focus();
+      addAlertDanger("Giá sản phẩm phải lớn hơn hoặc bằng 0!");
+    }
+    else if (!(($(this).val()).match(/^\d+$/))) {
+      $(this).focus();
+      addAlertDanger("Giá sản phẩm phải là số");
+    }
+    else {
+      $("gia-goc").focus()
     }
   });
   $("#danhmucsp").focusout(function () {
@@ -144,7 +161,7 @@
     $("#ten-san-pham").focus()
     $.ajax({
       method: "get",
-      url: "controllers/danhmuc-controller.asp",
+      url: "../controllers/danhmuc-controller.asp",
       data: {
         loai: "getListDanhMuc",
       },
@@ -160,7 +177,7 @@
         $("#danhmucsp").html(str)
         $.ajax({
           method: "get",
-          url: "controllers/danhmuc-controller.asp",
+          url: "../controllers/danhmuc-controller.asp",
           data: {
             madm: madm,
             loai: "getList",
@@ -186,7 +203,7 @@
     if (madm != "") {
       $.ajax({
         method: "get",
-        url: "controllers/danhmuc-controller.asp",
+        url: "../controllers/danhmuc-controller.asp",
         data: {
           madm: madm,
           loai: "getList",

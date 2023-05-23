@@ -136,6 +136,42 @@ Class SanPham
       end if
       conndb.Close()
     end function
+
+    public function checkTonTaiMaLoaiSP(maloaisp)
+      Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+      dim sql
+      sql = "select count(*) as c from LoaiSP where MaLoaiSP = " + maloaisp
+      Set rs = connDB.execute(sql)
+      if(rs.Fields("c")>0) then
+          checkTonTaiMaLoaiSP = true
+      else
+          checkTonTaiMaLoaiSP = false
+      end if
+      connDB.Close()
+    end function
+
+    public function checkTonTaiMaDMSP(madm)
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+        dim sql
+        sql = "select count(*) as c from DanhMucSP where MaDM = " + madm
+        Set rs = connDB.execute(sql)
+        if(rs.Fields("c")>0) then
+            checkTonTaiMaDMSP = true
+        else
+            checkTonTaiMaDMSP = false
+        end if
+        connDB.Close()
+    end function
     public function phanTrangSanPham(limit, page, tenspsearch,danhmucsearch,loaispsearch,hangspsearch,sltonkhosearch1,sltonkhosearch2,giasp1search,giasp2search,trangthaisearch,sapxepphobien, sapxepgia,sapxeptonkho)
         set classSP = new SanPham
         totalRows = classSP.count(tenspsearch,danhmucsearch,loaispsearch,hangspsearch,sltonkhosearch1,sltonkhosearch2,giaspsearch,trangthaisearch)
@@ -352,7 +388,31 @@ End Function
       Ceil = Ceil + 1
       end if
     end function
-
+    
+    public function suaThongTin(masp,tensp,maloaisp,hangsp,sltonkho,giagocsp,giamgiasp,trangthai,chitiet)
+      Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+        Set cmdPrep = Server.CreateObject("ADODB.Command")
+        cmdPrep.ActiveConnection = connDB
+        cmdPrep.CommandType = 1
+        cmdPrep.Prepared = True
+        cmdPrep.CommandText = "Update SanPham set TenSp = ?, MaLoaiSP =?, HangSP =?, SLTonKho =?, GiaGocSP = ?, GiamGiaSP=?, TrangThai=?, ChiTiet=? where MaSP = ?"
+        cmdPrep.Parameters(0)=tensp
+        cmdPrep.Parameters(1)=maloaisp
+        cmdPrep.Parameters(2)=hangsp
+        cmdPrep.Parameters(3)=sltonkho
+        cmdPrep.Parameters(4)=giagocsp
+        cmdPrep.Parameters(5)=giamgiasp
+        cmdPrep.Parameters(6)=trangthai
+        cmdPrep.Parameters(7)=chitiet
+        cmdPrep.Parameters(8)=masp
+        cmdPrep.execute
+        conndb.Close()
+    end function
     public function count(tensp,danhmuc,loaisp,hangsp,sltonkho1,sltonkho2,giasp,trangthai)
       Dim sql
       sql ="select count(*) as c from view1_SanPham where MaSP !='' "
@@ -392,4 +452,5 @@ End Function
     end function
 End Class
   set sp = new SanPham
+  'response.write(sp.suaThongTin("2","Hanz de Fuko Quicksand","1","Hanz De Fuko keke","9","560000","0","1","ko co gi"))
 %>
