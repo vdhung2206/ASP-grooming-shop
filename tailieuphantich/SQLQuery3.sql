@@ -117,3 +117,6 @@ select count (TenLoaiSP) as c from DanhMucSP join LoaiSP on DanhMucSP.MaDM = Loa
 
 select min (SLTonKho) from SanPham where MaSP !=''
 select count(*) as c from LoaiSP where MaLoaiSP ='35'
+
+create view view1_GiamGia as
+select * from (GiamGia join ChiTietGiamGia on (GiamGia.IDGiamGia) = ChiTietGiamGia.IDGiamGia)

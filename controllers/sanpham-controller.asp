@@ -149,6 +149,28 @@
         ' Response.Write("""data"":" + """"+tenspsua+"""")
         ' Response.Write("}")
     end if
+    if(loai="laydanhsachhang") then
+        set sp = new SanPham
+        Set danhsachhang = Server.CreateObject("Scripting.Dictionary")
+        set danhsachhang = sp.getHang()
+        Response.Write("{")
+        Response.Write("""status code"": ""20"",")
+        Response.Write("""message"": """",")
+        Response.Write("""data"":{ ""danhsachhang"": [")
+        count = 0
+        for each z in danhsachhang
+            count = count + 1
+            Response.Write("""")
+            response.write(danhsachhang(z).HangSP)
+            Response.Write("""")
+            if(count < danhsachhang.count) then
+                response.write(",")
+            end if
+        next
+        Response.Write("]")
+        Response.Write("}")
+        Response.Write("}")
+    end if
     if(loai="laythongtinsanpham") then
         masp = request.queryString("masp")
         set sp = new SanPham
@@ -206,6 +228,61 @@
             response.write(spx.TrangThai)
             response.write("""")
             Response.Write("}")
+        Response.Write("}")
+    end if
+
+    if(loai="timkiemsanphamtheohang") then
+        hangspsearch = request.querystring("hangsp")
+        set sp = new SanPham
+        set danhsachsanpham = sp.timkiemsanphamtheohang(hangspsearch)
+        Response.Write("{")
+        Response.Write("""status code"": ""20"",")
+        Response.Write("""message"": """",")
+        Response.Write("""data"":{ ""danhsachsanpham"": [")
+        count = 0
+        for each z in danhsachsanpham
+            count = count + 1
+            Response.Write("{")
+            response.write("""masp"": """)
+            response.write(danhsachsanpham(z).MaSP)
+            Response.Write(""",")
+            response.write("""tensp"": """)
+            response.write(danhsachsanpham(z).TenSP)
+            Response.Write("""")
+            Response.Write("}")
+            if(count < danhsachsanpham.count) then
+                response.write(",")
+            end if
+        next
+        Response.Write("]")
+        Response.Write("}")
+        Response.Write("}")
+    end if
+    if(loai="timkiemsanpham") then
+        tenspsearch = request.querystring("tensp")
+        set sp = new SanPham
+        set danhsachsanpham = sp.timKiemSanPham(tenspsearch)
+        Response.Write("{")
+        Response.Write("""status code"": ""20"",")
+        Response.Write("""message"": """",")
+        Response.Write("""data"":{ ""danhsachsanpham"": [")
+        count = 0
+        for each z in danhsachsanpham
+            count = count + 1
+            Response.Write("{")
+            response.write("""masp"": """)
+            response.write(danhsachsanpham(z).MaSP)
+            Response.Write(""",")
+            response.write("""tensp"": """)
+            response.write(danhsachsanpham(z).TenSP)
+            Response.Write("""")
+            Response.Write("}")
+            if(count < danhsachsanpham.count) then
+                response.write(",")
+            end if
+        next
+        Response.Write("]")
+        Response.Write("}")
         Response.Write("}")
     end if
     if(loai="phantrangsanpham") then

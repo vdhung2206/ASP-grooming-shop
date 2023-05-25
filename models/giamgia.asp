@@ -67,7 +67,42 @@
         p_sotiengg = value
     End Property
     ' getter and setter
-    public function getList()
+    public function getList(magg,tengg,batdautruoc,batdautu,ketthuctruoc,ketthuctu,tichdiem1,tichdiem2,tinhtrang)
+        set gg = new GiamGia
+        Dim sql
+        sql = "select * from GiamGia where TenGG != ''"
+        if(magg <> "") then
+          sql = sql + " and MaGG like '%" & magg & "%'"
+        end if
+        if (tengg <>"") then
+          sql = sql + " and TenGG like '%" & tengg & "%'"
+        end if
+        if (batdautruoc <>"") then
+          sql = sql + " and BatDau < '" & batdautruoc & "'"
+        end if
+        if (batdautu <>"") then
+          sql = sql + " and BatDau >= '" & batdautu & "'"
+        end if
+        if (ketthuctruoc <>"") then
+          sql = sql + " and KetThuc < '" & ketthuctruoc & "'"
+        end if
+        if (ketthuctu <>"") then
+          sql = sql + " and KetThuc > '" & ketthuctu & "'"
+        end if
+        if (tichdiem1 <>"") then
+          sql = sql + " and DKKhachHang >= " & tichdiem1 & ""
+        end if
+        if (tichdiem2 <>"") then
+          sql = sql + " and DKKhachHang <= " & tichdiem2 & ""
+        end if
+        if(tinhtrang ="0")then
+          sql = sql +" and KetThuc < getDate()"
+        end If
+        if(tinhtrang ="1")then
+          sql = sql +" and KetThuc >= getDate()"
+        end If
+
+        sql = sql + "order by DKKhachHang"
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection
@@ -75,13 +110,15 @@
         connDB.ConnectionString = strConnection
         connDB.Open()
 
-        Dim danhsaschgiamgia
+        Dim danhsachgiamgia
         Set danhsachgiamgia = Server.CreateObject("Scripting.Dictionary")
 
-        Dim gg, seq
-
-        Set rs = connDB.execute("select * from GiamGia")
-        seq = 0
+        Set cmdPrep = Server.CreateObject("ADODB.Command")
+        cmdPrep.ActiveConnection = connDB
+        cmdPrep.CommandType = 1
+        cmdPrep.Prepared = True
+        cmdPrep.CommandText = sql
+        Set rs = cmdPrep.execute
         Do While Not rs.EOF
             seq = seq+1
             set gg = New GiamGia
@@ -99,5 +136,38 @@
         connDB.Close()
         set getList = danhsachgiamgia
     end function
+
+     function minTichDiem() 
+      Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Dim tk, seq
+        Set rs = connDB.execute("select min(DKKhachHang) as c from GiamGia ")
+        If Not rs.EOF then
+          minTichDiem = rs.Fields("c")
+        end if
+        connDB.Close()
+    end function
+
+    function maxTichDiem() 
+      Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Dim tk, seq
+        Set rs = connDB.execute("select max(DKKhachHang) as c from GiamGia ")
+        If Not rs.EOF then
+          maxTichDiem = rs.Fields("c")
+        end if
+        connDB.Close()
+    end function
 end class
+    set gg = new GiamGia
 %>

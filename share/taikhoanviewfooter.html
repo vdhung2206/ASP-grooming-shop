@@ -17,6 +17,8 @@
   var sapxepten = ""
   var sapxeptichdiem = ""
   var sapxepdiachi = ""
+  var mintichdiem
+  var maxtichdiem
   $("#customRange1").mousemove(function () {
     var val = $(this).val();
     $("#tichdiem").html(val)
@@ -243,6 +245,10 @@
         const obj = JSON.parse(response);
         var danhsachtaikhoan = obj.data.danhsachtaikhoan
         var str = ""
+        mintichdiem = obj.data.minTichDiem
+        maxtichdiem = obj.data.maxTichDiem
+        $("#customRange1").prop("min",mintichdiem)
+        $("#customRange1").prop("max", maxtichdiem)
         danhsachtaikhoan.forEach(taikhoan => {
           str += "<tr>";
           str += "<td>";

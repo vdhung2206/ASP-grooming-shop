@@ -8,7 +8,16 @@
     
     if(loai="laydanhsachgiamgia") then
         set gg = new GiamGia
-        set danhsachgiamgia = gg.getList() 
+        magg = request.querystring("magg")
+        tengg = request.querystring("tengg")
+        batdautruoc = request.querystring("batdautruoc")
+        batdautu = request.querystring("batdautu")
+        ketthuctruoc = request.querystring("ketthuctruoc")
+        ketthuctu = request.querystring("ketthuctu")
+        tichdiem1 = request.querystring("tichdiem1")
+        tichdiem2 = request.querystring("tichdiem2")
+        tinhtrang = request.querystring("tinhtrang")
+        set danhsachgiamgia = gg.getList(magg,tengg,batdautruoc,batdautu,ketthuctruoc,ketthuctu,tichdiem1,tichdiem2,tinhtrang)
         Response.Write("{")
         Response.Write("""status code"": ""6"",")
         Response.Write("""message"": """",")
@@ -55,7 +64,13 @@
             end if
         next
         Response.Write("]")
+        Response.Write(",""minTichDiem"":")
+        Response.Write(gg.minTichDiem())
+        Response.Write("")
+        Response.Write(",""maxTichDiem"":")
+        Response.Write(gg.maxTichDiem)
         Response.Write("}")
         Response.Write("}")
     end if
+
 %>

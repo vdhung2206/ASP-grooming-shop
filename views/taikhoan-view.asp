@@ -46,7 +46,7 @@
                 </div>
                 <div  class="form-group row mt-3" style="padding-left: 0; margin-left:0">
                     <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
-                        <label for="customRange1" class="form-label">Tích điểm trên: </label>
+                        <label for="customRange1" class="form-label">Tích điểm ≥ </label>
                         <label id="tichdiem"></label>
                     </div>
                     <div class="col-lg-3" >

@@ -55,7 +55,7 @@
                 </div>
                 <div  class="form-group row mt-3" style="padding-left: 0; margin-left:0">
                     <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
-                        <label for="customRange1" class="form-label">Số lượng tồn trên: </label>
+                        <label for="customRange1" class="form-label">Số lượng tồn ≥: </label>
                         <label id="tonkhotren"></label>
                     </div>
                     <div class="col-lg-3" >
@@ -70,7 +70,7 @@
                 </div>
                 <div class="form-group row mt-3" style="padding-left: 0; margin-left:0" >
                     <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
-                        <label for="customRange1" class="form-label">Số lượng tồn dưới: </label>
+                        <label for="customRange1" class="form-label">Số lượng tồn ≤: </label>
                         <label id="tonkhoduoi"></label>
                     </div>
                     <div class="col-lg-3" >

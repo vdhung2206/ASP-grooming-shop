@@ -198,10 +198,10 @@ Class SanPham
           sql = sql + " and HangSP like '%" & hangspsearch & "%'"
         end if
         if (sltonkhosearch1 <>"") then
-          sql = sql + " and SLTonKho > " & sltonkhosearch1 & ""
+          sql = sql + " and SLTonKho >= " & sltonkhosearch1 & ""
         end if
         if (sltonkhosearch2 <>"") then
-          sql = sql + " and SLTonKho < " & sltonkhosearch2 & ""
+          sql = sql + " and SLTonKho <= " & sltonkhosearch2 & ""
         end if
         if (giasp1search <>"") then
           sql = sql + " and GiaSP >= " & giasp1search & ""
@@ -227,6 +227,9 @@ Class SanPham
         end if
         if (sapxepgia ="0") then
           sql = sql + " GiaSP desc,"
+        end if
+        if (sapxeptonkho="0") then
+          sql = sql + " SLTonKho,"
         end if
         if (sapxeptonkho="1") then
           sql = sql + " SLTonKho desc,"
@@ -314,10 +317,10 @@ End Function
         sql = sql + " and HangSP like '%" & hangsp & "%'"
       end if
       if (sltonkho1 <>"") then
-        sql = sql + " and SLTonKho > " & sltonkho1 & ""
+        sql = sql + " and SLTonKho >= " & sltonkho1 & ""
       end if
       if (sltonkho2 <>"") then
-        sql = sql + " and SLTonKho < " & sltonkho2 & ""
+        sql = sql + " and SLTonKho <= " & sltonkho2 & ""
       end if
       if (giasp <>"") then
         sql = sql + " and GiaSP = " & giasp & ""
@@ -356,10 +359,10 @@ End Function
         sql = sql + " and HangSP like '%" & hangsp & "%'"
       end if
       if (sltonkho1 <>"") then
-        sql = sql + " and SLTonKho > " & sltonkho1 & ""
+        sql = sql + " and SLTonKho >= " & sltonkho1 & ""
       end if
       if (sltonkho2 <>"") then
-        sql = sql + " and SLTonKho < " & sltonkho2 & ""
+        sql = sql + " and SLTonKho <= " & sltonkho2 & ""
       end if
       if (giasp <>"") then
         sql = sql + " and GiaSP = " & giasp & ""
@@ -388,30 +391,114 @@ End Function
       Ceil = Ceil + 1
       end if
     end function
-    
-    public function suaThongTin(masp,tensp,maloaisp,hangsp,sltonkho,giagocsp,giamgiasp,trangthai,chitiet)
-      Dim connDB
+    public function timkiemsanphamtheohang(hangsp)
+        set classSP = new SanPham
+        Dim sql
+        sql = "select * from view1_SanPham where HangSP like'%" & HangSP & "%'"
+        Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection
         strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
         connDB.ConnectionString = strConnection
         connDB.Open()
+        Dim danhsachsanpham
+        Set danhsachsanpham = Server.CreateObject("Scripting.Dictionary")
+
         Set cmdPrep = Server.CreateObject("ADODB.Command")
         cmdPrep.ActiveConnection = connDB
         cmdPrep.CommandType = 1
         cmdPrep.Prepared = True
-        cmdPrep.CommandText = "Update SanPham set TenSp = ?, MaLoaiSP =?, HangSP =?, SLTonKho =?, GiaGocSP = ?, GiamGiaSP=?, TrangThai=?, ChiTiet=? where MaSP = ?"
-        cmdPrep.Parameters(0)=tensp
-        cmdPrep.Parameters(1)=maloaisp
-        cmdPrep.Parameters(2)=hangsp
-        cmdPrep.Parameters(3)=sltonkho
-        cmdPrep.Parameters(4)=giagocsp
-        cmdPrep.Parameters(5)=giamgiasp
-        cmdPrep.Parameters(6)=trangthai
-        cmdPrep.Parameters(7)=chitiet
-        cmdPrep.Parameters(8)=masp
-        cmdPrep.execute
+        cmdPrep.CommandText = sql
+        Set rs = cmdPrep.execute
+        Do While Not rs.EOF
+            seq = seq+1
+            set mySP = New SanPham
+            mySP.MaSP = rs.Fields("MaSP")
+            mySP.TenSP = rs.Fields("TenSP")
+            danhsachsanpham.add seq, mySP
+            rs.MoveNext
+        Loop 
         conndb.Close()
+        set timkiemsanphamtheohang = danhsachsanpham
+    end function
+    public function timKiemSanPham(tensp)
+        set classSP = new SanPham
+        Dim sql
+        sql = "select * from view1_SanPham where TenSP like'%" & tensp & "%'"
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Dim danhsachsanpham
+        Set danhsachsanpham = Server.CreateObject("Scripting.Dictionary")
+
+        Set cmdPrep = Server.CreateObject("ADODB.Command")
+        cmdPrep.ActiveConnection = connDB
+        cmdPrep.CommandType = 1
+        cmdPrep.Prepared = True
+        cmdPrep.CommandText = sql
+        Set rs = cmdPrep.execute
+        Do While Not rs.EOF
+            seq = seq+1
+            set mySP = New SanPham
+            mySP.MaSP = rs.Fields("MaSP")
+            mySP.TenSP = rs.Fields("TenSP")
+            danhsachsanpham.add seq, mySP
+            rs.MoveNext
+        Loop 
+        conndb.Close()
+        set timkiemsanpham = danhsachsanpham
+    end function
+    public function getHang()
+      Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+
+      Dim danhsachhang
+      Set danhsachhang = Server.CreateObject("Scripting.Dictionary")
+
+      dim sql
+      sql = "select distinct HangSP from SanPham"
+      Set rs = connDB.execute(sql)
+      Do While Not rs.EOF
+        seq = seq+1
+        set mySP = New SanPham
+        mySP.HangSP = rs.Fields("HangSP")
+        danhsachhang.add seq, mySP
+        rs.MoveNext
+      Loop
+        set getHang = danhsachhang
+      conndb.Close()
+    end function
+    public function suaThongTin(masp,tensp,maloaisp,hangsp,sltonkho,giagocsp,giamgiasp,trangthai,chitiet)
+      Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+      Set cmdPrep = Server.CreateObject("ADODB.Command")
+      cmdPrep.ActiveConnection = connDB
+      cmdPrep.CommandType = 1
+      cmdPrep.Prepared = True
+      cmdPrep.CommandText = "Update SanPham set TenSp = ?, MaLoaiSP =?, HangSP =?, SLTonKho =?, GiaGocSP = ?, GiamGiaSP=?, TrangThai=?, ChiTiet=? where MaSP = ?"
+      cmdPrep.Parameters(0)=tensp
+      cmdPrep.Parameters(1)=maloaisp
+      cmdPrep.Parameters(2)=hangsp
+      cmdPrep.Parameters(3)=sltonkho
+      cmdPrep.Parameters(4)=giagocsp
+      cmdPrep.Parameters(5)=giamgiasp
+      cmdPrep.Parameters(6)=trangthai
+      cmdPrep.Parameters(7)=chitiet
+      cmdPrep.Parameters(8)=masp
+      cmdPrep.execute
+      conndb.Close()
     end function
     public function count(tensp,danhmuc,loaisp,hangsp,sltonkho1,sltonkho2,giasp,trangthai)
       Dim sql
@@ -429,10 +516,10 @@ End Function
         sql = sql + " and HangSP like '%" & hangsp & "%'"
       end if
       if (sltonkho1 <>"") then
-        sql = sql + " and SLTonKho > " & sltonkho1 & ""
+        sql = sql + " and SLTonKho >= " & sltonkho1 & ""
       end if
       if (sltonkho2 <>"") then
-        sql = sql + " and SLTonKho < " & sltonkho2 & ""
+        sql = sql + " and SLTonKho <= " & sltonkho2 & ""
       end if
       if (giasp <>"") then
         sql = sql + " and GiaSP = " & giasp & ""

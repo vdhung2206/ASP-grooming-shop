@@ -78,6 +78,12 @@
         Response.Write(",""totalPages"":")
         Response.Write(tk.Ceil(tk.count(loaitk,taikhoansearch,tennguoidung,diachi,sodienthoai,tichdiem,trangthai)/limit))
         Response.Write("")
+        Response.Write(",""minTichDiem"":")
+        Response.Write(tk.minTichDiem())
+        Response.Write("")
+        Response.Write(",""maxTichDiem"":")
+        Response.Write(tk.maxTichDiem)
+        Response.Write("")
         Response.Write("}")
         Response.Write("}")
     end if

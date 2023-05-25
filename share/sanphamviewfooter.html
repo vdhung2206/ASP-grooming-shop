@@ -13,7 +13,6 @@
   $("#formtimkiem").submit(function (e) {
     e.preventDefault()
     tensp = $("#tensp").val();
-    console.log(tensp)
     madm = $("#danhmucsp option:selected").val();
     loaisp = $("#loaisp option:selected").val();
     hangsp = $("#hangsp").val();
@@ -21,12 +20,12 @@
       slton1 = $("#customRange1").val()
       slton2 = $("#customRange2").val()
     }
-    else{
-      slton1="";
-      slton2="";
+    else {
+      slton1 = "";
+      slton2 = "";
     }
     sapxeptonkho = $("#sapxeptonkho").find(":selected").val()
-    selectedValue
+    selectedValue =""
     tinhtrang = document.getElementsByName('checkbox1');
     for (var i = 0, length = tinhtrang.length; i < length; i++) {
       if (tinhtrang[i].checked) {
@@ -36,15 +35,21 @@
     }
     loadData(1)
   })
+  $(document).on('input', '#customRange1', function () {
+    var val1 = $(this).val();
+    if (parseInt(val1) > parseInt($("#customRange2").val())) {
+      $(this).val($("#customRange2").val())
+    }
+    $("#tonkhotren").html($(this).val())
+  });
+  $(document).on('input', '#customRange2', function () {
+    var val1 = $(this).val();
+    if (parseInt(val1) < parseInt($("#customRange1").val())) {
+      $(this).val($("#customRange1").val())
+    }
+    $("#tonkhoduoi").html($(this).val())
+  });
 
-  $("#customRange1").mousemove(function () {
-    var val1 = $("#customRange1").val();
-    $("#tonkhotren").html(val1)
-  })
-  $("#customRange2").mousemove(function () {
-    var val1 = $("#customRange2").val();
-    $("#tonkhoduoi").html(val1)
-  })
   $("#flexCheckDefault").change(function () {
     if ($('#flexCheckDefault').is(':checked')) {
       $(".form-range").prop('disabled', false)
@@ -59,6 +64,18 @@
     }
   })
   $(document).ready(function () {
+    $.ajax({
+      method: "get",
+      url: "../controllers/sanpham-controller.asp",
+      data: {
+        loai: "phantrangsanpham",
+      },
+      success: function(response){
+        const obj = JSON.parse(response);
+        $("#customRange1").val(obj.data.mintonkhoall)
+        $("#customRange2").val(obj.data.maxtonkhoall)
+      }
+    })
     if (sessionStorage.getItem("suaspMSG") != null && sessionStorage.getItem("suaspMSG") != "") {
       $("#msg").html(sessionStorage.getItem("suaspMSG"));
       $("#msg").addClass("alert alert-success");
@@ -146,11 +163,10 @@
       ,
       success: function (response) {
         const obj = JSON.parse(response);
-        var mid = Math.round((obj.data.mintonkho + obj.data.maxtonkho) / 2)
-        $("#customRange1").prop("min", obj.data.mintonkhoall-1)
-        $("#customRange2").prop("max", obj.data.maxtonkhoall+1)
-        $("#customRange1").prop("max", mid)
-        $("#customRange2").prop("min", mid)
+        $("#customRange1").prop("min", obj.data.mintonkhoall)
+        $("#customRange2").prop("max", obj.data.maxtonkhoall)
+        $("#customRange1").prop("max", obj.data.maxtonkhoall)
+        $("#customRange2").prop("min", obj.data.mintonkhoall)
         var danhsachsanpham = obj.data.danhsachsanpham
         var str = ""
         danhsachsanpham.forEach(sanpham => {
@@ -189,7 +205,7 @@
           str += "</td>";
           str += "<td>";
           str += "<form action=\"chitietsanpham-view.asp\">"
-          str += "<input type=\"hidden\" name=\"masp\" value=\"" + sanpham.masp +"\">"
+          str += "<input type=\"hidden\" name=\"masp\" value=\"" + sanpham.masp + "\">"
           str += "<input type=\"hidden\" name=\"loai\" value=\"laythongtinsanpham\">";
           str += '<button type="submit" class="btn btn-success")">Chi tiết</button>';
           str += "</form>";

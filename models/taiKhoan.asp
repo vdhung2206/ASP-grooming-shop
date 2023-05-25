@@ -111,6 +111,37 @@ connDB.ConnectionString = strConnection
       end if
     end function
 
+    function minTichDiem() 
+      Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Dim tk, seq
+        Set rs = connDB.execute("select min(TichDiem) as c from TaiKhoan where LoaiTK = '0'")
+        If Not rs.EOF then
+          minTichDiem = rs.Fields("c")
+        end if
+        connDB.Close()
+    end function
+
+    function maxTichDiem() 
+      Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Dim tk, seq
+        Set rs = connDB.execute("select max(TichDiem) as c from TaiKhoan where LoaiTK = '0'")
+        If Not rs.EOF then
+          maxTichDiem = rs.Fields("c")
+        end if
+        connDB.Close()
+    end function
     function checkPage(cond, ret) 
       if cond=true then
         Response.write ret
@@ -149,7 +180,7 @@ connDB.ConnectionString = strConnection
           sql = sql + " and SDT like '%" & sodienthoai & "%'"
         end if
         if (tichdiem <>"") then
-          sql = sql + " and TichDiem > " & tichdiem & ""
+          sql = sql + " and TichDiem >= " & tichdiem & ""
         end if
         if (trangthai <>"") then
           sql = sql + " and TinhTrang = " & trangthai & ""
@@ -236,7 +267,7 @@ connDB.ConnectionString = strConnection
         sql = sql + " and SDT like '%" & sodienthoai & "%'"
       end if
       if (tichdiem <>"") then
-        sql = sql + " and TichDiem > " & tichdiem & ""
+        sql = sql + " and TichDiem >= " & tichdiem & ""
       end if
       if (trangthai <>"") then
         sql = sql + " and TinhTrang = " & trangthai & ""
@@ -440,5 +471,4 @@ connDB.ConnectionString = strConnection
     end function
   End Class
   set tk = new TaiKhoan
-  call tk.phanTrangTaiKhoan("0",10,1,"","","","","","","","","")
 %>
