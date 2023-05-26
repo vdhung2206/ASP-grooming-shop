@@ -5,7 +5,32 @@
         loai = request.form("loai")
     end if
     Set danhsachgiamgia = Server.CreateObject("Scripting.Dictionary")
-    
+    if(loai="taochuongtrinhgiamgia") then
+        magg = request.form("magg")
+        tengg = request.form("tengg")
+        tichdiemgg = request.form("tichdiemgg")
+        listspgg = request.form("listspgg")
+        danhmucgg=request.form("danhmucgg")
+        hangspgg= request.form("hangspgg")
+        loaispgg = request.form("loaispgg")
+        sotiengg = request.form("sotiengg")
+        phantramgg: request.form("phantramgg")
+        ngaybatdaugg: request.form("ngaybatdaugg")
+        ngayketthucgg: request.form("ngayketthucgg")
+        response.write(magg)
+        response.write(tengg)
+        response.write(tichdiemgg)
+        response.write(listspgg)
+        response.write(danhmucgg)
+        response.write(hangspgg)
+        response.write(loaispgg)
+        response.write(sotiengg)
+        response.write(phantramgg)
+        response.write(ngaybatdaugg)
+        response.write(ngayketthucgg)
+
+    end if
+
     if(loai="laydanhsachgiamgia") then
         set gg = new GiamGia
         magg = request.querystring("magg")

@@ -391,40 +391,34 @@ End Function
       Ceil = Ceil + 1
       end if
     end function
-    public function timkiemsanphamtheohang(hangsp)
+    public function timKiemSanPham(tensp,hangsp,danhmucsp,loaisp)
         set classSP = new SanPham
         Dim sql
-        sql = "select * from view1_SanPham where HangSP like'%" & HangSP & "%'"
-        Dim connDB
-        set connDB = Server.CreateObject("ADODB.Connection")
-        Dim strConnection
-        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
-        connDB.ConnectionString = strConnection
-        connDB.Open()
-        Dim danhsachsanpham
-        Set danhsachsanpham = Server.CreateObject("Scripting.Dictionary")
-
-        Set cmdPrep = Server.CreateObject("ADODB.Command")
-        cmdPrep.ActiveConnection = connDB
-        cmdPrep.CommandType = 1
-        cmdPrep.Prepared = True
-        cmdPrep.CommandText = sql
-        Set rs = cmdPrep.execute
-        Do While Not rs.EOF
-            seq = seq+1
-            set mySP = New SanPham
-            mySP.MaSP = rs.Fields("MaSP")
-            mySP.TenSP = rs.Fields("TenSP")
-            danhsachsanpham.add seq, mySP
-            rs.MoveNext
-        Loop 
-        conndb.Close()
-        set timkiemsanphamtheohang = danhsachsanpham
-    end function
-    public function timKiemSanPham(tensp)
-        set classSP = new SanPham
-        Dim sql
-        sql = "select * from view1_SanPham where TenSP like'%" & tensp & "%'"
+        if (tensp<>"" or hangsp<>"" or danhmucsp<>"" or loaisp<>"") then
+          sql = "select * from view1_SanPham where"
+          if(tensp <>"") then
+            sql = sql +" TenSP like'%" & tensp & "%' and"
+          end if
+          if(hangsp <>"") then
+              sql = sql +" HangSP ='" & hangsp & "' and"
+          end if
+          if(danhmucsp <>"") then
+            sql = sql +" MaDM =" & danhmucsp & "and"
+          end if
+          if(danhmucsp ="")then
+            sql = sql +" MaDM !='' and"
+          end if
+          if(loaisp <>"") then
+            sql = sql +" MaLoaiSP =" & loaisp & "and"
+          end if
+          if(danhmucsp ="")then
+            sql = sql +" MaLoaiSP !='' and"
+          end if
+          sql = Left(sql, Len(sql) - 3)
+        else
+          sql = "select * from view1_SanPham where 1=2"
+        end if
+        'response.write(sql)
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection
@@ -539,5 +533,6 @@ End Function
     end function
 End Class
   set sp = new SanPham
+  call sp.timkiemsanpham("","","","")
   'response.write(sp.suaThongTin("2","Hanz de Fuko Quicksand","1","Hanz De Fuko keke","9","560000","0","1","ko co gi"))
 %>

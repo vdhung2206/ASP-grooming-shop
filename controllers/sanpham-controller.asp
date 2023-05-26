@@ -230,38 +230,14 @@
             Response.Write("}")
         Response.Write("}")
     end if
-
-    if(loai="timkiemsanphamtheohang") then
-        hangspsearch = request.querystring("hangsp")
-        set sp = new SanPham
-        set danhsachsanpham = sp.timkiemsanphamtheohang(hangspsearch)
-        Response.Write("{")
-        Response.Write("""status code"": ""20"",")
-        Response.Write("""message"": """",")
-        Response.Write("""data"":{ ""danhsachsanpham"": [")
-        count = 0
-        for each z in danhsachsanpham
-            count = count + 1
-            Response.Write("{")
-            response.write("""masp"": """)
-            response.write(danhsachsanpham(z).MaSP)
-            Response.Write(""",")
-            response.write("""tensp"": """)
-            response.write(danhsachsanpham(z).TenSP)
-            Response.Write("""")
-            Response.Write("}")
-            if(count < danhsachsanpham.count) then
-                response.write(",")
-            end if
-        next
-        Response.Write("]")
-        Response.Write("}")
-        Response.Write("}")
-    end if
     if(loai="timkiemsanpham") then
         tenspsearch = request.querystring("tensp")
+        hangspsearch = request.querystring("hangsp")
+        danhmucspsearch = request.querystring("danhmucsp")
+        loaispsearch = request.querystring("loaisp")
+
         set sp = new SanPham
-        set danhsachsanpham = sp.timKiemSanPham(tenspsearch)
+        set danhsachsanpham = sp.timKiemSanPham(tenspsearch,hangspsearch,danhmucspsearch,loaispsearch)
         Response.Write("{")
         Response.Write("""status code"": ""20"",")
         Response.Write("""message"": """",")

@@ -9,6 +9,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <title>Document</title>
+    <style>
+        .table-responsive {
+            max-height: 300px;
+        }
+    </style>
 </head>
 
 <body>
@@ -32,15 +37,16 @@
                 <select name="loaigg" id="loaigg" class="form-select">
                     <option value="0">Giảm giá khách hàng</option>
                     <option value="1">Giảm giá sản phẩm</option>
+                    <option value="2">Giảm giá theo hãng, danh mục, loại sản phẩm</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="tichdiem">Tích điểm lớn hơn:</label>
-                <input type="text" name="tichdiem" class="form-control" id="tichdiem">
+                <input type="number" name="tichdiem" class="form-control" id="tichdiem">
             </div>
             <div class="form-group">
                 <label for="sp">Sản phẩm</label>
-                <input placeholder="Nhập tên sản phẩm" type="text" class="form-control" list="listsp" id="searchsp">
+                <input type="text" id="searchsp" name="city" list="listsp" class="form-control">
                 <datalist id="listsp">
                 </datalist>
                 <button id="addlist" class="btn btn-primary">Thêm vào danh sách</button>
@@ -60,9 +66,27 @@
                 <select name="loaisp" id="loaisp" class="form-select">
                 </select>
             </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">STT</th>
+                            <th scope="col">Tên sản phẩm</th>
+                            <th scope="col">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result">
+                    </tbody>
+                </table>
+            </div>
             <div class="form-group">
-                <label for="sp">Các sản phẩm đã chọn</label>
-                <textarea class="form-control" id="listsearchsp"> </textarea>
+                <label for="sotiengg">Số tiền giảm giá:</label>
+                <input type="number" name="sotiengg" class="form-control" id="sotiengg">
+            </div>
+            <div class="form-group">
+                <label for="phantramgg">Phần trăm giảm giá:</label>
+                <input type="number" max=100 min=0 name="phantramgg" class="form-control" id="phantramgg">
             </div>
             <div class="form-group">
                 <label for="ngaybatdau">Ngày bắt đầu:</label>
@@ -86,16 +110,71 @@
     </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
-    var madm
+    var loaisp = ""
+    var hangsp = ""
+    var danhmucsp = ""
+    var tensp = ""
+    var madm = ""
     var listsp = []
-    $("#addlist").click(function () {
-        if (!listsp.includes($("#masp1").val())) {
-            listsp.push($("#masp1").val())
-            $("#listsearchsp").append($("#searchsp").val() + "&#13;&#10; ")
+
+
+    function loadTable() {
+        $("#result").html("")
+        var str = ""
+        if (listsp.length > 0) {
+            for (i = 0; i < listsp.length; i++) {
+                str += "<tr>";
+                str += "<td>" + (i + 1) + "</td>"
+                str += "<td>" + listsp[i].name + "</td>"
+                str += "<td>" + "<button class=\"btn btn-danger\" onclick=\"remove(" + listsp[i].key + ")\">Xóa</button>" + "</td>"
+                str += "</tr>";
+                $("#result").html(str)
+            }
         }
         else {
-            addAlertDanger("Bạn đã chọn sản phẩm này rồi!")
+            $("#result").html("")
         }
+    }
+    function remove(masp) {
+        lookupandremove(masp)
+        console.log(listsp)
+    }
+    function lookup(name) {
+        for (var i = 0, len = listsp.length; i < len; i++) {
+            if (listsp[i].key === name)
+                return true;
+        }
+        return false;
+    }
+    function lookupandremove(name) {
+        for (var i = 0, len = listsp.length; i < len; i++) {
+            console.log(listsp[i])
+            if (listsp[i].key == name) {
+                listsp.splice(i, 1)
+                break;
+            }
+        }
+        loadTable()
+    }
+    $("#addlist").click(function (e) {
+        e.preventDefault()
+        var key = $("#listsp option[value='" + $('#searchsp').val() + "']").attr('data-value')
+        var name = $('#searchsp').val()
+        const obj = { key: key, name: name }
+        if (obj.key != undefined) {
+            if (!lookup(obj.key)) {
+                listsp.push(obj)
+            }
+            else {
+                addAlertDanger("Bạn đã chọn sản phẩm này rồi!")
+            }
+        }
+        else {
+            addAlertDanger("Bạn chưa chọn sản phẩm nào")
+        }
+
+        console.log(listsp)
+        loadTable()
     })
     $("#searchsp").keyup(function () {
         $.ajax({
@@ -109,17 +188,14 @@
                 const obj = JSON.parse(response);
                 var str = ""
                 obj.data.danhsachsanpham.forEach(element => {
-                    str += "<option value=\"" + element.tensp + "\">";
-                    str += element.tensp
-                    str += "</option>";
-                    str += "<input id = \"masp1\"type=\"hidden\" value=\"" + element.masp + "\">"
+                    str += "<option data-value=\"" + element.masp + "\"value=\"" + element.tensp + "\"</option>";
                 })
                 $("#listsp").html(str)
             }
         })
     })
     $("#form-them-gg").submit(function (e) {
-        e.preventDefault()
+        //e.preventDefault()
         var magg = $("#magg").val()
         var tengg = $("#tengg").val()
         var loaigg = $("#loaigg").val()
@@ -127,33 +203,122 @@
         var hangsp = $("#hangsp").val()
         var loaisp = $("#loaisp").val()
         var danhmuc = $("#danhmuc").val()
+        var sotiengg = $("#sotiengg").val()
+        var phantramgg = $("#phantramgg").val()
         var ngaybatdau = $("#ngaybatdau").val()
         var ngayketthuc = $("#ngayketthuc").val()
-        console.log(loaigg)
-        if (magg != "") {
-            if (tengg != "") {
-                if ((loaigg == 0 && tichdiem != "") || loaigg == 1) {
-                    if ((loaigg == 0 && tichdiem.match(/^\d+$/)) || loaigg == 1) {
-
-                    }
-                    else {
-                        addAlertDanger("Tích điểm phải là số lớn hơn hoặc bằng 0!")
-                    }
-                }
-                else {
-                    addAlertDanger("Tích điểm không được để trống!")
-                }
-            }
-            else {
-                addAlertDanger("Tên chương trình giảm giá không được để trống!")
-            }
-        }
-        else {
-            addAlertDanger("Mã giảm giá không được để trống!")
-        }
+        var d = new Date();
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+        var today = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day
+        console.log(d)
+        // if (loaigg == 0) {
+        //     if (magg != "") {
+        //         if (tengg != "") {
+        //             if (tichdiem != "" && tichdiem.match(/^\d+$/)) {
+        //                 if (!(sotiengg != "" && phantramgg != "")) {
+        //                     if (ngaybatdau != "" && ngayketthuc != "") {
+        //                         if (ngaybatdau >= today && ngayketthuc >= today && ngayketthuc >= ngaybatdau) {
+        //                             $.ajax({
+        //                                 method: "post",
+        //                                 url: "../controllers/giamgia-controller.asp",
+        //                                 data: {
+        //                                     loai: "taochuongtrinhgiamgia",
+        //                                     magg: magg,
+        //                                     tengg: tengg,
+        //                                     tichdiemgg: tichdiem,
+        //                                     sotiengg: sotiengg,
+        //                                     phantramgg: phantramgg,
+        //                                     ngaybatdaugg: ngaybatdau,
+        //                                     ngayketthucgg: ngayketthuc,
+        //                                 },
+        //                                 success: function (response) {
+        //                                     const obj = JSON.parse(response);
+        //                                     console.log(obj)
+        //                                 }
+        //                             })
+        //                         }
+        //                         else {
+        //                             addAlertDanger("Ngày bắt đầu và ngày kết thúc không hợp lệ")
+        //                         }
+        //                     }
+        //                     else {
+        //                         addAlertDanger("Hãy chọn ngày bắt đầu và ngày kết thúc")
+        //                     }
+        //                 }
+        //                 else {
+        //                     addAlertDanger("Chỉ được chọn một loại giảm giá (giảm theo tiền hoặc %)")
+        //                 }
+        //             }
+        //             else {
+        //                 addAlertDanger("Tích điểm không được để trống và phải là số lớn hơn hoặc bằng 0!")
+        //             }
+        //         }
+        //         else {
+        //             addAlertDanger("Tên chương trình giảm giá không được để trống!")
+        //         }
+        //     }
+        //     else {
+        //         addAlertDanger("Mã giảm giá không được để trống!")
+        //     }
+        // }
+        // if (loaigg == 1 || loaigg == 2) {
+        //     if (magg != "") {
+        //         if (tengg != "") {
+        //             if (!(sotiengg != "" && phantramgg != "")) {
+        //                 if (listsp.length > 0) {
+        //                     if (ngaybatdau != "" && ngayketthuc != "") {
+        //                         if (ngaybatdau >= today && ngayketthuc >= today && ngayketthuc >= ngaybatdau) {
+        //                             $.ajax({
+        //                                 method: "post",
+        //                                 url: "../controllers/giamgia-controller.asp",
+        //                                 data: {
+        //                                     loai: "taochuongtrinhgiamgia",
+        //                                     magg: magg,
+        //                                     tengg: tengg,
+        //                                     danhmucgg: danhmuc,
+        //                                     listspgg: listsp,
+        //                                     hangspgg: hangsp,
+        //                                     loaispgg: loaisp,
+        //                                     sotiengg: sotiengg,
+        //                                     phantramgg: phantramgg,
+        //                                     ngaybatdaugg: ngaybatdau,
+        //                                     ngayketthucgg: ngayketthuc,
+        //                                 },
+        //                                 success: function (response) {
+        //                                     const obj = JSON.parse(response);
+        //                                     console.log(obj)
+        //                                 }
+        //                             })
+        //                         }
+        //                         else {
+        //                             addAlertDanger("Ngày bắt đầu và ngày kết thúc không hợp lệ")
+        //                         }
+        //                     }
+        //                     else {
+        //                         addAlertDanger("Hãy chọn ngày bắt đầu và ngày kết thúc")
+        //                     }
+        //                 }
+        //                 else {
+        //                     addAlertDanger("Hãy chọn ít nhất một sản phẩm ")
+        //                 }
+        //             }
+        //             else {
+        //                 addAlertDanger("Chỉ được chọn một loại giảm giá (giảm theo tiền hoặc %)")
+        //             }
+        //         }
+        //         else {
+        //             addAlertDanger("Tên chương trình giảm giá không được để trống!")
+        //         }
+        //     }
+        //     else {
+        //         addAlertDanger("Mã giảm giá không được để trống!")
+        //     }
+        // }
     })
     $("#danhmuc").change(function () {
         madm = $(this).val()
+        console.log(madm)
         if (madm != "") {
             $.ajax({
                 method: "get",
@@ -164,8 +329,7 @@
                 },
                 success: function (response) {
                     const obj = JSON.parse(response);
-                    var str = "<option value=\"0\">Không</option>"
-
+                    var str = "<option value=\"\">Không</option>"
                     if (madm != "") {
                         obj.data.listloaisp.forEach(element => {
                             str += "<option value=\"" + element.maloaisp + "\">";
@@ -177,29 +341,102 @@
                 }
             })
         }
+        else {
+            $("#loaisp").html("<option value=\"\">Không</option>");
+        }
+        listsp = []
+        danhmucsp = $(this).val()
+        if (danhmucsp == "") {
+            loaisp == ""
+        }
+        console.log(danhmucsp)
+        console.log(hangsp)
+        console.log(tensp)
+        console.log(loaisp)
+        $.ajax({
+            method: "get",
+            url: "../controllers/sanpham-controller.asp",
+            data: {
+                tensp: tensp,
+                danhmucsp: danhmucsp,
+                loaisp: loaisp,
+                hangsp: hangsp,
+                loai: "timkiemsanpham",
+            },
+            success: function (response) {
+                const obj = JSON.parse(response);
+                console.log(obj)
+                obj.data.danhsachsanpham.forEach(element => {
+                    var ob = { key: element.masp, name: element.tensp }
+                    //$("#listsearchsp").append(element.tensp + "&#13;&#10; ")
+                    listsp.push(ob)
+                })
+                loadTable()
+            }
+        })
+        console.log(listsp)
+    })
+    $("#loaisp").change(function () {
+        listsp = []
+        loaisp = $(this).val()
+        console.log(danhmucsp)
+        console.log(hangsp)
+        console.log(tensp)
+        console.log(loaisp)
+        $.ajax({
+            method: "get",
+            url: "../controllers/sanpham-controller.asp",
+            data: {
+                tensp: tensp,
+                danhmucsp: danhmucsp,
+                loaisp: loaisp,
+                hangsp: hangsp,
+                loai: "timkiemsanpham",
+            },
+            success: function (response) {
+                const obj = JSON.parse(response);
+                console.log(obj)
+                obj.data.danhsachsanpham.forEach(element => {
+                    var ob = { key: element.masp, name: element.tensp }
+                    //$("#listsearchsp").append(element.tensp + "&#13;&#10; ")
+                    listsp.push(ob)
+                })
+                loadTable()
+            }
+        })
+        console.log(listsp)
+
     })
     $("#hangsp").change(function () {
-        if ($(this).val() != 0) {
-            $.ajax({
-                method: "get",
-                url: "../controllers/sanpham-controller.asp",
-                data: {
-                    hangsp: $(this).val(),
-                    loai: "timkiemsanphamtheohang",
-                },
-                success: function (response) {
-                    const obj = JSON.parse(response);
-                    console.log(obj)
-                    obj.data.danhsachsanpham.forEach(element => {
-                        if(!listsp.includes(element.masp)){
-                            $("#listsearchsp").append(element.tensp + "&#13;&#10; ")
-                            listsp.push(element.masp)
-                        }
-                        console.log(listsp)
-                    })
-                }
-            })
-        }
+        listsp = []
+        hangsp = $(this).find(":selected").val();
+        console.log(danhmucsp)
+        console.log(hangsp)
+        console.log(tensp)
+        console.log(loaisp)
+        $.ajax({
+            method: "get",
+            url: "../controllers/sanpham-controller.asp",
+            data: {
+                tensp: tensp,
+                danhmucsp: danhmucsp,
+                loaisp: loaisp,
+                hangsp: hangsp,
+                loai: "timkiemsanpham",
+            },
+            success: function (response) {
+                const obj = JSON.parse(response);
+                console.log(obj)
+                obj.data.danhsachsanpham.forEach(element => {
+                    var ob = { key: element.masp, name: element.tensp }
+                    //$("#listsearchsp").append(element.tensp + "&#13;&#10; ")
+                    listsp.push(ob)
+                })
+                loadTable()
+            }
+        })
+        console.log(listsp)
+
     })
     $("#loaigg").change(function () {
         if ($(this).val() == 0) {
@@ -210,13 +447,21 @@
             $("#addlist").prop("disabled", true)
             $("#searchsp").prop("disabled", true)
         }
-        else {
+        if ($(this).val() == 1) {
+            $("#hangsp").prop("disabled", true)
+            $("#danhmuc").prop("disabled", true)
+            $("#loaisp").prop("disabled", true)
+            $("#tichdiem").prop("disabled", true)
+            $("#addlist").prop("disabled", false)
+            $("#searchsp").prop("disabled", false)
+        }
+        if ($(this).val() == 2) {
             $("#hangsp").prop("disabled", false)
             $("#danhmuc").prop("disabled", false)
             $("#loaisp").prop("disabled", false)
             $("#tichdiem").prop("disabled", true)
-            $("#addlist").prop("disabled", false)
-            $("#searchsp").prop("disabled", false)
+            $("#addlist").prop("disabled", true)
+            $("#searchsp").prop("disabled", true)
         }
     })
     $(document).ready(function () {
@@ -233,7 +478,7 @@
                 loai: "getListDanhMuc",
             },
             success: function (response) {
-                var str = "<option value=\"0\">Không</option>"
+                var str = "<option value=\"\">Không</option>"
 
                 const obj = JSON.parse(response);
                 madm = obj.data.listdanhmuc[0].madm
@@ -250,15 +495,7 @@
                         loai: "getList",
                     },
                     success: function (response) {
-                        const obj = JSON.parse(response);
-                        var str = "<option value=\"0\">Không</option>"
-                        if (madm != "") {
-                            obj.data.listloaisp.forEach(element => {
-                                str += "<option value=\"" + element.maloaisp + "\">";
-                                str += element.tenloaisp
-                                str += "</option>";
-                            })
-                        }
+                        var str = "<option value=\"\">Không</option>"
                         $("#loaisp").html(str)
                     }
                 })
@@ -272,8 +509,7 @@
             },
             success: function (response) {
                 const obj = JSON.parse(response);
-                console.log(obj)
-                var str = "<option value=\"0\">Không</option>"
+                var str = "<option value=\"\">Không</option>"
                 if (madm != "") {
                     obj.data.danhsachhang.forEach(element => {
                         str += "<option value=\"" + element + "\">";
