@@ -1,5 +1,5 @@
 <%
-    if(session("uid")<>"" and session("loaitk")=2) then
+    if(session("uidadmin")<>"" and session("loaitk")=2) then
 %>
 <!DOCTYPE html>
 <html lang="en">

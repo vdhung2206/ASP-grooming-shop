@@ -189,10 +189,10 @@ Class SanPham
           sql = sql + " and TenSP like '%" & tenspsearch & "%'"
         end if
         if (danhmucsearch <>"") then
-          sql = sql + " and MaDM like '%" & danhmucsearch & "%'"
+          sql = sql + " and MaDM = '" & danhmucsearch & "'"
         end if
         if (loaispsearch <>"") then
-          sql = sql + " and MaLoaiSP like '%" & loaispsearch & "%'"
+          sql = sql + " and MaLoaiSP = '" & loaispsearch & "'"
         end if
         if (hangspsearch <>"") then
           sql = sql + " and HangSP like '%" & hangspsearch & "%'"
@@ -217,7 +217,7 @@ Class SanPham
         end If
         sql = sql + "order by "
         if (sapxepphobien ="" and sapxepgia ="" and sapxeptonkho="") then
-          sql = sql + " SLTonKho,"
+          sql = sql + " TenSP,"
         end if
         if (sapxepphobien ="1") then
           'xu ly
@@ -339,6 +339,48 @@ End Function
         countMinTonKho = rs.Fields("c")
       else
         countMinTonKho ="0"
+      end if
+      connDB.Close()
+    end function
+
+    public function minGiaSP(tensp,danhmuc,loaisp,hangsp,sltonkho1,sltonkho2,giasp,trangthai) 
+      Dim sql
+      sql ="select min(GiaSP) as c from view1_SanPham where MaSP !='' "
+      if(tensp <> "") then
+        sql = sql + " and TenSP like '%" & tensp & "%'"
+      end if
+      if (danhmuc <>"") then
+        sql = sql + " and MaDM like '%" & danhmuc & "%'"
+      end if
+      if (loaisp <>"") then
+        sql = sql + " and MaLoaiSP like '%" & loaisp & "%'"
+      end if
+      if (hangsp <>"") then
+        sql = sql + " and HangSP like '%" & hangsp & "%'"
+      end if
+      if (sltonkho1 <>"") then
+        sql = sql + " and SLTonKho >= " & sltonkho1 & ""
+      end if
+      if (sltonkho2 <>"") then
+        sql = sql + " and SLTonKho <= " & sltonkho2 & ""
+      end if
+      if (giasp <>"") then
+        sql = sql + " and GiaSP = " & giasp & ""
+      end if
+      if (trangthai <>"") then
+        sql = sql + " and TrangThai = " & trangthai & ""
+      end if
+      Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+      Set rs = connDB.execute(sql)
+      if(rs.Fields("c")<>"") then
+        minGiaSP = rs.Fields("c")
+      else
+        minGiaSP ="0"
       end if
       connDB.Close()
     end function

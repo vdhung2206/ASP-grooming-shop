@@ -120,3 +120,39 @@ select count(*) as c from LoaiSP where MaLoaiSP ='35'
 
 create view view1_GiamGia as
 select * from (GiamGia join ChiTietGiamGia on (GiamGia.IDGiamGia) = ChiTietGiamGia.IDGiamGia)
+
+select * from ChiTietGiamGia
+select * from GiamGia
+select * from SanPham
+
+go
+drop trigger tg_GiamGia
+create trigger tg_GiamGia on ChiTietGiamGia
+for insert as
+declare @idgiamgia int
+declare @masp int
+declare @sotiengiam money
+declare @phantramgiam int
+select @idgiamgia =IDGiamGia from inserted
+print @idgiamgia
+select @masp =MaSP from inserted
+print @masp
+select @sotiengiam = SoTienGG from GiamGia where GiamGia.IDGiamGia = @idgiamgia
+select @sotiengiam = isnull(@sotiengiam,0)
+print @sotiengiam
+select @phantramgiam = PhanTramGG from GiamGia where GiamGia.IDGiamGia = @idgiamgia
+select @phantramgiam = isnull(@phantramgiam,0)
+print @phantramgiam
+print @phantramgiam/100
+update SanPham set GiamGiaSP =GiamGiaSP + (@sotiengiam + (GiaGocSP*@phantramgiam/100)), GiaSP = GiaGocSP - (GiamGiaSP+(@sotiengiam + (GiaGocSP*@phantramgiam/100))) where MaSP = @masp
+
+go
+drop trigger tg_SanPham
+create trigger tg_SanPham on SanPham 
+for update as
+declare @masp int
+select @masp = MaSP from inserted
+if(update(GiaGocSP))
+begin
+	update SanPham set GiaSP = GiaGocSP, GiamGiaSP = 0 where MaSP = @masp
+end

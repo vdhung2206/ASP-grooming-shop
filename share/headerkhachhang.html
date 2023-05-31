@@ -1,0 +1,102 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link " aria-current="page" href="/views/trangchukhachhang-view.asp">Trang chủ</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Sản phẩm
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a href="" class="dropdown-item">Sáp vuốt tóc</a></li>
+            <li><a href="" class="dropdown-item">Chăm sóc tóc</a></li>
+            <li><a href="" class="dropdown-item">Sản phẩm hỗ trợ</a></li>
+          </ul>
+        </li>
+        <li>
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm?" aria-label="Search">
+            <button class="btn" type="submit"><i class="fa fa-search"></i></button>
+          </form>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <a id="giohang" class="btn ms-3"><span>Giỏ hàng / </span><span id="giagiohang">0</span><span class="text-decoration-underline">đ</span><span>   </span></span><i class="fas fa-shopping-bag"></i></a>
+      </div>
+      <div id="welcome" class="d-flex">
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container sticky-top" id="headercontainer">
+  <div id="msg" class="mt-2" role="alert">
+  </div>
+</div>
+<script>
+  $("#btndangxuat").click(function () {
+    delete_cookie("tk")
+    $.ajax({
+      method: "post",
+      url: "loginkhachhang-view.asp",
+      data: {
+        loai: "dangxuat"
+      },
+      success: function () {
+        window.location.href = "loginkhachhang-view.asp"
+      }
+    });
+  });
+  function dangxuat() {
+    delete_cookie("tk")
+    $.ajax({
+      method: "post",
+      url: "loginkhachhang-view.asp",
+      data: {
+        loai: "dangxuat"
+      },
+      success: function () {
+        window.location.href = "loginkhachhang-view.asp"
+      }
+    });
+  }
+  $(document).ready(function () {
+    if (getCookie("tk") != null) {
+      str = "";
+      str += "<span class=\"navbar-text\"></span>";
+      str += "<a id=\"btndangxuat\" onclick=\"dangxuat()\"class=\"btn btn-outline-warning ms-3\">Đăng xuất</a>"
+      $("#welcome").html(str)
+      $(".navbar-text").html("Chào mừng " + getCookie("tk") + "!")
+    }
+    else {
+      str = "";
+      str += "<span class=\"navbar-text\"></span>";
+      str += "<a id=\"btndangnhap\" href=\"/views/loginkhachhang-view.asp\" class=\"btn btn-outline-warning ms-3\">Đăng nhập</a>"
+      str += "<a id=\"btndangky\" href=\"/views/dangky.asp\" class=\"btn btn-outline-warning ms-3\">Đăng ký</a>"
+      $("#welcome").html(str)
+    }
+  })
+
+  function getCookie(name) {
+    var cookieArr = document.cookie.split(";");
+    for (var i = 0; i < cookieArr.length; i++) {
+      var cookiePair = cookieArr[i].split("=");
+      if (name == cookiePair[0].trim()) {
+        return decodeURIComponent(cookiePair[1]);
+      }
+    }
+    return null;
+  }
+  function delete_cookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+</script>

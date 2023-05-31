@@ -1,3 +1,6 @@
+<%
+    if(session("uidadmin")<>"") then
+%>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -134,3 +137,8 @@
         <!--#include file="../share/sanphamviewfooter.html"-->
     </body>
 </html>
+<%
+    else
+    response.redirect("login.asp")
+    end if
+%>

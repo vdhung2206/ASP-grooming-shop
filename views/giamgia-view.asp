@@ -1,3 +1,6 @@
+<%
+    if(session("uidadmin")<>"") then
+%>
 <html lang="en">
 
 <head>
@@ -193,14 +196,14 @@
         })
         $(document).on('input', '#customRange1', function () {
             var val1 = $(this).val();
-            if (val1 > $("#customRange2").val()) {
+            if (parseInt(val1) > parseInt($("#customRange2").val())) {
                 $(this).val($("#customRange2").val())
             }
             $("#tichdiemtren").html($(this).val())
         });
         $(document).on('input', '#customRange2', function () {
             var val1 = $(this).val();
-            if (val1 < $("#customRange1").val()) {
+            if (parseInt(val1) < parseInt($("#customRange1").val())){
                 $(this).val($("#customRange1").val())
             }
             $("#tichdiemduoi").html($(this).val())
@@ -239,6 +242,18 @@
             });
         });
         $(document).ready(function () {
+            if (sessionStorage.getItem("themggMSG") != null && sessionStorage.getItem("themggMSG") != "") {
+                console.log(sessionStorage.getItem("themggMSG"))
+                $("#msg").html(sessionStorage.getItem("themggMSG"));
+                $("#msg").addClass("alert alert-success");
+                $(".alert").fadeTo(500, 1).slideDown(500, function () {
+                });
+                window.setTimeout(function () {
+                    $(".alert").fadeTo(500, 0).slideUp(500, function () {
+                    });
+                }, 2000);
+                sessionStorage.removeItem("themggMSG");
+            }
             $(".form-range").prop('disabled', true)
             $("#tichdiemtren").html("")
             $("#tichdiemduoi").html("")
@@ -316,3 +331,8 @@
 </body>
 
 </html>
+<%
+    else
+    response.redirect("login.asp")
+    end if
+%>

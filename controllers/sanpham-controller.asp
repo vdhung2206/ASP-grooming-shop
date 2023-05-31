@@ -9,7 +9,7 @@
     dim page
     page = request.querystring("page")
     Set danhsachsanpham = Server.CreateObject("Scripting.Dictionary")
-    limit = 2
+    limit = 6
     
     tenspsearch = request.querystring("tensp")
     danhmucsearch = request.querystring("madm")
@@ -186,7 +186,7 @@
             response.write(spx.HinhAnh)
             response.write(""",")
             Response.Write("")
-            response.write("""masp"": """)
+            response.write("""masp"":""")
             response.write(spx.MaSP)
             response.write(""",")
             response.write("""tensp"": """)

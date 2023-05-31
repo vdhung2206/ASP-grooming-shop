@@ -52,9 +52,7 @@
         <label id="msggiagoc" for=""></label>
       </div>
       <div class="form-group">
-        <label for="gia-goc">Giảm giá</label>
-        <input type="text" name="giagocsp" class="form-control" id="gia-giam">
-        <label id="msggiamgia" for=""></label>
+        <input type="hidden" name="giagocsp" class="form-control" id="gia-giam">
       </div>
       <div class="form-group">
         <label for="gia-goc">Chi tiết</label>

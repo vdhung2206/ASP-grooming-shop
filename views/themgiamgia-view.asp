@@ -1,3 +1,6 @@
+<%
+    if(session("uidadmin")<>"") then
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -172,7 +175,6 @@
         else {
             addAlertDanger("Bạn chưa chọn sản phẩm nào")
         }
-
         console.log(listsp)
         loadTable()
     })
@@ -195,7 +197,7 @@
         })
     })
     $("#form-them-gg").submit(function (e) {
-        //e.preventDefault()
+        e.preventDefault()
         var magg = $("#magg").val()
         var tengg = $("#tengg").val()
         var loaigg = $("#loaigg").val()
@@ -211,110 +213,119 @@
         var month = d.getMonth() + 1;
         var day = d.getDate();
         var today = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day
-        console.log(d)
-        // if (loaigg == 0) {
-        //     if (magg != "") {
-        //         if (tengg != "") {
-        //             if (tichdiem != "" && tichdiem.match(/^\d+$/)) {
-        //                 if (!(sotiengg != "" && phantramgg != "")) {
-        //                     if (ngaybatdau != "" && ngayketthuc != "") {
-        //                         if (ngaybatdau >= today && ngayketthuc >= today && ngayketthuc >= ngaybatdau) {
-        //                             $.ajax({
-        //                                 method: "post",
-        //                                 url: "../controllers/giamgia-controller.asp",
-        //                                 data: {
-        //                                     loai: "taochuongtrinhgiamgia",
-        //                                     magg: magg,
-        //                                     tengg: tengg,
-        //                                     tichdiemgg: tichdiem,
-        //                                     sotiengg: sotiengg,
-        //                                     phantramgg: phantramgg,
-        //                                     ngaybatdaugg: ngaybatdau,
-        //                                     ngayketthucgg: ngayketthuc,
-        //                                 },
-        //                                 success: function (response) {
-        //                                     const obj = JSON.parse(response);
-        //                                     console.log(obj)
-        //                                 }
-        //                             })
-        //                         }
-        //                         else {
-        //                             addAlertDanger("Ngày bắt đầu và ngày kết thúc không hợp lệ")
-        //                         }
-        //                     }
-        //                     else {
-        //                         addAlertDanger("Hãy chọn ngày bắt đầu và ngày kết thúc")
-        //                     }
-        //                 }
-        //                 else {
-        //                     addAlertDanger("Chỉ được chọn một loại giảm giá (giảm theo tiền hoặc %)")
-        //                 }
-        //             }
-        //             else {
-        //                 addAlertDanger("Tích điểm không được để trống và phải là số lớn hơn hoặc bằng 0!")
-        //             }
-        //         }
-        //         else {
-        //             addAlertDanger("Tên chương trình giảm giá không được để trống!")
-        //         }
-        //     }
-        //     else {
-        //         addAlertDanger("Mã giảm giá không được để trống!")
-        //     }
-        // }
-        // if (loaigg == 1 || loaigg == 2) {
-        //     if (magg != "") {
-        //         if (tengg != "") {
-        //             if (!(sotiengg != "" && phantramgg != "")) {
-        //                 if (listsp.length > 0) {
-        //                     if (ngaybatdau != "" && ngayketthuc != "") {
-        //                         if (ngaybatdau >= today && ngayketthuc >= today && ngayketthuc >= ngaybatdau) {
-        //                             $.ajax({
-        //                                 method: "post",
-        //                                 url: "../controllers/giamgia-controller.asp",
-        //                                 data: {
-        //                                     loai: "taochuongtrinhgiamgia",
-        //                                     magg: magg,
-        //                                     tengg: tengg,
-        //                                     danhmucgg: danhmuc,
-        //                                     listspgg: listsp,
-        //                                     hangspgg: hangsp,
-        //                                     loaispgg: loaisp,
-        //                                     sotiengg: sotiengg,
-        //                                     phantramgg: phantramgg,
-        //                                     ngaybatdaugg: ngaybatdau,
-        //                                     ngayketthucgg: ngayketthuc,
-        //                                 },
-        //                                 success: function (response) {
-        //                                     const obj = JSON.parse(response);
-        //                                     console.log(obj)
-        //                                 }
-        //                             })
-        //                         }
-        //                         else {
-        //                             addAlertDanger("Ngày bắt đầu và ngày kết thúc không hợp lệ")
-        //                         }
-        //                     }
-        //                     else {
-        //                         addAlertDanger("Hãy chọn ngày bắt đầu và ngày kết thúc")
-        //                     }
-        //                 }
-        //                 else {
-        //                     addAlertDanger("Hãy chọn ít nhất một sản phẩm ")
-        //                 }
-        //             }
-        //             else {
-        //                 addAlertDanger("Chỉ được chọn một loại giảm giá (giảm theo tiền hoặc %)")
-        //             }
-        //         }
-        //         else {
-        //             addAlertDanger("Tên chương trình giảm giá không được để trống!")
-        //         }
-        //     }
-        //     else {
-        //         addAlertDanger("Mã giảm giá không được để trống!")
-        //     }
-        // }
+        if (loaigg == 0) {
+            if (magg != "") {
+                if (tengg != "") {
+                    if (tichdiem != "" && tichdiem.match(/^\d+$/)) {
+                        if (!(sotiengg != "" && phantramgg != "")) {
+                            if (ngaybatdau != "" && ngayketthuc != "") {
+                                if (ngaybatdau >= today && ngayketthuc >= today && ngayketthuc >= ngaybatdau) {
+                                    $.ajax({
+                                        method: "post",
+                                        url: "../controllers/giamgia-controller.asp",
+                                        data: {
+                                            loai: "taochuongtrinhgiamgiakhachhang",
+                                            magg: magg,
+                                            tengg: tengg,
+                                            tichdiemgg: tichdiem,
+                                            sotiengg: sotiengg,
+                                            phantramgg: phantramgg,
+                                            ngaybatdaugg: ngaybatdau,
+                                            ngayketthucgg: ngayketthuc,
+                                        },
+                                        success: function (response) {
+                                            const obj = JSON.parse(response);
+                                            if(obj.data.themGiamGia){
+                                                sessionStorage.setItem("themggMSG","Tạo chương trình giảm giá thành công")
+                                                window.location.href="giamgia-view.asp"
+                                            }
+                                        }
+                                    })
+                                }
+                                else {
+                                    addAlertDanger("Ngày bắt đầu và ngày kết thúc không hợp lệ")
+                                }
+                            }
+                            else {
+                                addAlertDanger("Hãy chọn ngày bắt đầu và ngày kết thúc")
+                            }
+                        }
+                        else {
+                            addAlertDanger("Chỉ được chọn một loại giảm giá (giảm theo tiền hoặc %)")
+                        }
+                    }
+                    else {
+                        addAlertDanger("Tích điểm không được để trống và phải là số lớn hơn hoặc bằng 0!")
+                    }
+                }
+                else {
+                    addAlertDanger("Tên chương trình giảm giá không được để trống!")
+                }
+            }
+            else {
+                addAlertDanger("Mã giảm giá không được để trống!")
+            }
+        }
+        if (loaigg == 1 || loaigg == 2) {
+            if (magg != "") {
+                if (tengg != "") {
+                    if (!(sotiengg != "" && phantramgg != "")) {
+                        if (listsp.length > 0) {
+                            var listspgg = "";
+                            var c = 0
+                            listsp.forEach(element=>{
+                                c++;
+                                listspgg += element.key;
+                                if(c<listsp.length){
+                                 listspgg+= ","
+                                }
+                            })
+                            if (ngaybatdau != "" && ngayketthuc != "") {
+                                if (ngaybatdau >= today && ngayketthuc >= today && ngayketthuc >= ngaybatdau) {
+                                    $.ajax({
+                                        method: "post",
+                                        url: "../controllers/giamgia-controller.asp",
+                                        data: {
+                                            loai: "taochuongtrinhgiamgiasanpham",
+                                            magg: magg,
+                                            tengg: tengg,
+                                            listspgg: listspgg,
+                                            sotiengg: sotiengg,
+                                            phantramgg: phantramgg,
+                                            ngaybatdaugg: ngaybatdau,
+                                            ngayketthucgg: ngayketthuc,
+                                        },
+                                        success: function (response) {
+                                            const obj = JSON.parse(response);
+                                            sessionStorage.setItem("themggMSG","Tạo chương trình giảm giá thành công")
+                                            window.location.href = "giamgia-view.asp"
+                                        }
+                                    })
+                                }
+                                else {
+                                    addAlertDanger("Ngày bắt đầu và ngày kết thúc không hợp lệ")
+                                }
+                            }
+                            else {
+                                addAlertDanger("Hãy chọn ngày bắt đầu và ngày kết thúc")
+                            }
+                        }
+                        else {
+                            addAlertDanger("Hãy chọn ít nhất một sản phẩm ")
+                        }
+                    }
+                    else {
+                        addAlertDanger("Chỉ được chọn một loại giảm giá (giảm theo tiền hoặc %)")
+                    }
+                }
+                else {
+                    addAlertDanger("Tên chương trình giảm giá không được để trống!")
+                }
+            }
+            else {
+                addAlertDanger("Mã giảm giá không được để trống!")
+            }
+        }
     })
     $("#danhmuc").change(function () {
         madm = $(this).val()
@@ -532,3 +543,8 @@
         }, 2000);
     }
 </script>
+<%
+    else
+    response.redirect("login.asp")
+    end if
+%>

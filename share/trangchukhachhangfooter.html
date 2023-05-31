@@ -1,0 +1,219 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+  var giohang = []
+  $(document).ready(function () {
+    if (getCookie("giohang") == null) {
+      const now = new Date();
+      const expires = new Date(now.getTime() + 24 *60 * 60 * 1000).toUTCString();
+      var json_str = JSON.stringify(giohang);
+      document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+    } else {
+      var giagiohanghientai = parseInt(getCookie("giagiohang"))
+      $("#giagiohang").html(tinhGiaGioHang())
+    }
+    $.ajax({
+      method: "get",
+      url: "../controllers/sanpham-controller.asp",
+      data: {
+        loai: "phantrangsanpham",
+        madm: "1"
+      },
+      success: function (response) {
+        const obj = JSON.parse(response);
+        var str = "";
+        var count = 0;
+        obj.data.danhsachsanpham.forEach(element => {
+          if (count < 6) {
+            str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
+            str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
+            str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
+            str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
+            str += "</a>"
+            str += "<div class=\"card-body\" style=\"padding:0\">";
+            str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
+            str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
+            if (element.giasp != element.giagocsp) {
+              str += "<span class=\"text text-decoration-line-through text-black-50\">"
+              str += element.giagocsp
+              str += "<span class=\"text-decoration-underline\">đ</span></span>"
+            }
+            str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
+            if (element.sltonkho > 0) {
+              str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp +"','" + element.hinhanh + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
+            }
+            else {
+              str += "Đã hết hàng"
+            }
+            str += "</div></div></div>"
+          }
+          count++
+        });
+        $("#sapvuottoc").html(str)
+      }
+    })
+    $.ajax({
+      method: "get",
+      url: "../controllers/sanpham-controller.asp",
+      data: {
+        loai: "phantrangsanpham",
+        madm: "3"
+      },
+      success: function (response) {
+        const obj = JSON.parse(response);
+
+        var str = "";
+        var count = 0;
+        obj.data.danhsachsanpham.forEach(element => {
+          if (count < 6) {
+            str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
+            str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
+            str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
+            str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
+            str += "</a>"
+            str += "<div class=\"card-body\" style=\"padding:0\">";
+            str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
+            str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
+            if (element.giasp != element.giagocsp) {
+              str += "<span class=\"text text-decoration-line-through text-black-50\">"
+              str += element.giagocsp
+              str += "<span class=\"text-decoration-underline\">đ</span></span>"
+            }
+            str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
+            if (element.sltonkho > 0) {
+              str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp +"','" + element.hinhanh + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
+            }
+            else {
+              str += "Đã hết hàng"
+            }
+            str += "</div></div></div>"
+          }
+          count++
+        });
+        $("#chamsoctoc").html(str)
+      }
+    })
+    $.ajax({
+      method: "get",
+      url: "../controllers/sanpham-controller.asp",
+      data: {
+        loai: "phantrangsanpham",
+        madm: "4"
+      },
+      success: function (response) {
+        const obj = JSON.parse(response);
+        var str = "";
+        var count = 0;
+        obj.data.danhsachsanpham.forEach(element => {
+          if (count < 6) {
+            str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
+            str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
+            str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
+            str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
+            str += "</a>"
+            str += "<div class=\"card-body\" style=\"padding:0\">";
+            str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
+            str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
+            if (element.giasp != element.giagocsp) {
+              str += "<span class=\"text text-decoration-line-through text-black-50\">"
+              str += element.giagocsp
+              str += "<span class=\"text-decoration-underline\">đ</span></span>"
+            }
+            str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
+            if (element.sltonkho > 0) {
+              str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp +"','" + element.hinhanh + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
+            }
+            else {
+              str += "Đã hết hàng"
+            }
+            str += "</div></div></div>"
+          }
+          count++
+        });
+        $("#sanphamhotro").html(str)
+      }
+    })
+  })
+  function getCookie(name) {
+    var cookieArr = document.cookie.split(";");
+    for (var i = 0; i < cookieArr.length; i++) {
+      var cookiePair = cookieArr[i].split("=");
+      if (name == cookiePair[0].trim()) {
+        return decodeURIComponent(cookiePair[1]);
+      }
+    }
+    return null;
+  }
+  function delete_cookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+  function themgiohang(masp, giasp, hinhanh) {
+    var json_str = getCookie('giohang');
+    giohang = JSON.parse(json_str);
+    var obj = {}
+    var key = masp
+    obj[key] = 1
+    obj["hinhanh"] = hinhanh
+    obj["giasp"] = giasp
+    if (!lookup(masp)) {
+      giohang.push(obj)
+      var json_str = JSON.stringify(giohang);
+      const now = new Date();
+      const expires = new Date(now.getTime() + 20 * 60 * 1000).toUTCString();
+      document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+    }
+    else {
+      increase(masp)
+    }
+    tinhGiaGioHang()
+    addAlertSuccess("Thêm vào giỏ hàng thành công")
+  }
+  function tinhGiaGioHang() {
+    var json_str = getCookie('giohang');
+    var tongtien = 0
+    giohang = JSON.parse(json_str);
+    giohang.forEach(element => {
+      for(var x in element){
+        tongtien += element[x] * element["giasp"]
+        break
+      }
+    });
+    $("#giagiohang").html(tongtien);
+    return tongtien
+  }
+  function lookup(name) {
+    var json_str = getCookie('giohang');
+    giohang = JSON.parse(json_str);
+    for (var i = 0, len = giohang.length; i < len; i++) {
+      if (name in giohang[i])
+        return true;
+    }
+    return false;
+  }
+  function increase(masp) {
+    for (var i = 0, len = giohang.length; i < len; i++) {
+      if (masp in giohang[i]) {
+        for (var x in giohang[i]) {
+          giohang[i][x] += 1
+          var json_str = JSON.stringify(giohang);
+          const now = new Date();
+          const expires = new Date(now.getTime() + 24 *60 * 60 * 1000).toUTCString();
+          document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+          break;
+        }
+      }
+    }
+  }
+  function findValue(arr, key) {
+    return arr.find(function (o) { return o.key === key }).value;
+  }
+  function addAlertSuccess(msg) {
+    $("#msg").addClass("alert alert-success mt-2");
+    $("#msg").html(msg);
+    $(".alert").fadeTo(500, 1).slideDown(500, function () {
+    });
+    window.setTimeout(function () {
+      $(".alert").fadeTo(500, 0).slideUp(500, function () {
+      });
+    }, 2000);
+  }
+</script>

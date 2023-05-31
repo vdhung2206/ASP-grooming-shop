@@ -108,42 +108,78 @@
     end if
 
     If (loai="admindangnhap") Then
-    Set classtk = New TaiKhoan
-    dim tk
-    tk = Request.querystring("tk")
-    dim mk
-    mk = Request.querystring("mk")
-    Response.Write("{")
-    If (classtk.checkTonTai(tk)) Then
-        If (classtk.getLoaiTK(tk) <> "0") Then
-            If(classtk.getTinhTrang(tk) = True) Then
-                If(classtk.checkMK(tk,mk)) Then
-                    session("loaitk") = classtk.getLoaiTK(tk)
-                    Session("uid") = classtk.getUID(tk)
-                    Response.Write("""status code"": ""1"",")
-                    Response.Write("""message"": """",")
-                    Response.Write("""data"":{ ""checkLogin"": true}")
+        Set classtk = New TaiKhoan
+        dim tk
+        tk = Request.querystring("tk")
+        dim mk
+        mk = Request.querystring("mk")
+        Response.Write("{")
+        If (classtk.checkTonTai(tk)) Then
+            If (classtk.getLoaiTK(tk) <> "0") Then
+                If(classtk.getTinhTrang(tk) = True) Then
+                    If(classtk.checkMK(tk,mk)) Then
+                        session("loaitk") = classtk.getLoaiTK(tk)
+                        Session("uidadmin") = classtk.getUID(tk)
+                        Response.Write("""status code"": ""1"",")
+                        Response.Write("""message"": """",")
+                        Response.Write("""data"":{ ""checkLogin"": true}")
+                    Else
+                        Response.Write("""status code"": ""2"",")
+                        Response.Write("""message"": ""Sai mật khẩu!"",")
+                        Response.Write("""data"":{ ""checkLogin"": false}")
+                    End If
                 Else
-                    Response.Write("""status code"": ""2"",")
-                    Response.Write("""message"": ""Sai mật khẩu!"",")
+                    Response.Write("""status code"": ""3"",")
+                    Response.Write("""message"": ""Tài khoản của bạn đang bị khóa!"",")
                     Response.Write("""data"":{ ""checkLogin"": false}")
-                End If
+                End if
             Else
-                Response.Write("""status code"": ""3"",")
-                Response.Write("""message"": ""Tài khoản của bạn đang bị khóa!"",")
+                Response.Write("""status code"": ""4"",")
+                Response.Write("""message"": ""Sai loại tài khoản!"",")
                 Response.Write("""data"":{ ""checkLogin"": false}")
-            End if
+            End If
         Else
-            Response.Write("""status code"": ""4"",")
-            Response.Write("""message"": ""Sai loại tài khoản!"",")
+            Response.Write("""status code"": ""5"",")
+            Response.Write("""message"": ""Tài khoản không tồn tại!"",")
             Response.Write("""data"":{ ""checkLogin"": false}")
         End If
-    Else
-        Response.Write("""status code"": ""5"",")
-        Response.Write("""message"": ""Tài khoản không tồn tại!"",")
-        Response.Write("""data"":{ ""checkLogin"": false}")
+        Response.Write("}")
     End If
-    Response.Write("}")
+    If (loai="khachhangdangnhap") Then
+        Set classtk = New TaiKhoan
+        tk = Request.querystring("tk")
+        mk = Request.querystring("mk")
+        Response.Write("{")
+        If (classtk.checkTonTai(tk)) Then
+            If (classtk.getLoaiTK(tk) = "0") Then
+                If(classtk.getTinhTrang(tk) = True) Then
+                    If(classtk.checkMK(tk,mk)) Then
+                        session("loaitk") = classtk.getLoaiTK(tk)
+                        Session("uid") = classtk.getUID(tk)
+                        Response.Write("""status code"": ""1"",")
+                        Response.Write("""message"": """",")
+                        Response.Write("""data"":{ ""checkLogin"": true}")
+                    Else
+                        Response.Write("""status code"": ""2"",")
+                        Response.Write("""message"": ""Sai mật khẩu!"",")
+                        Response.Write("""data"":{ ""checkLogin"": false}")
+                    End If
+                Else
+                    Response.Write("""status code"": ""3"",")
+                    Response.Write("""message"": ""Tài khoản của bạn đang bị khóa!"",")
+                    Response.Write("""data"":{ ""checkLogin"": false}")
+                End if
+            Else
+                Response.Write("""status code"": ""4"",")
+                Response.Write("""message"": ""Sai loại tài khoản!"",")
+                Response.Write("""data"":{ ""checkLogin"": false}")
+            End If
+        Else
+            Response.Write("""status code"": ""5"",")
+            Response.Write("""message"": ""Tài khoản không tồn tại!"",")
+            Response.Write("""data"":{ ""checkLogin"": false}")
+        End If
+        Response.Write("}")
     End If
 
     if(loai ="taotaikhoanquanly") then

@@ -1,5 +1,5 @@
 <%
-    if(session("uid")<>"") then
+    if(session("uidadmin")<>"") then
 %>
 <html lang="en">
     <head>

@@ -4,7 +4,7 @@
     if(t = "dangxuat") then
         Session.Contents.RemoveAll()
     end if
-    if(session("uid")="") then
+    if(session("uidadmin")="") then
 %>
 <!-- #include file="../share/connect.asp" -->
 <!DOCTYPE html>

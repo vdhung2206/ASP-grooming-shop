@@ -138,7 +138,7 @@
     end function
 
      function minTichDiem() 
-      Dim connDB
+       Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection
         strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
@@ -152,9 +152,46 @@
         end if
         connDB.Close()
     end function
+    function ggKhachHang(magg, tengg,tichdiemgg,batdaugg, ketthucgg, phantramgg, sotiengg)
+      Dim sql
+      sql= "insert into GiamGia values('"+magg+"','"+tengg+"',"+tichdiemgg+",'"+batdaugg+"','"+ketthucgg+" 23:59:59',"
+      if(phantramgg <>"") then
+        sql = sql + phantramgg +",null)"
+      end if
+      if(sotiengg <>"") then
+        sql = sql +"null,"+sotiengg+")"
+      end if
+      Dim connDB 
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+      Set cmdPrep = Server.CreateObject("ADODB.Command")
+      cmdPrep.ActiveConnection = connDB
+      cmdPrep.CommandType = 1
+      cmdPrep.Prepared = True
+      cmdPrep.CommandText = sql
+      cmdPrep.Execute()
+      Set rs = connDB.execute("SELECT @@IDENTITY AS idgiamgia")
+      ggKhachHang = rs.Fields("idgiamgia")
+      connDB.Close()
+    end function
 
-    function maxTichDiem() 
+    function suaChiTietGiamGia(idgiamgia, masp)
       Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+
+      Dim tk, seq
+      Set rs = connDB.execute("insert into ChiTietGiamGia values('"+idgiamgia +"','"+masp+"')")
+      connDB.Close()
+    end function
+    function maxTichDiem() 
+        Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
         Dim strConnection
         strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
