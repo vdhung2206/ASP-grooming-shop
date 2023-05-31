@@ -67,7 +67,7 @@
       loadData()
     })
     
-    async function loadData() {
+    function loadData() {
       var json_str = getCookie("giohang")
       giohang = JSON.parse(json_str);
       if (giohang.length > 0) {
@@ -114,7 +114,7 @@
         str1 += '<h5>' + (parseInt(tinhGiaGioHang()) + parseInt(30000)) + '<span class=\"text-decoration-underline\">đ</span></h5>'
         str1 += '</div><button type="button" class="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Tiến hành thanh toán</button></div>'
         $("#thongkegiohang").html(str1)
-        return str
+
       }
     }
 

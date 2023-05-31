@@ -276,6 +276,46 @@ Class SanPham
         set phantrangsanpham = danhsachsanpham
     end function
 
+    public function gioHang()
+        set classSP = new SanPham
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Dim danhsachsanpham
+        Set danhsachsanpham = Server.CreateObject("Scripting.Dictionary")
+
+        Set cmdPrep = Server.CreateObject("ADODB.Command")
+        cmdPrep.ActiveConnection = connDB
+        cmdPrep.CommandType = 1
+        cmdPrep.Prepared = True
+        cmdPrep.CommandText = sql
+        Set rs = cmdPrep.execute
+        Do While Not rs.EOF
+            seq = seq+1
+            set mySP = New SanPham
+            mySP.MaSP = rs.Fields("MaSP")
+            mySP.TenSP = rs.Fields("TenSP")
+            mySP.LoaiSP = rs.Fields("TenLoaiSP")
+            mySP.DanhMuc = rs.Fields("TenDM")
+            mySP.HangSP = rs.Fields("HangSP")
+            mySP.SLTonKho = rs.Fields("SLTonKho")
+            mySP.GiaGocSP = rs.Fields("GiaGocSP")
+            mySP.GiamGiaSP= rs.Fields("GiamGiaSP")
+            mySP.GiaSP = rs.Fields("GiaSP")
+            mySP.HinhAnh = rs.Fields("HinhAnh")
+            mySP.ChiTiet = rs.Fields("ChiTiet")
+            mySP.TrangThai = rs.Fields("TrangThai")
+            danhsachsanpham.add seq, mySP
+            rs.MoveNext
+        Loop 
+        conndb.Close()
+        set giohang = danhsachsanpham
+    end function
+
     Public Function themSanPham(tensp, maloaisp, hangsp, sltonkho, giagocsp, hinhanh, chitiet)
     Dim sql
     sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,0,?,'1',?,?)"
