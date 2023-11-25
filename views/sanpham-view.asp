@@ -16,7 +16,7 @@
                 <h2>Danh sách sản phẩm</h2>
             </div>
             <div class="p-2 bd-highlight">
-                <a href="" class="btn btn-primary">Thêm sản phẩm</a>
+                <a href="../views/themsanpham-view.asp" class="btn btn-primary">Thêm sản phẩm</a>
             </div>
         </div>
         <form id ="formtimkiem" class="form-inline">
@@ -31,7 +31,6 @@
                     </div>
                     <div class="col-lg-1 mr-1"style="padding-left: 0; margin-left:0">
                         <label for="danhmucsp" class="form-label">Danh mục: </label>
-
                     </div>
                     <div class="col-lg-2 mr-1"style="padding-left: 0; margin-left:0">
                         <select name="danhmucsp" id="danhmucsp" class="form-select">

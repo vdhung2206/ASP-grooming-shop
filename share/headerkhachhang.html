@@ -12,26 +12,29 @@
         <li class="nav-item">
           <a class="nav-link " aria-current="page" href="/views/trangchukhachhang-view.asp">Trang chủ</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link " aria-current="page" href="/views/shop-view.asp">Shop</a>
+        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
             aria-expanded="false">
             Sản phẩm
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a href="" class="dropdown-item">Sáp vuốt tóc</a></li>
-            <li><a href="" class="dropdown-item">Chăm sóc tóc</a></li>
-            <li><a href="" class="dropdown-item">Sản phẩm hỗ trợ</a></li>
+            <li><a href="shop-view.asp?page=1&madm=1" class="dropdown-item">Sáp vuốt tóc</a></li>
+            <li><a href="shop-view.asp?page=1&madm=3" class="dropdown-item">Chăm sóc tóc</a></li>
+            <li><a href="shop-view.asp?page=1&madm=4" class="dropdown-item">Sản phẩm hỗ trợ</a></li>
           </ul>
         </li>
         <li>
           <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm?" aria-label="Search">
-            <button class="btn" type="submit"><i class="fa fa-search"></i></button>
+            <input id="inputtimkiem" class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm?" aria-label="Search">
+            <a id="timkiem" class="btn"><i class="fa fa-search"></i></a>
           </form>
         </li>
       </ul>
       <div class="d-flex">
-        <a id="giohang" class="btn ms-3"><span>Giỏ hàng / </span><span id="giagiohang">0</span><span class="text-decoration-underline">đ</span><span>   </span></span><i class="fas fa-shopping-bag"></i></a>
+        <a href ="../views/giohang.html"id="giohang" class="btn ms-3"><span>Giỏ hàng / </span><span id="giagiohang">0</span><span class="text-decoration-underline">đ</span><span>   </span></span><i class="fas fa-shopping-bag"></i></a>
       </div>
       <div id="welcome" class="d-flex">
       </div>
@@ -43,6 +46,11 @@
   </div>
 </div>
 <script>
+    $("#timkiem").click(function(){
+      sessionStorage.setItem("tensp",$("#inputtimkiem").val())
+      window.location.href = "shop-view.asp"
+  })
+  
   $("#btndangxuat").click(function () {
     delete_cookie("tk")
     $.ajax({
@@ -65,6 +73,17 @@
         loai: "dangxuat"
       },
       success: function () {
+        $.ajax({
+          method: "get",
+          url: "../controllers/giamgia-controller.asp",
+          data: {
+            loai: "huyapmagiamgia",
+          }, success: function (response) {
+            $("#magiamgia").val("")
+            sessionStorage.removeItem("magg")
+            delete_cookie("giamgia")
+          }
+        })
         window.location.href = "loginkhachhang-view.asp"
       }
     });
@@ -74,6 +93,7 @@
       str = "";
       str += "<span class=\"navbar-text\"></span>";
       str += "<a id=\"btndangxuat\" onclick=\"dangxuat()\"class=\"btn btn-outline-warning ms-3\">Đăng xuất</a>"
+      str += "<a href=\"lichsu.asp?tk="+getCookie("tk")+"\" class=\"btn btn-outline-warning ms-3\">Lịch sử</a>"
       $("#welcome").html(str)
       $(".navbar-text").html("Chào mừng " + getCookie("tk") + "!")
     }

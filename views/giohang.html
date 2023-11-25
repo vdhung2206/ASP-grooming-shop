@@ -22,6 +22,10 @@
 </head>
 
 <body>
+  <div class="container sticky-top" id="headercontainer">
+    <div id="msg" class="mt-2" role="alert">
+    </div>
+  </div>
   <section class="h-100 h-custom" style="background-color: #d2c9ff;">
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -34,7 +38,7 @@
                   </div>
                   <div class="p-5 pt-0">
                     <div class="">
-                      <h6 class="mb-0"><a href="#!" class="text-body"><i
+                      <h6 class="mb-0"><a href="shop-view.asp" class="text-body"><i
                             class="fas fa-long-arrow-alt-left me-2"></i>Quay lại shop</a></h6>
                     </div>
                   </div>
@@ -56,7 +60,38 @@
   <script>
 
     var giohang = []
+    function apdunggiamgia() {
+      var magg = $("#magiamgia").val()
+      $.ajax({
+        method: "get",
+        url: "../controllers/giamgia-controller.asp",
+        data: {
+          loai: "apdunggiamgia",
+          magg: magg
+        }, success: function (response) {
+          const obj = JSON.parse(response);
+          if (obj.data.apDungGiamGia) {
+            const now = new Date();
+            const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000).toUTCString();
+            document.cookie = "giamgia=" + response + ";expires=" + expires + "; path=/";
+            sessionStorage.setItem("magg", $("#magiamgia").val())
+          }
+          if (obj.data.apDungGiamGia) {
+            addAlertSuccess(obj.message)
+          }
+          else {
+            addAlertDanger(obj.message)
+          }
+          loadData()
+          if (!obj.data.apDungGiamGia && obj.status != "1010") {
+            $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+            $("#thanhtien").html(tinhGiaGioHang() + +30000 + '<span class=\"text-decoration-underline\">đ</span>')
+          }
+        }
+      })
+    }
     $(document).ready(function () {
+      tinhGiaGioHang()
       if (getCookie("giohang") == null) {
         const now = new Date();
         const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000).toUTCString();
@@ -65,104 +100,295 @@
       } else {
       }
       loadData()
+      if (sessionStorage.getItem("magg")) {
+      }
+      else {
+        $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+        $("#thanhtien").html(tinhGiaGioHang() + +30000 + '<span class=\"text-decoration-underline\">đ</span>')
+      }
     })
-    
+    function addAlertSuccess(msg) {
+      $("#msg").removeClass("alert alert-danger mt-2")
+      $("#msg").addClass("alert alert-success mt-2");
+      $("#msg").html(msg);
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    }
+    function addAlertDanger(msg) {
+      $("#msg").removeClass("alert alert-success mt-2");
+      $("#msg").addClass("alert alert-danger mt-2");
+      $("#msg").html(msg);
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    }
     function loadData() {
-      var json_str = getCookie("giohang")
-      giohang = JSON.parse(json_str);
-      if (giohang.length > 0) {
-        var str = '<div class="d-flex justify-content-between align-items-center mb-5"><h1 class="fw-bold mb-0 text-black">Giỏ hàng</h1><h6 class="mb-0 text-muted">' + tongSanPham() + ' sản phẩm</h6></div>'
+      function soLuong(masp) {
+        var json_str = getCookie('giohang');
+        giohang = JSON.parse(json_str);
+        var a
         giohang.forEach(element => {
-          for (var x in element) {
-            $.ajax({
-              method: "get",
-              url: "../controllers/sanpham-controller.asp",
-              data: {
-                loai: "laythongtinsanpham",
-                masp: x
-              }, success: function (response) {
-                const obj = JSON.parse(response);
-                console.log(obj)
-                str += '<hr class="my-4">'
-                str += '<div class="row mb-4 d-flex justify-content-between align-items-center">'
-                str += '<div class="col-md-2 col-lg-2 col-xl-2">'
-                str += '<img src="' + obj.data.hinhanh + '" class="img-fluid rounded-3">'
-                str += '</div>'
-                str += '<div class="col-md-3 col-lg-3 col-xl-3">'
-                str += '<h6 class="text-black mb-0">' + obj.data.tensp + '</h6>'
-                str += '</div>'
-                str += '<div class="col-md-3 col-lg-3 col-xl-2 d-flex">'
-                str += '<button class="btn btn-link px-2"onclick="giamSoLuong(' + x + ',' + obj.data.giasp + ')"><i class="fas fa-minus"></i></button>'
-                str += '<input id="' + x + '" min="0" name="quantity" value="' + element[x] + '" type="number" class="form-control form-control-sm" />'
-                str += '<button class="btn btn-link px-2" onclick="tangSoLuong(' + x + ',' + obj.data.giasp + ')"><i class="fas fa-plus"></i></button>'
-                str += '</div> <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1"><h6 class="mb-0">' + obj.data.giasp * element[x] + '<span class=\"text-decoration-underline\">đ</span></h6>'
-                str += '</div> <div class="col-md-1 col-lg-1 col-xl-1 text-end"> <a href="#!" class="text-muted"><i class="fas fa-times"></i></a></div></div>'
-                console.log(str)
-                $("#result").html(str)
-              }
-            });
+          for (x in element) {
+            if (x == masp) {
+              a = element[x]
+            }
             break
           }
         });
-        console.log(str)
+        return a
+      }
+      var json_str = getCookie("giohang")
+      giohang = JSON.parse(json_str);
+      var listsp = "";
+      if (giohang.length > 0) {
+        var c = 1
+        giohang.forEach(element => {
+          for (var x in element) {
+            listsp += x;
+            if (c < giohang.length) {
+              listsp += ","
+            }
+            c++
+            break
+          }
+        });
+        var str = '<div class="d-flex justify-content-between align-items-center mb-5"><h1 class="fw-bold mb-0 text-black">Giỏ hàng</h1><h6 class="mb-0 text-muted">' + tongSanPham() + ' sản phẩm</h6></div>'
+        $.ajax({
+          method: "get",
+          url: "../controllers/sanpham-controller.asp",
+          data: {
+            loai: "giohang",
+            listsp: listsp,
+          }, success: function (response) {
+            const obj = JSON.parse(response);
+            obj.data.danhsachsanpham.forEach(element => {
+              str += '<hr class="my-4">'
+              str += '<div class="row mb-4 d-flex justify-content-between align-items-center">'
+              str += '<div class="col-md-2 col-lg-2 col-xl-2">'
+              str += '<img src="' + element.hinhanh + '" class="img-fluid rounded-3">'
+              str += '</div>'
+              str += '<div class="col-md-3 col-lg-3 col-xl-3">'
+              str += '<h6 class="text-black mb-0">' + element.tensp + '</h6>'
+              str += '</div>'
+              str += '<div class="col-md-3 col-lg-3 col-xl-2 d-flex">'
+              str += '<button class="btn btn-link px-2"onclick="giamSoLuong(' + element.masp + ',' + element.giasp + ')"><i class="fas fa-minus"></i></button>'
+              str += '<input onchange="thaydoisl(this,'+element.masp+')" id="sl' + element.masp + '" min="0" name="quantity" value="' + soLuong(element.masp) + '" type="number" class="form-control form-control-sm" />'
+              str += '<button class="btn btn-link px-2" onclick="tangSoLuong(' + element.masp + ',' + element.giasp + ')"><i class="fas fa-plus"></i></button>'
+              str += '</div> <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1"><h6 id="tien' + element.masp + '" class="mb-0">' + soLuong(element.masp) * element.giasp + '<span class=\"text-decoration-underline\">đ</span></h6>'
+              str += '</div> <div class="col-md-1 col-lg-1 col-xl-1 text-end"> <button onclick="xoagiohang(' + element.masp + ')" class=" btn text-muted"><i class="fas fa-times"></i></button></div></div>'
+            })
+            $("#result").html(str)
+          }
+        });
         $("#result").append('<hr class="my-4"><div class="pt-5"><h6 class="mb-0"><a href="#!" class="text-body"><iclass="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>/div>')
         var str1 = ""
+        if (sessionStorage.getItem("magg")) {
+          magg = sessionStorage.getItem("magg")
+        }
+        else {
+          magg = ""
+        }
         str1 += '<div class="p-5"><h3 class="fw-bold mb-5 mt-2 pt-1">Thống kê giỏ hàng</h3><hr class="my-4"><div class="d-flex justify-content-between mb-4"><h5 class="text-uppercase">' + tongSanPham() + ' sản phẩm</h5>'
         str1 += '<h5>' + tinhGiaGioHang() + '<span class=\"text-decoration-underline\">đ</span></h5>'
-        str1 += '</div><h5 class="text-uppercase mb-3">Giao hàng</h5><div class="mb-4 pb-2"><h5>Đồng giá 30.000đ</h5></div><h5 class="text-uppercase mb-3">Mã giảm giá</h5><div class="mb-5"><div class="form-outline"><input type="text" id="form3Examplea2" class="form-control form-control-lg" /></div><button type="button" class="mt-2 btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Áp dụng</button>  </div><hr class="my-4">'
+        str1 += '</div><h5 class="text-uppercase mb-3">Giao hàng</h5><div class="mb-4 pb-2"><h5>Đồng giá 30.000đ</h5></div><h5 class="text-uppercase mb-3">Mã giảm giá</h5><div class="mb-5"><div class="form-outline"><input type="text" id="magiamgia" value="' + magg + '" class="form-control form-control-lg" /></div><button type="button" onclick="apdunggiamgia()" class="mt-2 btn mr-5 btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Áp dụng</button><button type="button" onclick="huyapmagiamgia()" class="mt-2 btn btn-danger ml-5 btn-block btn-lg" data-mdb-ripple-color="dark">Hủy áp dụng</button>   </div><hr class="my-4">'
         str1 += '<div class="d-flex justify-content-between mb-5"><h5 class="text-uppercase">Tổng</h5>'
-        str1 += '<h5>' + (parseInt(tinhGiaGioHang()) + parseInt(30000)) + '<span class=\"text-decoration-underline\">đ</span></h5>'
-        str1 += '</div><button type="button" class="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Tiến hành thanh toán</button></div>'
+        str1 += '<h5 id="tong">' + (tinhGiaGioHang() + parseInt(30000)) + '<span class=\"text-decoration-underline\">đ</span></h5></div>'
+        str1 += '<div class="d-flex justify-content-between mb-5"><h5 class="text-uppercase">Giảm giá</h5>'
+        str1 += '<h5 id="giamgia">' + '<span class=\"text-decoration-underline\">đ</span></h5></div>'
+        str1 += '<div class="d-flex justify-content-between mb-5"><h5 class="text-uppercase">Thành tiền</h5>'
+        str1 += '<h5 id="thanhtien">' + '<span class=\"text-decoration-underline\">đ</span></h5>'
+        str1 += '</div><a href="../views/checkout.html"class="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Tiến hành thanh toán</a></div>'
         $("#thongkegiohang").html(str1)
-
+        tinhGiamGia()
+      }
+      else {
+        $("#result").html("Chưa có sản phẩm nào trong giỏ hàng!")
+        $("#thongkegiohang").html("")
       }
     }
-
+    function thaydoisl(input,masp){
+      var json_str = getCookie('giohang');
+      giohang = JSON.parse(json_str);
+      giohang.forEach(element => {
+        for (x in element) {
+          if (x == masp) {
+            if (parseInt(input.value) <= parseInt(element["sltonkho"])) {
+              element[x] = parseInt(input.value)
+              var json_str = JSON.stringify(giohang);
+              const now = new Date();
+              const expires = new Date(now.getTime() + 20 * 60 * 1000).toUTCString();
+              document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+            }
+            else {
+              addAlertDanger("Số lượng tồn kho không đủ để đáp ứng!")
+            }
+            break
+          }
+        }
+      });
+      tinhGiaGioHang()
+      loadData()
+      if (sessionStorage.getItem("magg") == null) {
+        $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+        $("#thanhtien").html(tinhGiaGioHang() + +30000 + '<span class=\"text-decoration-underline\">đ</span>')
+      }
+    }
     function tangSoLuong(masp, giasp) {
       var json_str = getCookie('giohang');
       giohang = JSON.parse(json_str);
       giohang.forEach(element => {
         for (x in element) {
           if (x == masp) {
-            element[x] += 1
-            var json_str = JSON.stringify(giohang);
-            const now = new Date();
-            const expires = new Date(now.getTime() + 20 * 60 * 1000).toUTCString();
-            document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+            if (element[x] < element["sltonkho"]) {
+              element[x] += 1
+              var json_str = JSON.stringify(giohang);
+              const now = new Date();
+              const expires = new Date(now.getTime() + 20 * 60 * 1000).toUTCString();
+              document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+            }
+            else {
+              addAlertDanger("Số lượng tồn kho không đủ để đáp ứng!")
+            }
+            break
           }
+        }
+      });
+      tinhGiaGioHang()
+      loadData()
+      if (sessionStorage.getItem("magg") == null) {
+        $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+        $("#thanhtien").html(tinhGiaGioHang() + +30000 + '<span class=\"text-decoration-underline\">đ</span>')
+      }
+    }
+    $(this)
+    function huyapmagiamgia() {
+      var magg = $("#magiamgia").val()
+      if (magg == "") {
+        addAlertDanger("Bạn chưa nhập mã giảm giá nào")
+      }
+      else {
+        $.ajax({
+          method: "get",
+          url: "../controllers/giamgia-controller.asp",
+          data: {
+            loai: "huyapmagiamgia",
+          }, success: function (response) {
+            $("#magiamgia").val("")
+            delete_cookie("giamgia")
+            const obj = JSON.parse(response);
+            if (obj.data.huyapmagiamgia) {
+              addAlertSuccess(obj.message)
+            }
+            sessionStorage.removeItem("magg")
+            loadData()
+            $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+            $("#thanhtien").html(tinhGiaGioHang() + 30000 + '<span class=\"text-decoration-underline\">đ</span>')
+          }
+        })
+      }
+
+    }
+    function tinhGiaGioHang() {
+      var json_str = getCookie('giohang');
+      var tongtien = 0
+      giohang = JSON.parse(json_str);
+      giohang.forEach(element => {
+        for (var x in element) {
+          tongtien += element[x] * element["giasp"]
           break
         }
       });
-      loadData()
+      $("#giagiohang").html(tongtien);
+      $.ajax({
+        method: "post",
+        url: "../controllers/giamgia-controller.asp",
+        data: {
+          loai: "luugiagiohang",
+          giagiohang: tongtien
+        }, success: function (response) {
+        }
+      })
+      return tongtien
     }
-    function tinhGiaGioHang() {
-    var json_str = getCookie('giohang');
-    var tongtien = 0
-    giohang = JSON.parse(json_str);
-    giohang.forEach(element => {
-      for(var x in element){
-        tongtien += element[x] * element["giasp"]
-        break
+    function tinhGiamGia() {
+      var json_str = getCookie('giamgia');
+      giamgia = JSON.parse(json_str);
+      if (giamgia != null) {
+        console.log(giamgia)
+        if (giamgia.data.phantramgg != undefined) {
+          $("#giamgia").html((tinhGiaGioHang() * giamgia.data.phantramgg) / 100 + '<span class=\"text-decoration-underline\">đ</span>')
+          $("#thanhtien").html(tinhGiaGioHang() + 30000 - ((tinhGiaGioHang() * giamgia.data.phantramgg) / 100) + '<span class=\"text-decoration-underline\">đ</span>')
+        }
+        if (giamgia.data.sotiengg != undefined) {
+          $("#giamgia").html(giamgia.data.sotiengg + '<span class=\"text-decoration-underline\">đ</span>')
+          $("#thanhtien").html(tinhGiaGioHang() + 30000 - giamgia.data.sotiengg + '<span class=\"text-decoration-underline\">đ</span>')
+        }
       }
-    });
-    $("#giagiohang").html(tongtien);
-    return tongtien
-  }
-    function giamSoLuong(masp, giasp) {
+
+    }
+
+    function xoagiohang(masp) {
       var json_str = getCookie('giohang');
       giohang = JSON.parse(json_str);
+      var c = 0
+
       giohang.forEach(element => {
         for (x in element) {
           if (x == masp) {
-            element[x] -= 1
+            giohang.splice(c, 1)
             var json_str = JSON.stringify(giohang);
             const now = new Date();
             const expires = new Date(now.getTime() + 20 * 60 * 1000).toUTCString();
             document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
           }
         }
+        c++
       });
+      tinhGiaGioHang()
       loadData()
+      if (sessionStorage.getItem("magg") == null) {
+        $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+        $("#thanhtien").html(tinhGiaGioHang() + 30000 + '<span class=\"text-decoration-underline\">đ</span>')
+      }
+    }
+    function giamSoLuong(masp, giasp) {
+      var json_str = getCookie('giohang');
+      giohang = JSON.parse(json_str);
+      var c = 0
+      giohang.forEach(element => {
+        for (x in element) {
+          if (x == masp) {
+            if (element[x] > 1) {
+              element[x] -= 1
+              var json_str = JSON.stringify(giohang);
+              const now = new Date();
+              const expires = new Date(now.getTime() + 20 * 60 * 1000).toUTCString();
+              document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+            }
+            else {
+              giohang.splice(c, 1)
+              var json_str = JSON.stringify(giohang);
+              const now = new Date();
+              const expires = new Date(now.getTime() + 20 * 60 * 1000).toUTCString();
+              document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+            }
+          }
+        }
+        c++
+      });
+      tinhGiaGioHang()
+      loadData()
+      if (sessionStorage.getItem("magg") == null) {
+        $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+        $("#thanhtien").html(tinhGiaGioHang() + 30000 + '<span class=\"text-decoration-underline\">đ</span>')
+      }
     }
     function tongSanPham() {
       var count = 0
@@ -174,7 +400,9 @@
       })
       return count;
     }
-
+    function delete_cookie(name) {
+      document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
     function getCookie(name) {
       var cookieArr = document.cookie.split(";");
       for (var i = 0; i < cookieArr.length; i++) {

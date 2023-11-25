@@ -1,5 +1,5 @@
 <!--#include file="../models/sanPham.asp" -->
-<!-- #include file="../aspuploader/include_aspuploader.asp" -->  
+<!-- #include file="vbsUpload.asp" -->
 <%
     ' status code 20: Lay danh sach san pham phan trang thanh cong
     loai = request.querystring("loai")
@@ -25,12 +25,6 @@
     sapxeptonkho = request.querystring("sapxeptonkho")
     if(loai="themsanpham") then
         set sp = new SanPham
-        Dim uploader   
-        Set uploader=new AspUploader 
-        Dim mvcfile						
-        Set mvcfile=uploader.GetUploadedFile(Request.Form("myuploader"))
-        dim hinhanh
-        hinhanh= "../image/" + mvcfile.FileName
         tenspthem = request.form("tenspthem")
         maloaispthem = request.form("maloaispthem")
         hangspthem = request.form("hangspthem")
@@ -43,8 +37,9 @@
                     if(sltonkhothem > 0 and IsNumeric(sltonkhothem)) then
                         if(giagocspthem >0 and IsNumeric(giagocspthem)) then
                             set sp = new SanPham
-                            call sp.themSanPham(tenspthem, maloaispthem, hangspthem, sltonkhothem, giagocspthem, hinhanh, chitietspthem)
-                            response.redirect("/views/sanpham-view.asp")
+                            session("masp") = sp.themSanPham(tenspthem, maloaispthem, hangspthem, sltonkhothem, giagocspthem, "", chitietspthem)
+                            Response.write("Thêm sản phẩm thành công! Hãy thêm ảnh cho sản phẩm")
+                            'response.redirect("/views/sanpham-view.asp")
                         else
                             Response.Write("""status code"": ""103"",")
                             Response.Write("""message"": ""Giá sản phẩm phải sản phẩm phải lớn hơn 0 và phải là số!"",")
@@ -251,6 +246,9 @@
             Response.Write(""",")
             response.write("""tensp"": """)
             response.write(danhsachsanpham(z).TenSP)
+            Response.Write(""",")
+            response.write("""giasp"": """)
+            response.write(danhsachsanpham(z).Giasp)
             Response.Write("""")
             Response.Write("}")
             if(count < danhsachsanpham.count) then
@@ -347,6 +345,117 @@
         Response.Write(",""mintonkhoall"":")
         Response.Write(mincountall)
         Response.Write("")
+        Response.Write("}")
+        Response.Write("}")
+    end if
+
+    if(loai="thongkedoanhsosanpham") then
+        nam =  request.queryString("nam")
+        thang =  request.queryString("thang")
+        page = request.queryString("page")
+        set sp = new SanPham
+        set danhsachsanpham = sp.thongKeDoanhSo(nam, thang, limit, page)
+        Response.Write("{")
+        Response.Write("""status code"": ""20"",")
+        Response.Write("""message"": """",")
+        Response.Write("""data"":{ ""danhsachsanpham"": [")
+        count = 0
+        for each z in danhsachsanpham
+            count = count + 1
+            Response.Write("{")
+            Response.Write("")
+            response.write("""stt"": """)
+            response.write((page-1)*limit+count)
+            response.write(""",")
+            response.write("""tensp"": """)
+            response.write(danhsachsanpham(z).TenSP)
+            response.write(""",")
+            Response.Write("")
+            response.write("""doanhso"": """)
+            response.write(danhsachsanpham(z).DoanhSo)
+            response.write("""")
+            Response.Write("}")
+            if(count < danhsachsanpham.count) then
+                response.write(",")
+            end if
+
+        next
+        Response.Write("]")
+        Response.Write(",""totalPages"":")
+        Response.Write(sp.Ceil(sp.countthongke(nam,thang)/limit))
+        Response.Write("")
+        Response.Write("}")
+        Response.Write("}")
+    end if
+
+    if(loai="giohang") then
+    
+        dim giohang
+        set listsp = request.queryString("listsp")
+        set sp = new SanPham
+        set danhsachsanpham = sp.gioHang(listsp)
+        
+        Response.Write("{")
+        Response.Write("""status code"": ""20"",")
+        Response.Write("""message"": """",")
+        Response.Write("""data"":{ ""danhsachsanpham"": [")
+        count = 0
+        for each z in danhsachsanpham
+            count = count + 1
+            Response.Write("{")
+            Response.Write("")
+            response.write("""hinhanh"": """)
+            response.write(danhsachsanpham(z).HinhAnh)
+            response.write(""",")
+            Response.Write("")
+            response.write("""masp"": """)
+            response.write(danhsachsanpham(z).MaSP)
+            response.write(""",")
+            response.write("""tensp"": """)
+            response.write(danhsachsanpham(z).TenSP)
+            response.write(""",")
+            response.write("""danhmuc"": """)
+            response.write(danhsachsanpham(z).DanhMuc)
+            response.write("""")
+            response.write(",")
+            response.write("""loaisp"": """)
+            response.write(danhsachsanpham(z).LoaiSP)
+            response.write("""")
+            response.write(",")
+            response.write("""hang"": """)
+            response.write(danhsachsanpham(z).HangSP)
+            response.write("""")
+            response.write(",")
+            response.write("""sltonkho"": """)
+            response.write(danhsachsanpham(z).SLTonKho)
+            response.write("""")
+            response.write(",")
+            response.write("""giagocsp"": """)
+            response.write(danhsachsanpham(z).GiaGocSP)
+            response.write("""")
+            response.write(",")
+            response.write("""giamgiasp"": """)
+            response.write(danhsachsanpham(z).GiamGiaSP)
+            response.write("""")
+            response.write(",")
+            response.write("""giasp"": """)
+            response.write(danhsachsanpham(z).giasp)
+            response.write("""")
+            response.write(",")
+            response.write("""chitietsp"": """)
+            response.write(danhsachsanpham(z).ChiTiet)
+            response.write("""")
+            response.write(",")
+            response.write("""trangthai"": """)
+            response.write(danhsachsanpham(z).TrangThai)
+            response.write("""")
+            Response.Write("}")
+            if(count < danhsachsanpham.count) then
+                response.write(",")
+            end if
+
+        next
+        Response.Write("]")
         Response.Write("}")
         Response.Write("}")
     end if

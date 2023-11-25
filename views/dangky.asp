@@ -66,8 +66,9 @@ dim cmdPrep
         cmdPrep1.Parameters(3)=sdt
         cmdPrep1.Parameters(4)=address
         cmdPrep1.execute()
+        session("taikhoan") = tkregister
         session("success") ="Đăng ký thành công"
-        response.redirect("trangchukhachhang-view.asp")
+        response.redirect("loginkhachhang-view.asp")
         connDB.Close()
     end if
 end if

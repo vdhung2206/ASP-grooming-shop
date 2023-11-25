@@ -1,0 +1,192 @@
+<script>
+    var madh =""
+    var sdt =""
+    var dathangtu =""  
+    var dathangden =""
+    var hoanthanhtu =""
+    var hoanthanhden =""
+    var trangthai = ""
+    var currentPage = "1"
+    var sapxepthoigian =""
+    $("#formtimkiem").submit(function (e) {
+        e.preventDefault()
+        madh = $("#madh").val();
+        sdt = $("#sdt").val();
+        dathangtu = $("#dathangtu").val()
+        dathangden = $("#dathangden").val()
+        hoanthanhtu = $("#hoanthanhtu").val()
+        hoanthanhden = $("#hoanthanhden").val()
+        trangthai =$("#trangthai").val()
+        sapxepthoigian = $("#sapxepthoigian").val()
+        console.log(madh)
+        console.log(sdt)
+        console.log(dathangtu)
+        console.log(dathangden)
+        console.log(hoanthanhtu)
+        console.log(hoanthanhden)
+        console.log(trangthai)
+        loadData(1)
+        loadThanhPhanTrang()
+    })
+    $(document).ready(function () {
+        $.ajax({
+            method: "get",
+            url: "../controllers/donhang-controller.asp",
+            data: {
+                loai: "phantrangdonhang",
+            },
+            success: function (response) {
+                const obj = JSON.parse(response);
+                console.log(obj)
+            }
+        })
+        loadData(1);
+    })
+
+    function loadData(page) {
+        currentPage = page
+        $.ajax({
+            method: "get",
+            url: "../controllers/donhang-controller.asp",
+            data: {
+                page: page,
+                loai: "phantrangdonhang",
+                madh: madh,
+                sdt: sdt,
+                dathangtu: dathangtu,
+                dathangden: dathangden,
+                hoanthanhtu: hoanthanhtu,
+                hoanthanhden: hoanthanhden,
+                trangthai: trangthai,
+                sapxepthoigian:sapxepthoigian,
+            }
+            ,
+            success: function (response) {
+                const obj = JSON.parse(response);
+                $("#customRange1").prop("min", obj.data.mintonkhoall)
+                $("#customRange2").prop("max", obj.data.maxtonkhoall)
+                $("#customRange1").prop("max", obj.data.maxtonkhoall)
+                $("#customRange2").prop("min", obj.data.mintonkhoall)
+                var danhsachdonhang = obj.data.danhsachdonhang
+                var str = ""
+                danhsachdonhang.forEach(donhang => {
+                    str += "<tr>";
+                    str += "<td width = 10%>";
+                    str += donhang.madh
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.tk;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.tennguoinhan;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.sdtnguoinhan;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.diachi;
+                    str += "<td>";
+                    str += donhang.magg;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.ngaydat;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.ngayhoanthanh;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.phigiaohang;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.tongtien;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.chietkhau;
+                    str += "</td>";
+                    str += "<td>";
+                    str += donhang.thanhtoan;
+                    str += "</td>";
+                    str += "<td>";
+                    if (donhang.trangthai == "0")
+                        str += "Chờ duyệt";
+                    else if (donhang.trangthai == "1")
+                        str += "Đang giao";
+                    else if (donhang.trangthai == "2")
+                        str += "Đã hoàn thành"
+                    else {
+                        str += "Đã hủy"
+                    }
+                    str += "</td>";
+                    str += "<td>";
+                    str += "<form action=\"chitietdonhang-view.asp\">"
+                    str += "<input type=\"hidden\" name=\"masp\" value=\"" + donhang.masp + "\">"
+                    str += "<input type=\"hidden\" name=\"loai\" value=\"laythongtindonhang\">";
+                    str += '<a type="submit" href="chitietdonhang.asp?madh='+donhang.madh+'" class="btn btn-success")">Chi tiết</a>';
+                    str += "</form>";
+                    str += "</td>";
+                    str += "</tr>";
+                }
+                );
+                $("#result").html(str);
+                loadThanhPhanTrang(obj.data.totalPages, page)
+            }
+        });
+    }
+    function loadThanhPhanTrang(totalPages, currentPage) {
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        var truoc = "<li class=\"page-item\"" + "><a id=\"truoc\" class =\"page-link\" onclick=\"loadData(" + (currentPage - 1) + ")\" style=\"cursor:pointer";
+        truoc += "\">" + "Trước</a></li>"
+        var str = "";
+        str += truoc;
+        if (totalPages <= 10) {
+            for (let i = 1; i <= totalPages; i++) {
+                str += "<li class=\"page-item"
+                if (i == currentPage) {
+                    str += " active"
+                }
+                str += "\"><a class =\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(" + i + ")\""
+                str += ">" + i + "</a></li>"
+            }
+        }
+        if (totalPages > 10) {
+            str += "<li class=\"page-item";
+            if (1 == currentPage) {
+                str += " active"
+            }
+            str += "\"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(1)\">" + 1 + "</a></li>"
+            if (currentPage > 3) {
+                str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+            }
+            if (currentPage > 2) {
+                str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(" + (parseInt(currentPage) - 1) + ")\">" + (parseInt(currentPage) - 1) + "</a></li>"
+            }
+            if (currentPage != 1) {
+                str += "<li class=\"page-item active\"><a class=\"page-link\">" + currentPage + "</a></li>"
+            }
+            if (currentPage < (totalPages - 1)) {
+                str += "<li class=\"page-item\"><a class=\"page-link\"style=\"cursor:pointer\" onclick=\"loadData(" + (parseInt(currentPage) + 1) + ")\">" + (parseInt(currentPage) + 1) + "</a></li>"
+            }
+            if (currentPage < (totalPages - 2)) {
+                str += "<li class=\"page-item\"><a class=\"page-link\" style=\"pointer-events: none\">...</a></li>"
+            }
+            if ((totalPages > 1) && (parseInt(currentPage) < parseInt(totalPages))) {
+                str += "<li class=\"page-item \"><a class=\"page-link\" style=\"cursor:pointer\" onclick=\"loadData(" + totalPages + ")\">" + totalPages + "</a></li>"
+            }
+        }
+        var sau = "<li class=\"page-item\"" + "><a id=\"sau\" class =\"page-link\" onclick=\"loadData(" + (parseInt(currentPage) + 1) + ")\" style=\"cursor:pointer";
+        sau += "\">" + "Sau</a></li>"
+        str += sau;
+        $("#thanhphantrang").html(str);
+        if (currentPage <= 1) {
+            $("#truoc").addClass(" disabled")
+        }
+        if (currentPage >= totalPages) {
+            $("#sau").addClass(" disabled")
+        }
+    }
+</script>

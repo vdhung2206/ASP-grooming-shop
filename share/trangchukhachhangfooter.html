@@ -2,9 +2,14 @@
 <script>
   var giohang = []
   $(document).ready(function () {
+    console.log(sessionStorage.getItem("dathang"))
+    if(sessionStorage.getItem("dathang") !="" && sessionStorage.getItem("dathang")!=null){
+      addAlertSuccess(sessionStorage.getItem("dathang"))
+      sessionStorage.removeItem("dathang");
+    }
     if (getCookie("giohang") == null) {
       const now = new Date();
-      const expires = new Date(now.getTime() + 24 *60 * 60 * 1000).toUTCString();
+      const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000).toUTCString();
       var json_str = JSON.stringify(giohang);
       document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
     } else {
@@ -20,33 +25,37 @@
       },
       success: function (response) {
         const obj = JSON.parse(response);
+        console.log(obj)
         var str = "";
         var count = 0;
         obj.data.danhsachsanpham.forEach(element => {
-          if (count < 6) {
-            str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
-            str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
-            str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
-            str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
-            str += "</a>"
-            str += "<div class=\"card-body\" style=\"padding:0\">";
-            str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
-            str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
-            if (element.giasp != element.giagocsp) {
-              str += "<span class=\"text text-decoration-line-through text-black-50\">"
-              str += element.giagocsp
-              str += "<span class=\"text-decoration-underline\">đ</span></span>"
+          if (element.trangthai == "True") {
+            if (count < 6) {
+              str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
+              str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
+              str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
+              str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
+              str += "</a>"
+              str += "<div class=\"card-body\" style=\"padding:0\">";
+              str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
+              str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
+              str += "<h6 class=\"text-black-80\" style=\"margin:0\">Số lượng có sẵn: " + element.sltonkho + "</h6>"
+              if (element.giasp != element.giagocsp) {
+                str += "<span class=\"text text-decoration-line-through text-black-50\">"
+                str += element.giagocsp
+                str += "<span class=\"text-decoration-underline\">đ</span></span>"
+              }
+              str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
+              if (element.sltonkho > 0) {
+                str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp + "','" + element.hinhanh + "','" + element.sltonkho + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
+              }
+              else {
+                str += "Đã hết hàng"
+              }
+              str += "</div></div></div>"
             }
-            str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
-            if (element.sltonkho > 0) {
-              str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp +"','" + element.hinhanh + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
-            }
-            else {
-              str += "Đã hết hàng"
-            }
-            str += "</div></div></div>"
+            count++
           }
-          count++
         });
         $("#sapvuottoc").html(str)
       }
@@ -64,31 +73,35 @@
         var str = "";
         var count = 0;
         obj.data.danhsachsanpham.forEach(element => {
-          if (count < 6) {
-            str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
-            str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
-            str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
-            str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
-            str += "</a>"
-            str += "<div class=\"card-body\" style=\"padding:0\">";
-            str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
-            str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
-            if (element.giasp != element.giagocsp) {
-              str += "<span class=\"text text-decoration-line-through text-black-50\">"
-              str += element.giagocsp
-              str += "<span class=\"text-decoration-underline\">đ</span></span>"
+          if (element.trangthai == "True") {
+            if (count < 6) {
+              str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
+              str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
+              str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
+              str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
+              str += "</a>"
+              str += "<div class=\"card-body\" style=\"padding:0\">";
+              str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
+              str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
+              str += "<h6 class=\"text-black-80\" style=\"margin:0\">Số lượng có sẵn: " + element.sltonkho + "</h6>"
+              if (element.giasp != element.giagocsp) {
+                str += "<span class=\"text text-decoration-line-through text-black-50\">"
+                str += element.giagocsp
+                str += "<span class=\"text-decoration-underline\">đ</span></span>"
+              }
+              str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
+              if (element.sltonkho > 0) {
+                str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp + "','" + element.hinhanh + "','" + element.sltonkho + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
+              }
+              else {
+                str += "Đã hết hàng"
+              }
+              str += "</div></div></div>"
             }
-            str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
-            if (element.sltonkho > 0) {
-              str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp +"','" + element.hinhanh + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
-            }
-            else {
-              str += "Đã hết hàng"
-            }
-            str += "</div></div></div>"
+            count++
           }
-          count++
         });
+
         $("#chamsoctoc").html(str)
       }
     })
@@ -104,30 +117,33 @@
         var str = "";
         var count = 0;
         obj.data.danhsachsanpham.forEach(element => {
-          if (count < 6) {
-            str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
-            str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
-            str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
-            str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
-            str += "</a>"
-            str += "<div class=\"card-body\" style=\"padding:0\">";
-            str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
-            str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
-            if (element.giasp != element.giagocsp) {
-              str += "<span class=\"text text-decoration-line-through text-black-50\">"
-              str += element.giagocsp
-              str += "<span class=\"text-decoration-underline\">đ</span></span>"
+          if (element.trangthai == "True") {
+            if (count < 6) {
+              str += "<div class=\"p-2\" style=\"width:33%; min-width:200px\">"
+              str += "<div class=\"card pt-10\" style=\"width: 20rem; border: none\">";
+              str += "<a href=\"/views/chitietsanpham.asp?masp=" + element.masp + "\">"
+              str += "<img class=\"card-img-top\" src=" + element.hinhanh + " height=333em alt=\"Card image cap\">"
+              str += "</a>"
+              str += "<div class=\"card-body\" style=\"padding:0\">";
+              str += "<h6 class=\"text-black-50\">" + element.loaisp + "</h6>"
+              str += "<h6 class=\"card-title\" style=\"margin:0\">" + element.tensp + "</h6>"
+              str += "<h6 class=\"text-black-80\" style=\"margin:0\">Số lượng có sẵn: " + element.sltonkho + "</h6>"
+              if (element.giasp != element.giagocsp) {
+                str += "<span class=\"text text-decoration-line-through text-black-50\">"
+                str += element.giagocsp
+                str += "<span class=\"text-decoration-underline\">đ</span></span>"
+              }
+              str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
+              if (element.sltonkho > 0) {
+                str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp + "','" + element.hinhanh + "','" + element.sltonkho + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
+              }
+              else {
+                str += "Đã hết hàng"
+              }
+              str += "</div></div></div>"
             }
-            str += "<span class=\"text fs-5\"> " + element.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
-            if (element.sltonkho > 0) {
-              str += "<a onclick=\"themgiohang('" + element.masp + "','" + element.giasp +"','" + element.hinhanh + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
-            }
-            else {
-              str += "Đã hết hàng"
-            }
-            str += "</div></div></div>"
+            count++
           }
-          count++
         });
         $("#sanphamhotro").html(str)
       }
@@ -146,7 +162,7 @@
   function delete_cookie(name) {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   }
-  function themgiohang(masp, giasp, hinhanh) {
+  function themgiohang(masp, giasp, hinhanh, sltonkho) {
     var json_str = getCookie('giohang');
     giohang = JSON.parse(json_str);
     var obj = {}
@@ -154,6 +170,7 @@
     obj[key] = 1
     obj["hinhanh"] = hinhanh
     obj["giasp"] = giasp
+    obj["sltonkho"] = sltonkho
     if (!lookup(masp)) {
       giohang.push(obj)
       var json_str = JSON.stringify(giohang);
@@ -165,14 +182,13 @@
       increase(masp)
     }
     tinhGiaGioHang()
-    addAlertSuccess("Thêm vào giỏ hàng thành công")
   }
   function tinhGiaGioHang() {
     var json_str = getCookie('giohang');
     var tongtien = 0
     giohang = JSON.parse(json_str);
     giohang.forEach(element => {
-      for(var x in element){
+      for (var x in element) {
         tongtien += element[x] * element["giasp"]
         break
       }
@@ -193,11 +209,18 @@
     for (var i = 0, len = giohang.length; i < len; i++) {
       if (masp in giohang[i]) {
         for (var x in giohang[i]) {
-          giohang[i][x] += 1
-          var json_str = JSON.stringify(giohang);
-          const now = new Date();
-          const expires = new Date(now.getTime() + 24 *60 * 60 * 1000).toUTCString();
-          document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+          if ((giohang[i][x]) < giohang[i]["sltonkho"]) {
+            giohang[i][x] += 1
+            var json_str = JSON.stringify(giohang);
+            const now = new Date();
+            const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000).toUTCString();
+            document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
+            addAlertSuccess("Thêm vào giỏ hàng thành công!")
+          }
+          else{
+            console.log("OK")
+            addAlertDanger("Số lượng tồn kho không đủ để đáp ứng!")
+          }
           break;
         }
       }
@@ -207,6 +230,7 @@
     return arr.find(function (o) { return o.key === key }).value;
   }
   function addAlertSuccess(msg) {
+    $("#msg").removeClass("alert alert-danger mt-2")
     $("#msg").addClass("alert alert-success mt-2");
     $("#msg").html(msg);
     $(".alert").fadeTo(500, 1).slideDown(500, function () {
@@ -216,4 +240,15 @@
       });
     }, 2000);
   }
+  function addAlertDanger(msg) {
+      $("#msg").removeClass("alert alert-success mt-2")
+      $("#msg").addClass("alert alert-danger mt-2");
+      $("#msg").html(msg);
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    }
 </script>

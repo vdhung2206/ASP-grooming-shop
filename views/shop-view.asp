@@ -24,9 +24,7 @@
     <div class="row flex-nowrap">
       <div class="col-auto col-md-5 col-xl-3 px-sm-2 px-0 bg-light">
         <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-black min-vh-100">
-          <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-black text-decoration-none">
             <span class="fs-5 d-none d-sm-inline">Danh mục sản phẩm</span>
-          </a>
           <ul style="width:100%"
             class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
             <li>
@@ -107,6 +105,7 @@
       </div>
       <div class="col py-3">
         <div class="container">
+          <h5 id="ketquatimkiem"></h5>
           <div id="result" class="d-flex flex-wrap justify-content-start">
           </div>
           <nav aria-label="Page Navigation">
@@ -138,24 +137,24 @@
   </div>
   <script>
     var currentPage = "1"
-    var tensp = ""
+    var tensp = sessionStorage.getItem("tensp")
     var madm = ""
     var loaisp = ""
     var sapxep = ""
-    var sapxepgia=""
+    var sapxepgia = ""
     var sapxepphobien = ""
     var giohang = []
 
-    $("#sapxep").change(function(){
+    $("#sapxep").change(function () {
       sapxep = $("#sapxep").find(":selected").val()
-      if(sapxep ==0){
-        sapxepgia=""
+      if (sapxep == 0) {
+        sapxepgia = ""
         loadData(1)
-      }else if(sapxep==1){
-        sapxepgia =0;
+      } else if (sapxep == 1) {
+        sapxepgia = 0;
         loadData(1)
-      }else if(sapxep==2){
-        sapxepgia =1;
+      } else if (sapxep == 2) {
+        sapxepgia = 1;
         loadData(1)
       }
     })
@@ -171,38 +170,38 @@
       madm = searchParams.get('madm');
       loaisp = searchParams.get('loaisp');
       sapxep = searchParams.get('sapxep')
-      if(sapxep =="" ||sapxep==null){
+      if (sapxep == "" || sapxep == null) {
         sapxep = 0
       }
-      if(madm == 1){
+      if (madm == 1) {
         $("#sapvuottoc").addClass("bold")
-      }else if(madm ==3){
+      } else if (madm == 3) {
         $("#chamsoctoc").addClass("bold")
-      }else if(madm==4){
+      } else if (madm == 4) {
         $("#sanphamhotro").addClass("bold")
       }
-      if(loaisp==1){
+      if (loaisp == 1) {
         $("#clay").addClass("bold")
       }
-      else if(loaisp==2){
+      else if (loaisp == 2) {
         $("#wax").addClass("bold")
       }
-      else if(loaisp==3){
+      else if (loaisp == 3) {
         $("#pomade").addClass("bold")
       }
-      else if(loaisp==4){
+      else if (loaisp == 4) {
         $("#daugoi").addClass("bold")
       }
-      else if(loaisp==5){
+      else if (loaisp == 5) {
         $("#dauxa").addClass("bold")
       }
-      else if(loaisp==6){
+      else if (loaisp == 6) {
         $("#duongtoc").addClass("bold")
       }
-      else if(loaisp==1006){
+      else if (loaisp == 1006) {
         $("#hotrotaokieu").addClass("bold")
       }
-      else if(loaisp==1007){
+      else if (loaisp == 1007) {
         $("#nuochoa").addClass("bold")
       }
       if (getCookie("giohang") == null) {
@@ -211,7 +210,7 @@
         var json_str = JSON.stringify(giohang);
         document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
       }
-      else{
+      else {
         $("#giagiohang").html(tinhGiaGioHang())
       }
       loadData(currentPage)
@@ -221,6 +220,8 @@
       $(".loaisp").removeClass("bold")
     }
     $("#sapvuottoc").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       loaisp = ""
       e.preventDefault()
       removeBold()
@@ -229,6 +230,8 @@
       loadData(1)
     })
     $("#clay").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       madm = ""
       e.preventDefault()
       removeBold()
@@ -237,6 +240,8 @@
       loadData(1)
     })
     $("#wax").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       madm = ""
       e.preventDefault()
       removeBold()
@@ -245,6 +250,8 @@
       loadData(1)
     })
     $("#pomade").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       madm = ""
       e.preventDefault()
       removeBold()
@@ -253,6 +260,8 @@
       loadData(1)
     })
     $("#chamsoctoc").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       loaisp = ""
       e.preventDefault()
       removeBold()
@@ -261,6 +270,8 @@
       loadData(1)
     })
     $("#daugoi").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       madm = ""
       e.preventDefault()
       removeBold()
@@ -269,6 +280,8 @@
       loadData(1)
     })
     $("#dauxa").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       madm = ""
       e.preventDefault()
       removeBold()
@@ -277,6 +290,7 @@
       loadData(1)
     })
     $("#duongtoc").click(function (e) {
+      sessionStorage.removeItem("tensp")
       madm = ""
       e.preventDefault()
       removeBold()
@@ -285,6 +299,8 @@
       loadData(1)
     })
     $("#sanphamhotro").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       loaisp = ""
       e.preventDefault()
       removeBold()
@@ -293,6 +309,8 @@
       loadData(1)
     })
     $("#hotrotaokieu").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       madm = ""
       e.preventDefault()
       removeBold()
@@ -301,6 +319,8 @@
       loadData(1)
     })
     $("#nuochoa").click(function (e) {
+      sessionStorage.removeItem("tensp")
+      tensp=""
       madm = ""
       e.preventDefault()
       removeBold()
@@ -311,47 +331,47 @@
     function delete_cookie(name) {
       document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
-    function themgiohang(masp,giasp,hinhanh) {
+    function themgiohang(masp, giasp, hinhanh,sltonkho) {
       var json_str = getCookie('giohang');
       giohang = JSON.parse(json_str);
       var obj = {}
       var key = masp
       obj["giasp"] = giasp
       obj["hinhanh"] = hinhanh
+      obj["sltonkho"] = sltonkho
       obj[key] = 1
       if (!lookup(masp)) {
         giohang.push(obj)
         var json_str = JSON.stringify(giohang);
         const now = new Date();
-        const expires = new Date(now.getTime() + 24* 60 * 60 * 1000).toUTCString();
+        const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000).toUTCString();
         document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
       }
       else {
         increase(masp)
       }
       tinhGiaGioHang()
-      addAlertSuccess("Thêm vào giỏ hàng thành công")
     }
 
-     function addAlertSuccess(msg) {
-    $("#msg").addClass("alert alert-success mt-2");
-    $("#msg").html(msg);
-    $(".alert").fadeTo(500, 1).slideDown(500, function () {
-    });
-    window.setTimeout(function () {
-      $(".alert").fadeTo(500, 0).slideUp(500, function () {
+    function addAlertSuccess(msg) {
+      $("#msg").addClass("alert alert-success mt-2");
+      $("#msg").html(msg);
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
       });
-    }, 2000);
-  }
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    }
     function loadData(page) {
       var newUrl = "shop-view.asp?page=" + currentPage
-      if(madm !=null && madm!=""){
-        newUrl += "&madm="+madm
+      if (madm != null && madm != "") {
+        newUrl += "&madm=" + madm
       }
-      if(loaisp !=null && loaisp!=""){
-        newUrl += "&loaisp="+loaisp
+      if (loaisp != null && loaisp != "") {
+        newUrl += "&loaisp=" + loaisp
       }
-      if(sapxep !=null && sapxep !=""){
+      if (sapxep != null && sapxep != "") {
         newUrl += "&sapxep=" + sapxep
       }
       $("#sapxep").val(sapxep)
@@ -370,32 +390,41 @@
         }
         ,
         success: function (response) {
+          if(sessionStorage.getItem("tensp")!="" && sessionStorage.getItem("tensp")!=null){
+            $("#ketquatimkiem").html("Kết quả tìm kiếm cho \"" +tensp+"\": ")
+          }
+          else{
+            $("#ketquatimkiem").html("")
+          }
           const obj = JSON.parse(response);
           console.log(obj)
           var danhsachsanpham = obj.data.danhsachsanpham
           var str = ""
           danhsachsanpham.forEach(sanpham => {
-            str += "<div class=\"p-2\" style=\"width:33%; min-width:100px\">"
-            str += "<div class=\"card pt-10\" style=\"width: 18rem; border: none\">";
-            str += "<a href=\"/views/chitietsanpham.asp?masp=" + sanpham.masp + "\">"
-            str += "<img class=\"card-img-top\" src=" + sanpham.hinhanh + " height=333em alt=\"Card image cap\">"
-            str += "</a>"
-            str += "<div class=\"card-body\" style=\"padding:0\">";
-            str += "<h6 class=\"text-black-50\">" + sanpham.loaisp + "</h6>"
-            str += "<h6 class=\"card-title\" style=\"margin:0\">" + sanpham.tensp + "</h6>"
-            if (sanpham.giasp != sanpham.giagocsp) {
-              str += "<span class=\"text text-decoration-line-through text-black-50\">"
-              str += sanpham.giagocsp
-              str += "<span class=\"text-decoration-underline\">đ</span></span>"
+            if (sanpham.trangthai == "True") {
+              str += "<div class=\"p-2\" style=\"width:33%; min-width:100px\">"
+              str += "<div class=\"card pt-10\" style=\"width: 18rem; border: none\">";
+              str += "<a href=\"/views/chitietsanpham.asp?masp=" + sanpham.masp + "\">"
+              str += "<img class=\"card-img-top\" src=" + sanpham.hinhanh + " height=333em alt=\"Card image cap\">"
+              str += "</a>"
+              str += "<div class=\"card-body\" style=\"padding:0\">";
+              str += "<h6 class=\"text-black-50\">" + sanpham.loaisp + "</h6>"
+              str += "<h6 class=\"card-title\" style=\"margin:0\">" + sanpham.tensp + "</h6>"
+              if (sanpham.giasp != sanpham.giagocsp) {
+                str += "<span class=\"text text-decoration-line-through text-black-50\">"
+                str += sanpham.giagocsp
+                str += "<span class=\"text-decoration-underline\">đ</span></span>"
+              }
+              str += "<span class=\"text fs-5\"> " + sanpham.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
+              if (sanpham.sltonkho > 0) {
+                str += "<h6 class=\"text-black-80\" style=\"margin:0\">Số lượng có sẵn: " + sanpham.sltonkho + "</h6>"
+                str += "<a onclick=\"themgiohang('" + sanpham.masp + "','" + sanpham.giasp + "','" + sanpham.hinhanh +"','"+sanpham.sltonkho+ "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
+              }
+              else {
+                str += "Đã hết hàng"
+              }
+              str += "</div></div></div>"
             }
-            str += "<span class=\"text fs-5\"> " + sanpham.giasp + "<span class=\"text-decoration-underline\">đ</span></span><br>"
-            if (sanpham.sltonkho > 0) {
-              str += "<a onclick=\"themgiohang('" + sanpham.masp + "','" + sanpham.giasp +"','" + sanpham.hinhanh + "')\" class=\"btnthemsp btn btn-primary btn-center\">Thêm vào giỏ hàng</a>"
-            }
-            else {
-              str += "Đã hết hàng"
-            }
-            str += "</div></div></div>"
           }
           );
           $("#result").html(str);
@@ -460,6 +489,28 @@
         $("#sau").addClass(" disabled")
       }
     }
+    function addAlertSuccess(msg) {
+    $("#msg").removeClass("alert alert-danger mt-2")
+    $("#msg").addClass("alert alert-success mt-2");
+    $("#msg").html(msg);
+    $(".alert").fadeTo(500, 1).slideDown(500, function () {
+    });
+    window.setTimeout(function () {
+      $(".alert").fadeTo(500, 0).slideUp(500, function () {
+      });
+    }, 2000);
+  }
+  function addAlertDanger(msg) {
+      $("#msg").removeClass("alert alert-success mt-2")
+      $("#msg").addClass("alert alert-danger mt-2");
+      $("#msg").html(msg);
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    }
     function getCookie(name) {
       var cookieArr = document.cookie.split(";");
       for (var i = 0; i < cookieArr.length; i++) {
@@ -474,17 +525,17 @@
       document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
     function tinhGiaGioHang() {
-    var json_str = getCookie('giohang');
-    var tongtien = 0
-    giohang = JSON.parse(json_str);
-    giohang.forEach(element => {
-      for(var x in element){
-        tongtien += element[x] * element["giasp"]
-        break
-      }
-    });
-    $("#giagiohang").html(tongtien);
-    return tongtien
+      var json_str = getCookie('giohang');
+      var tongtien = 0
+      giohang = JSON.parse(json_str);
+      giohang.forEach(element => {
+        for (var x in element) {
+          tongtien += element[x] * element["giasp"]
+          break
+        }
+      });
+      $("#giagiohang").html(tongtien);
+      return tongtien
     }
     function lookup(name) {
       var json_str = getCookie('giohang');
@@ -496,19 +547,26 @@
       return false;
     }
     function increase(masp) {
-      for (var i = 0, len = giohang.length; i < len; i++) {
-        if (masp in giohang[i]) {
-          for (var x in giohang[i]) {
+    for (var i = 0, len = giohang.length; i < len; i++) {
+      if (masp in giohang[i]) {
+        for (var x in giohang[i]) {
+          if ((giohang[i][x]) < giohang[i]["sltonkho"]) {
             giohang[i][x] += 1
             var json_str = JSON.stringify(giohang);
             const now = new Date();
-            const expires = new Date(now.getTime() + 24 *60 * 60 * 1000).toUTCString();
+            const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000).toUTCString();
             document.cookie = "giohang=" + json_str + ";expires=" + expires + "; path=/";
-            break;  
+            addAlertSuccess("Thêm vào giỏ hàng thành công!")
           }
+          else{
+            console.log("OK")
+            addAlertDanger("Số lượng tồn kho không đủ để đáp ứng!")
+          }
+          break;
         }
       }
     }
+  }
     function findValue(arr, key) {
       return arr.find(function (o) { return o.key === key }).value;
     }

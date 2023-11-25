@@ -137,6 +137,56 @@
         set getList = danhsachgiamgia
     end function
 
+    function getTichDiem(uid)
+      Dim sql
+      sql = "select TichDiem from TaiKhoan where UID=?"
+      Dim cmdPrep
+      set cmdPrep = Server.CreateObject("ADODB.Command")
+      connDB.Open()
+      cmdPrep.ActiveConnection = connDB
+      cmdPrep.CommandType=1
+      cmdPrep.Prepared=true
+      cmdPrep.CommandText = sql
+      cmdPrep.Parameters(0)=uid
+      Dim result
+      set result = cmdPrep.execute()
+      getTichDiem = result("TichDiem")
+      connDB.Close()
+    end function
+    public function checkTonTai(magg)
+        Dim sql
+        sql = "select * from GiamGia where MaGG ='" + magg +"'"
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Set cmdPrep = Server.CreateObject("ADODB.Command")
+        cmdPrep.ActiveConnection = connDB
+        cmdPrep.CommandType = 1
+        cmdPrep.Prepared = True
+        cmdPrep.CommandText = sql
+        Set rs = cmdPrep.execute
+        If Not rs.EOF then
+            set gg = New GiamGia
+            gg.Id = rs.Fields("IDGiamGia")
+            gg.MaGG = rs.Fields("MaGG")
+            gg.TenGG = rs.Fields("TenGG")
+            gg.DieuKienKH = rs.Fields("DKKhachHang")
+            gg.BatDau = rs.Fields("BatDau")
+            gg.KetThuc = rs.Fields("KetThuc")
+            gg.PhanTramGG = rs.Fields("PhanTramGG")
+            gg.SoTienGG = rs.Fields("SoTienGG")
+            set checkTonTai = gg
+        Else 
+            set gg = New GiamGia
+            gg.Id = ""
+            set checkTonTai = gg
+        End if
+        connDB.Close()
+    end function
      function minTichDiem() 
        Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")

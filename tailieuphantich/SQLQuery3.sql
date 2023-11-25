@@ -120,6 +120,10 @@ select count(*) as c from LoaiSP where MaLoaiSP ='35'
 
 create view view1_GiamGia as
 select * from (GiamGia join ChiTietGiamGia on (GiamGia.IDGiamGia) = ChiTietGiamGia.IDGiamGia)
+drop view view1_DonHang
+alter view view1_DonHang as
+select DonHang.MaDH, DonHang.TK, DonHang.TenNguoiNhan, DonHang.SDTNguoiNhan, DonHang.DiaChi, DonHang.IDGiamGia, DonHang.NgayDat, DonHang.NgayHoanThanh, DonHang.PhiGiaoHang, DonHang.TongTien, DonHang.ChietKhau, DonHang.ThanhToan, DonHang.TrangThai, GiamGia.MaGG from (DonHang left join GiamGia on (GiamGia.IDGiamGia) = DonHang.IDGiamGia)
+
 
 select * from ChiTietGiamGia
 select * from GiamGia
@@ -134,16 +138,11 @@ declare @masp int
 declare @sotiengiam money
 declare @phantramgiam int
 select @idgiamgia =IDGiamGia from inserted
-print @idgiamgia
 select @masp =MaSP from inserted
-print @masp
 select @sotiengiam = SoTienGG from GiamGia where GiamGia.IDGiamGia = @idgiamgia
 select @sotiengiam = isnull(@sotiengiam,0)
-print @sotiengiam
 select @phantramgiam = PhanTramGG from GiamGia where GiamGia.IDGiamGia = @idgiamgia
 select @phantramgiam = isnull(@phantramgiam,0)
-print @phantramgiam
-print @phantramgiam/100
 update SanPham set GiamGiaSP =GiamGiaSP + (@sotiengiam + (GiaGocSP*@phantramgiam/100)), GiaSP = GiaGocSP - (GiamGiaSP+(@sotiengiam + (GiaGocSP*@phantramgiam/100))) where MaSP = @masp
 
 go
@@ -151,8 +150,101 @@ drop trigger tg_SanPham
 create trigger tg_SanPham on SanPham 
 for update as
 declare @masp int
+declare @idgg int
+declare @count int
+declare @i int = 0
+
 select @masp = MaSP from inserted
+select @count = count(*) from ChiTietGiamGia where MaSp = @masp
 if(update(GiaGocSP))
 begin
 	update SanPham set GiaSP = GiaGocSP, GiamGiaSP = 0 where MaSP = @masp
+	while @i < @count
+	begin
+		select @idgg = IDGiamGia  from ChiTietGiamGia where MaSP = @masp  order by IDChiTietGiamGia desc offset @i rows fetch next 1 rows only
+		select @idgg
+		delete from ChiTietGiamGia where MaSP = @masp and IDGiamGia = @idgg
+		insert into ChiTietGiamGia values(@idgg,@masp)
+		set @i = @i+1
+	end
 end
+update SanPham set GiaGocSP = '700000' where MaSP ='2'
+
+select * from view1_SanPham where MaSP !='' and  MaSP = 27or MaSP = 25
+
+
+create view view1_ChiTietDonHang as
+select ChiTietDonHang.MaDH,SanPham.TenSP, ChiTietDonHang.SL, ChiTietDonHang.GiaSP from ChiTietDonHang join SanPham on ChiTietDonHang.MaSP = SanPham.MaSP
+
+drop trigger tg_DonHang_Update
+alter trigger tg_DonHang_Update on DonHang for update as
+declare @madh int
+declare @trangthai int
+declare @i int = 0
+declare @count int
+declare @masp int
+declare @sl int
+declare @tk nvarchar(25)
+declare @tongtien money
+select @tk = TK from inserted
+select @tongtien = TongTien from inserted
+select @madh = MaDH from inserted
+select @trangthai = TrangThai from inserted
+select @count = count(*) from ChiTietDonHang where MaDH = @madh
+if( @trangthai =1)
+begin
+	while @i < @count
+	begin
+		select @masp = MaSP  from ChiTietDonHang where MaDH = @madh order by MaDH offset @i rows fetch next 1 rows only
+		select @sl = SL from ChiTietDonHang where MaDH = @madh order by MaDH offset @i rows fetch next 1 rows only
+		update SanPham set SLTonKho = SLTonKho - @sl where MaSP = @masp
+		set @i = @i+1
+	end
+end 
+if( @trangthai =3)
+begin
+	while @i < @count
+	begin
+		select @masp = MaSP  from ChiTietDonHang where MaDH = @madh order by MaDH offset @i rows fetch next 1 rows only
+		select @sl = SL from ChiTietDonHang where MaDH = @madh order by MaDH offset @i rows fetch next 1 rows only
+		update SanPham set SLTonKho = SLTonKho + @sl where MaSP = @masp
+		set @i = @i+1
+		print @sl
+	end
+end 
+if(@trangthai = 2)
+begin
+	update TaiKhoan set TichDiem = TichDiem + CEILING(@tongtien / 100000) where TK = @tk
+	update DonHang set NgayHoanThanh=GETDATE() where MaDH = @madh
+end
+drop trigger tgngayhoanthanhdonhang
+alter trigger tgngayhoanthanhdonhang on DonHang for update as
+if update(TrangThai)
+begin
+	declare @trangthai int
+	declare @madh int
+
+	select @trangthai = TrangThai from inserted
+	select @madh = MaDH from DonHang
+		print @madh
+	if(@trangthai = 2)
+	begin
+		print @trangthai
+
+		update DonHang set NgayHoanThanh=GETDATE() where MaDH = @madh
+	end
+end
+update DonHang set TrangThai = 0 where MaDH =128
+update DonHang set TrangThai = 2 where MaDH =128
+SELECT CAST(MONTH(NgayDat) AS VARCHAR(2)) as thang, sum(ThanhToan)  as doanhthu from DonHang where TrangThai ='2' and Year(NgayDat) =2023 group by CAST(MONTH(NgayDat) AS VARCHAR(2)) order by thang
+
+create view viewthongke as
+select SanPham.TenSP, sum(ChiTietDonHang.SL) as DoanhSo, DonHang.NgayHoanThanh from SanPham join ChiTietDonHang on SanPham.MaSP = ChiTietDonHang.MaSP join DonHang on DonHang.MaDH = ChiTietDonHang.MaDH where NgayHoanThanh is not null group by SanPham.TenSP , DonHang.NgayHoanThanh
+
+select * from viewthongke where MONTH(NgayHoanThanh) = 7
+select * from view1_DonHang where TK='duyhung2206' order by NgayDat offset 0 rows fetch next 6 rows only
+
+ALTER TABLE DonHang
+DISABLE TRIGGER tg_DonHang_Update
+ALTER TABLE DonHang
+ENABLE TRIGGER tg_DonHang_Update

@@ -22,7 +22,7 @@
                 <h2>Danh sách các chương trình giảm giá </h2>
             </div>
             <div class="p-2 bd-highlight">
-                <a href="" class="btn btn-primary">Thêm</a>
+                <a href="../views/themgiamgia-view.asp" class="btn btn-primary">Tạo chương trình giảm giá</a>
             </div>
         </div>
         <form id="formtimkiem" class="form-inline">

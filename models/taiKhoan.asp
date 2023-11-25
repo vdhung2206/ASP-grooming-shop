@@ -72,6 +72,40 @@ connDB.ConnectionString = strConnection
       p_diachi = value
     End Property
 
+    public function thongTinTaiKhoan(uid)
+        Dim sql
+        sql = "select * from TaiKhoan where UID ='" + uid +"'"
+        Dim connDB
+        set connDB = Server.CreateObject("ADODB.Connection")
+        Dim strConnection
+        strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+        connDB.ConnectionString = strConnection
+        connDB.Open()
+
+        Set cmdPrep = Server.CreateObject("ADODB.Command")
+        cmdPrep.ActiveConnection = connDB
+        cmdPrep.CommandType = 1
+        cmdPrep.Prepared = True
+        cmdPrep.CommandText = sql
+        Set rs = cmdPrep.execute
+        If Not rs.EOF then
+            set tk1 = New TaiKhoan
+            tk1.Tk = rs.Fields("TK")
+            tk1.Mk = rs.Fields("MK")
+            tk1.Ten = rs.Fields("Ten")
+            tk1.Sdt = rs.Fields("SDT")
+            tk1.Diachi = rs.Fields("DiaChi")
+            tk1.Loaitk = rs.Fields("LoaiTK")
+            tk1.Tinhtrang = rs.Fields("TinhTrang")
+            tk1.Tichdiem = rs.Fields("TichDiem")
+            set thongTinTaiKhoan = tk1
+        Else 
+            set tk1 = New TaiKhoan
+            tk1.Tk = ""
+            set thongTinTaiKhoan = tk1
+        End if
+        connDB.Close()
+    end function
     public function getList()
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
@@ -420,7 +454,7 @@ connDB.ConnectionString = strConnection
       getUID = result("UID")
       connDB.Close()
     end function
-
+    
     function kiemTraDinhDangTK(tk) 
       If Len(tk) >= 6 And Len(tk) <= 25 And InStr(tk, " ") = 0 Then
         kiemTraDinhDangTK = true
@@ -470,5 +504,4 @@ connDB.ConnectionString = strConnection
       connDB.Close()
     end function
   End Class
-  set tk = new TaiKhoan
 %>

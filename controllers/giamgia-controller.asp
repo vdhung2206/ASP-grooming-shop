@@ -77,6 +77,106 @@
         Response.Write("""data"":{ ""themGiamGia"": true}")
         response.write("}")
     end if
+    if(loai ="huyapmagiamgia") then
+        if(session("magg")<>"") then
+            session("magg")=""
+            session("idgg") = ""
+            Response.Write("{")
+            Response.Write("""status code"": ""102"",")
+            Response.Write("""message"": ""Hủy áp dụng mã giảm giá thành công, bạn có thể sử dụng mã giảm giá khác!"",")
+            Response.Write("""data"":{ ""huyapmagiamgia"": true}}")
+        else
+        Response.Write("{")
+            Response.Write("""status code"": ""102"",")
+            Response.Write("""message"": ""Bạn chưa áp dụng mã giảm giá nào!"",")
+            Response.Write("""data"":{ ""huyapmagiamgia"": false}}")
+        end if
+    end if
+
+    if(loai="luugiagiohang") then
+        giagiohang = request.form("giagiohang")
+        session("giagiohang") = giagiohang
+        response.write(session("giagiohang"))
+    end if
+    if(loai="apdunggiamgia") then
+        if (session("magg")="") then 
+            magg = request.querystring("magg")
+            set classgg = new GiamGia
+            dim gg
+            set gg = classgg.checkTonTai(magg)
+            if(gg.Id<>"" and gg.DieuKienKH<>"") then
+                if(session("uid")<>"") then
+                        currentDate = Now() ' Lấy ngày hiện tại
+                        Dim currentDate, dateString
+                        dateString = Cdate(gg.BatDau)' Biến chứa ngày hiện tại
+                        dim a 
+                        a =Mid(dateString,3,2)
+                        if not (IsNumeric(a)) then
+                            a = left(a, 1)
+                        end if
+                        myDate = DateSerial(Right(dateString, 4), Left(dateString,1),a)
+                        If currentDate > myDate Then
+                            currentDate1 = Date() ' Lấy ngày hiện tại
+                            Dim currentDate1, dateString1
+                            dateString1 = Cdate(gg.KetThuc)' Biến chứa ngày hiện tại
+                            dateString1 = left(dateString1,9)
+                            dim b 
+                            b =Mid(dateString1,3,2)
+                            if not (IsNumeric(b)) then
+                                b = left(b, 1)
+                            end if
+                            myDate1 = DateSerial(Right(dateString1, 4), Left(dateString1,1),b)
+                            If currentDate1 =< myDate1 Then
+                                if(gg.getTichDiem(session("uid"))>gg.DieuKienKH) then
+                                    session("magg") = gg.MaGG
+                                    session("idgg") = gg.Id
+                                    Response.Write("{")
+                                    Response.Write("""status code"": ""102"",")
+                                    Response.Write("""message"": ""Áp dụng mã giảm giá thành công!"",")
+                                    Response.Write("""data"":{ ""apDungGiamGia"": true")
+                                    if(gg.PhanTramGG <>"") then
+                                    Response.Write(",""phantramgg"":" & gg.PhanTramGG)
+                                    else
+                                    Response.Write(",""sotiengg"":" & gg.SoTienGG)
+                                    end if
+                                    Response.Write("}}")
+                                else
+                                    Response.Write("{")
+                                    Response.Write("""status code"": ""102"",")
+                                    Response.Write("""message"": ""Bạn không đủ điều kiện áp dụng chương trình giảm giá này (Tích điểm không đủ) !"",")
+                                    Response.Write("""data"":{ ""apDungGiamGia"": false}}")
+                                end if
+                            else
+                            Response.Write("{")
+                            Response.Write("""status code"": ""102"",")
+                            Response.Write("""message"": ""Chương trình giảm giá đã kết thúc!"",")
+                            Response.Write("""data"":{ ""apDungGiamGia"": false}}")
+                            end if
+                        Else
+                            Response.Write("{")
+                            Response.Write("""status code"": ""102"",")
+                            Response.Write("""message"": ""Chương trình giảm giá chưa bắt đầu!"",")
+                            Response.Write("""data"":{ ""apDungGiamGia"": false}}")
+                        End If
+                else
+                    Response.Write("{")
+                    Response.Write("""status code"": ""102"",")
+                    Response.Write("""message"": ""Hãy đăng nhập để áp dụng mã giảm giá!"",")
+                    Response.Write("""data"":{ ""apDungGiamGia"": false}}")
+                end if
+            else
+                Response.Write("{")
+                Response.Write("""status code"": ""102"",")
+                Response.Write("""message"": ""Mã giảm giá không tồn tại!"",")
+                Response.Write("""data"":{ ""apDungGiamGia"": false}}")
+            end if
+        else
+            Response.Write("{")
+            Response.Write("""status"": ""1010"",")
+            Response.Write("""message"": ""Chỉ được áp dụng một mã giảm giá cho mỗi đơn hàng!"",")
+            Response.Write("""data"":{ ""apDungGiamGia"": false}}")
+        end if
+    end if  
 
     if(loai="laydanhsachgiamgia") then
         set gg = new GiamGia

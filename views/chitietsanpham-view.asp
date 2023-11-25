@@ -1,3 +1,6 @@
+<%
+    if(session("uidadmin")<>"" and session("loaitk")=2) then
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -349,3 +352,8 @@
     })
   })
 </script>
+<%
+    else
+    response.redirect("login.asp")
+    end if
+%>

@@ -20,6 +20,8 @@ Class SanPham
     Private p_trangthai 
     Private p_hinhanh
     Private p_chitiet
+    Private p_doanhso
+
     ' getter and setter
     ' getter and setter
     Public Property Get Masp()
@@ -105,6 +107,12 @@ Class SanPham
     Public Property Let ChiTiet(value)
         p_chitiet = value
     End Property
+    Public Property Get Doanhso()
+        Doanhso = p_doanhso
+    End Property
+    Public Property Let Doanhso(value)
+        p_doanhso = value
+    End Property
 
     public function layThongTinSanPham(masp)
       Dim connDB
@@ -134,6 +142,46 @@ Class SanPham
       else
         layThongTinSanPham = "nothing"
       end if
+      conndb.Close()
+    end function
+
+    public function thongKeDoanhSo(nam, thang, limit, page)
+      set classSP = new SanPham
+      totalRows = classSP.countthongke(nam, thang)
+      pages = Ceil(totalRows/limit)
+      if (Clng(pages) < Clng(page)) then
+        page = pages
+      end if
+      if (Clng(page)<=0) then
+        page = 1
+      end if
+      offset = (Clng(page) * Clng(limit)) - Clng(limit)
+      if(offset < 0) then 
+        offset =0
+      end if
+      Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+
+      Dim danhsachsanpham
+      Set danhsachsanpham = Server.CreateObject("Scripting.Dictionary")
+
+      dim sql
+      sql = "select * from viewthongke where year(NgayHoanThanh)=" & nam &"and Month(NgayHoanThanh)=" & thang &" order by DoanhSo desc offset " & offset &" rows fetch next " & limit &" rows only"
+      Set rs = connDB.execute(sql)
+        Do While Not rs.EOF
+        seq = seq+1
+        set mySP = New SanPham
+        mySP.TenSP = rs.Fields("TenSP")
+        mySP.Doanhso = rs.Fields("DoanhSo")
+        set thongKeDoanhSo = mySP
+        danhsachsanpham.add seq, mySP
+        rs.MoveNext
+        Loop
+      set thongKeDoanhSo = danhsachsanpham
       conndb.Close()
     end function
 
@@ -276,7 +324,7 @@ Class SanPham
         set phantrangsanpham = danhsachsanpham
     end function
 
-    public function gioHang()
+    public function gioHang(listsp)
         set classSP = new SanPham
         Dim connDB
         set connDB = Server.CreateObject("ADODB.Connection")
@@ -284,6 +332,14 @@ Class SanPham
         strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
         connDB.ConnectionString = strConnection
         connDB.Open()
+
+        dim sql
+        sql ="select * from view1_SanPham where MaSP !='' and "
+        a = Split(listsp,",")
+        for each x in a
+           sql = sql +" MaSP = " + x +"or"
+        next
+        sql = Left(sql, Len(sql) -2)
 
         Dim danhsachsanpham
         Set danhsachsanpham = Server.CreateObject("Scripting.Dictionary")
@@ -313,7 +369,7 @@ Class SanPham
             rs.MoveNext
         Loop 
         conndb.Close()
-        set giohang = danhsachsanpham
+        set gioHang = danhsachsanpham
     end function
 
     Public Function themSanPham(tensp, maloaisp, hangsp, sltonkho, giagocsp, hinhanh, chitiet)
@@ -336,8 +392,9 @@ Class SanPham
     cmdPrep.Parameters.Append cmdPrep.CreateParameter(, 3, 1, , giagocsp)
     cmdPrep.Parameters.Append cmdPrep.CreateParameter(, 200, 1, 255, hinhanh)
     cmdPrep.Parameters.Append cmdPrep.CreateParameter(, 200, 1, 255, chitiet)
-    
     cmdPrep.Execute()
+    Set rs = connDB.execute("SELECT @@IDENTITY AS masp")
+    themSanPham = rs.Fields("masp")
     connDB.Close()
 End Function
 
@@ -522,6 +579,7 @@ End Function
             set mySP = New SanPham
             mySP.MaSP = rs.Fields("MaSP")
             mySP.TenSP = rs.Fields("TenSP")
+            mySP.GiaSP = rs.Fields("GiaSP")
             danhsachsanpham.add seq, mySP
             rs.MoveNext
         Loop 
@@ -576,6 +634,20 @@ End Function
       cmdPrep.execute
       conndb.Close()
     end function
+    public function countthongke(nam, thang)
+      Dim sql
+      sql ="select count(*) as c from viewthongke where year(NgayHoanThanh)=" & nam &"and Month(NgayHoanThanh)=" & thang
+      Dim connDB
+      set connDB = Server.CreateObject("ADODB.Connection")
+      Dim strConnection
+      strConnection = "Provider=SQLOLEDB.1;Data Source=DUYHUNG\SQLEXPRESS;Database=DoAnWEB;User Id=sa;Password=duyhung21"
+      connDB.ConnectionString = strConnection
+      connDB.Open()
+      Set rs = connDB.execute(sql)
+      countthongke = rs.Fields("c")
+      connDB.Close()
+    end function
+    
     public function count(tensp,danhmuc,loaisp,hangsp,sltonkho1,sltonkho2,giasp,trangthai)
       Dim sql
       sql ="select count(*) as c from view1_SanPham where MaSP !='' "
@@ -615,6 +687,5 @@ End Function
     end function
 End Class
   set sp = new SanPham
-  call sp.timkiemsanpham("","","","")
   'response.write(sp.suaThongTin("2","Hanz de Fuko Quicksand","1","Hanz De Fuko keke","9","560000","0","1","ko co gi"))
 %>

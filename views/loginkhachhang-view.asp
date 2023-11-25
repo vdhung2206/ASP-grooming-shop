@@ -5,6 +5,7 @@
     if(t = "dangxuat") then
         Session.Contents.RemoveAll()
     end if
+    'Session.Contents.RemoveAll()
     if(session("uid")="") then
     
 %>
@@ -28,7 +29,7 @@
             <form id="formlogin" method="post" action=""> 
                 <div class="mb-3">
                     <label for="tk" class="form-label">Tên đăng nhập</label>
-                    <input type="text" class="form-control" id="tk" name="tk">
+                    <input value="<%=session("taikhoan")%>"type="text" class="form-control" id="tk" name="tk">
                 </div>
                 <div class="mb-3">
                     <label for="mk" class="form-label">Mật khẩu</label>

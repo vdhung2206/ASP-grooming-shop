@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link " aria-current="page" href="/management/index.asp">Tổng quan</a>
+          <a class="nav-link " aria-current="page" href="../views/index.asp">Tổng quan</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
@@ -18,22 +18,22 @@
             Quản lý tài khoản
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a href="" class="dropdown-item">Tài khoản khách hàng</a></li>
-            <li><a href="" class="dropdown-item">Tài khoản quản lý</a></li>
+            <li><a href="../views/taikhoan-view.asp" class="dropdown-item">Tài khoản khách hàng</a></li>
+            <li><a href="../views/taikhoanquanly-view.asp" class="dropdown-item">Tài khoản quản lý</a></li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="#">Quản lý sản phẩm</a>
+          <a class="nav-link " href="../views/sanpham-view.asp">Quản lý sản phẩm</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="#">Quản lý đơn đặt hàng</a>
+          <a class="nav-link " href="../views/donhang-view.asp">Quản lý đơn đặt hàng</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="#">Quản lý giảm giá</a>
+          <a style="padding-right: 120px;"class="nav-link " href="../views/giamgia-view.asp">Quản lý giảm giá</a>
         </li>
       </ul>
       <div class="d-flex">
-        <span class="navbar-text"></span>
+        <span style="padding-right:20px" class="navbar-text"></span>
         <a id="btndangxuat" class="btn btn-outline-warning ms-3">Đăng xuất</a>
       </div>
     </div>
@@ -60,7 +60,7 @@
         loai: "dangxuat"
       },
       success: function () {
-        window.location.href = "login.asp"
+        window.location.href = "../views/login.asp"
       }
     });
   });

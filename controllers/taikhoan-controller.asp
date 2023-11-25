@@ -22,6 +22,29 @@
     Set danhsachtaikhoan = Server.CreateObject("Scripting.Dictionary")
     limit = 10
     
+    if(loai ="laythongtintaikhoan") then
+        set classtk = new TaiKhoan
+        uid = session("uid")
+        if(uid <>"") then
+            set tk = classtk.thongTinTaiKhoan(cstr(uid))
+            Response.Write("{")
+            Response.Write("""status code"": ""102"",")
+            Response.Write("""message"": ""Lấy thông tin tài khoản thành công!"",")
+            Response.Write("""data"":{ ""laythongtintaikhoan"": true")
+            Response.Write(",""tk"":""" & tk.Tk &"""")
+            Response.Write(",""ten"":""" & tk.Ten &"""")
+            Response.Write(",""sdt"":""" & tk.Sdt &"""")
+            Response.Write(",""diachi"":""" & tk.Diachi &"""")
+            Response.Write("}}")
+        else
+            Response.Write("{")
+            Response.Write("""status code"": ""102"",")
+            Response.Write("""message"": ""Chưa đăng nhập!"",")
+            Response.Write("""data"":{ ""laythongtintaikhoan"": false")
+            Response.Write("}}")
+
+        end if
+    end if
     if(loai = "phantrangtaikhoan") then
         set tk = new TaiKhoan
         loaitk = request.querystring("loaitk")

@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.84.0">
+  <title>Checkout example · Bootstrap v5.0</title>
+
+  <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/checkout/">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+    integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+
+
+  <!-- Bootstrap core CSS -->
+
+
+  <!-- Favicons -->
+
+
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+
+
+  <!-- Custom styles for this template -->
+  <!-- <link href="form-validation.css" rel="stylesheet"> -->
+</head>
+
+<body class="bg-light">
+
+  <div class="container">
+    <div class="container sticky-top" id="headercontainer">
+      <div id="msg" class="mt-2" role="alert">
+      </div>
+    </div>
+    <main>
+      <div class="py-5 text-center">
+        <h4>Trang thanh toán</h4>
+      </div>
+
+      <div class="row g-5">
+        <div class="col-md-7 col-lg-8">
+          <h4 class="mb-3">Thông tin thanh toán</h4>
+          <form class="needs-validation" novalidate>
+            <div class="row g-3">
+              <input type="hidden" class="form-control" id="tkdathang" placeholder="" value="" required>
+              <div class="col-sm-6">
+                <label for="tennguoinhan" class="form-label">Tên người nhận</label>
+                <input type="text" class="form-control" id="tennguoinhan" placeholder="" value="" required>
+              </div>
+
+              <div class="col-sm-6">
+                <label for="sdtnguoinhan" class="form-label">SĐT người nhận</label>
+                <input type="text" class="form-control" id="sdtnguoinhan" placeholder="" value="" required>
+              </div>
+
+              <div class="col-12">
+                <label for="diachinguoinhan" class="form-label">Địa chỉ nhận hàng</label>
+                <input type="text" class="form-control" id="diachinguoinhan" placeholder="" required>
+              </div>
+
+
+            </div>
+            <h4 class="mb-3">Hình thức thanh toán</h4>
+
+            <div class="my-3">
+              <div class="form-check">
+                <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
+                <label class="form-check-label" for="credit">Thanh toán khi nhận hàng</label>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <button id="dathang" class="w-20 btn btn-primary btn-lg">Đặt hàng</button>
+          </form>
+        </div>
+        <div id="result" class="col-lg-4 bg-grey">
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+
+    var giohang
+    $(document).ready(function () {
+      $.ajax({
+        method: "get",
+        url: "../controllers/taikhoan-controller.asp",
+        data: {
+          loai: "laythongtintaikhoan",
+        }, success(response) {
+          const obj = JSON.parse(response);
+          if (obj.data.laythongtintaikhoan) {
+            $("#tennguoinhan").val(obj.data.ten)
+            $("#sdtnguoinhan").val(obj.data.sdt)
+            $("#diachinguoinhan").val(obj.data.diachi)
+            $("#tkdathang").val(obj.data.tk)
+          }
+        }
+      })
+      loadData()
+    })
+
+    $("#dathang").click(function (e) {
+      e.preventDefault()
+      var date = (new Date()).toISOString().split('T')[0];
+      if ($("#tennguoinhan").val() != "") {
+        var sdtcheck = /^0[0-9]{9}$/;
+        if ($("#sdtnguoinhan").val() != "" && sdtcheck.test($("#sdtnguoinhan").val())) {
+          if ($("#diachinguoinhan").val() != "") {
+            $.ajax({
+              method: "post",
+              url: "../controllers/donhang-controller.asp",
+              data: {
+                loai: "taodonhang",
+                tk: $("#tkdathang").val(),
+                ten: $("#tennguoinhan").val(),
+                sdt: $("#sdtnguoinhan").val(),
+                diachi: $("#diachinguoinhan").val(),
+                giamgia: tinhGiamGia(),
+                thanhtoan: tinhGiaGioHang() - tinhGiamGia() + 30000,
+                ngaydat: date
+              }, success(response) {
+                var json_str = getCookie('giohang');
+                var listsp = "";
+                var c = 1
+                giohang = JSON.parse(json_str);
+                giohang.forEach(element => {
+                  for (var x in element) {
+                    listsp += x + ":" + element[x];
+                    if (c < giohang.length) {
+                      listsp += ","
+                    }
+                    break;
+                  }
+                  c++
+                });
+                $.ajax({
+                  method: "post",
+                  url: "../controllers/donhang-controller.asp",
+                  data: {
+                    loai: "chitietdonhang",
+                    listsp : listsp
+                  }, success: function(response){
+                    sessionStorage.setItem("dathang","Đặt hàng thành công!")
+                    window.location.href ="trangchukhachhang-view.asp"
+                  }
+                })
+              }
+            })
+          }
+          else {
+            addAlertDanger("Hãy nhập địa chỉ giao hàng")
+          }
+        }
+        else {
+          addAlertDanger("Chưa nhập số điện thoại hoặc số điện thoại chưa đúng định dạng!")
+        }
+      }
+      else {
+        addAlertDanger("Hãy nhập tên người nhận!")
+      }
+    })
+    function loadData() {
+      function soLuong(masp) {
+        var json_str = getCookie('giohang');
+        giohang = JSON.parse(json_str);
+        var a
+        giohang.forEach(element => {
+          for (x in element) {
+            if (x == masp) {
+              a = element[x]
+            }
+            break
+          }
+        });
+        return a
+      }
+      var json_str = getCookie("giohang")
+      giohang = JSON.parse(json_str);
+      var listsp = "";
+      if (giohang.length > 0) {
+        var c = 1
+        giohang.forEach(element => {
+          for (var x in element) {
+            listsp += x;
+            if (c < giohang.length) {
+              listsp += ","
+            }
+            c++
+            break
+          }
+        });
+        var str = '<div class="d-flex justify-content-between align-items-center mb-5"><h1 class="fw-bold mb-0 text-black">Đơn hàng</h1><h6 class="mb-0 text-muted">' + tongSanPham() + ' sản phẩm</h6></div>'
+        str += '<hr class="my-4">'
+        $.ajax({
+          method: "get",
+          url: "../controllers/sanpham-controller.asp",
+          data: {
+            loai: "giohang",
+            listsp: listsp,
+          }, success: function (response) {
+            const obj = JSON.parse(response);
+            obj.data.danhsachsanpham.forEach(element => {
+              str += '<div class="row mb-4 d-flex align-items-center">'
+              str += '<div style="width:200px; padding:0; margin:0" class="col-6">'
+              str += '<h6 class="text-black mb-0">' + element.tensp + '</h6>'
+              str += '</div>'
+              str += '<div style="width:30px; padding:0; margin:0"  class="col-2 ">'
+              str += '<span> x ' + soLuong(element.masp) + '<span>'
+              str += '</div> <div  style="width:100px; padding:0; padding-left:60px; margin:0" class="col-xl-2"><h6 id="tien' + element.masp + '" class="mb-0">' + soLuong(element.masp) * element.giasp + '<span class=\"text-decoration-underline\">đ</span></h6></div>'
+            })
+            str += '<hr class="my-4">'
+            str += '<div class="row mb-4 d-flex align-items-center">'
+            str += '<div style="width:190px; padding:0; margin:0"  class="col-6">'
+            str += '<h6 class="text-uppercase mb-3">Giao hàng</h6>'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-3">'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-1 d-flex"><h6>30000</h6><h6 class=\"text-decoration-underline\">đ</h6></div>'
+
+            str += '<hr class="my-4">'
+            str += '<div class="row mb-4 d-flex align-items-center">'
+            str += '<div style="width:190px; padding:0; margin:0"  class="col-6">'
+            str += '<h6 class="text-uppercase mb-3">Tổng</h6>'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-3">'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-1 d-flex"><h6>' + (tinhGiaGioHang() + parseInt(30000)) + '</h6><h6 class=\"text-decoration-underline\">đ</h6></div>'
+
+            str += '<hr class="my-4">'
+            str += '<div class="row mb-4 d-flex align-items-center">'
+            str += '<div style="width:185px; padding:0; margin:0"  class="col-6">'
+            str += '<h6 class="text-uppercase mb-3">Giảm giá</h6>'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-3">'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-1 d-flex"><h6 id="giamgia">' + '<span class=\"text-decoration-underline\">đ</span></h6></div></div>'
+
+            str += '<hr class="my-4">'
+            str += '<div class="row mb-4 d-flex  align-items-center">'
+            str += '<div style="width:185px; padding:0; margin:0" class="col-6">'
+            str += '<h6 class="text-uppercase mb-3">Thành tiền</h6>'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-3">'
+            str += '</div>'
+            str += '<div class="col-md-3 col-lg-3 col-xl-1 d-flex"><h6 id="thanhtien">' + '<span class=\"text-decoration-underline\">đ</span></h6></div></div>'
+            //str += '</div> <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1"><h6 id="tien' + element.masp + '" class="mb-0">' + soLuong(element.masp) * element.giasp + '<span class=\"text-decoration-underline\">đ</span></h6></div>'
+            $("#result").html(str)
+            tinhGiamGia()
+          }
+        });
+        $("#result").append('<hr class="my-4"><div class="pt-5"><h6 class="mb-0"><a href="#!" class="text-body"><iclass="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>/div>')
+        // var str1 = ""
+        // if (sessionStorage.getItem("magg")) {
+        //   magg = sessionStorage.getItem("magg")
+        // }
+        // else {
+        //   magg = ""
+        // }
+        // str1 += '<div class="p-5"><h3 class="fw-bold mb-5 mt-2 pt-1">Thống kê giỏ hàng</h3><hr class="my-4"><div class="d-flex justify-content-between mb-4"><h5 class="text-uppercase">' + tongSanPham() + ' sản phẩm</h5>'
+        // str1 += '<h5>' + tinhGiaGioHang() + '<span class=\"text-decoration-underline\">đ</span></h5>'
+        // str1 += '</div><h5 class="text-uppercase mb-3">Giao hàng</h5><div class="mb-4 pb-2"><h5>Đồng giá 30.000đ</h5></div><h5 class="text-uppercase mb-3">Mã giảm giá</h5><div class="mb-5"><div class="form-outline"><input type="text" id="magiamgia" value="' + magg + '" class="form-control form-control-lg" /></div><button type="button" onclick="apdunggiamgia()" class="mt-2 btn mr-5 btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Áp dụng</button><button type="button" onclick="huyapmagiamgia()" class="mt-2 btn btn-danger ml-5 btn-block btn-lg" data-mdb-ripple-color="dark">Hủy áp dụng</button>   </div><hr class="my-4">'
+        // str1 += '<div class="d-flex justify-content-between mb-5"><h5 class="text-uppercase">Tổng</h5>'
+        // str1 += '<h5 id="tong">' + (tinhGiaGioHang() + parseInt(30000)) + '<span class=\"text-decoration-underline\">đ</span></h5></div>'
+        // str1 += '<div class="d-flex justify-content-between mb-5"><h5 class="text-uppercase">Giảm giá</h5>'
+        // str1 += '<h5 id="giamgia">' + '<span class=\"text-decoration-underline\">đ</span></h5></div>'
+        // str1 += '<div class="d-flex justify-content-between mb-5"><h5 class="text-uppercase">Thành tiền</h5>'
+        // str1 += '<h5 id="thanhtien">' + '<span class=\"text-decoration-underline\">đ</span></h5>'
+        // str1 += '</div><button type="button" class="btn btn-dark btn-block btn-lg" data-mdb-ripple-color="dark">Tiến hành thanh toán</button></div>'
+        // $("#thongkegiohang").html(str1)
+        //tinhGiamGia()
+
+      }
+      else {
+        $("#result").html("Chưa có sản phẩm nào trong giỏ hàng!")
+        //$("#thongkegiohang").html("")
+      }
+    }
+    function tongSanPham() {
+      var count = 0
+      giohang.forEach(element => {
+        for (var x in element) {
+          count += element[x]
+          break
+        }
+      })
+      return count;
+    }
+    function tinhGiaGioHang() {
+      var json_str = getCookie('giohang');
+      var tongtien = 0
+      giohang = JSON.parse(json_str);
+      giohang.forEach(element => {
+        for (var x in element) {
+          tongtien += element[x] * element["giasp"]
+          break
+        }
+      });
+      $("#giagiohang").html(tongtien);
+      $.ajax({
+        method: "post",
+        url: "../controllers/giamgia-controller.asp",
+        data: {
+          loai: "luugiagiohang",
+          giagiohang: tongtien
+        }, success: function (response) {
+        }
+      })
+      return tongtien
+    }
+    function tinhGiamGia() {
+      var json_str = getCookie('giamgia');
+      giamgia = JSON.parse(json_str);
+      if (giamgia != null) {
+        if (giamgia.data.phantramgg != undefined) {
+          $("#giamgia").html((tinhGiaGioHang() * giamgia.data.phantramgg) / 100 + '<span class=\"text-decoration-underline\">đ</span>')
+          $("#thanhtien").html(tinhGiaGioHang() + 30000 - ((tinhGiaGioHang() * giamgia.data.phantramgg) / 100) + '<span class=\"text-decoration-underline\">đ</span>')
+          return (tinhGiaGioHang() * giamgia.data.phantramgg) / 100
+        }
+        if (giamgia.data.sotiengg != undefined) {
+          $("#giamgia").html(giamgia.data.sotiengg + '<span class=\"text-decoration-underline\">đ</span>')
+          $("#thanhtien").html(tinhGiaGioHang() + 30000 - giamgia.data.sotiengg + '<span class=\"text-decoration-underline\">đ</span>')
+          return giamgia.data.sotiengg
+        }
+      }
+      else{
+        $("#giamgia").html(0 + '<span class=\"text-decoration-underline\">đ</span>')
+        $("#thanhtien").html(tinhGiaGioHang() + 30000 + '<span class=\"text-decoration-underline\">đ</span>')
+        return 0;
+      }
+    }
+    function delete_cookie(name) {
+      document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+    function getCookie(name) {
+      var cookieArr = document.cookie.split(";");
+      for (var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        if (name == cookiePair[0].trim()) {
+          return decodeURIComponent(cookiePair[1]);
+        }
+      }
+      return null;
+    }
+    function addAlertSuccess(msg) {
+      $("#msg").removeClass("alert alert-danger mt-2")
+      $("#msg").addClass("alert alert-success mt-2");
+      $("#msg").html(msg);
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    }
+    function addAlertDanger(msg) {
+      $("#msg").removeClass("alert alert-success mt-2");
+      $("#msg").addClass("alert alert-danger mt-2");
+      $("#msg").html(msg);
+      $(".alert").fadeTo(500, 1).slideDown(500, function () {
+      });
+      window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+        });
+      }, 2000);
+    }
+  </script>
+</body>
+
+</html>
